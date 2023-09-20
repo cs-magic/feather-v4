@@ -44,3 +44,15 @@
   - https://github.com/wpcodevo/nextjs13-trpc-setup/blob/main/src/app/layout.tsx
 - zod with zod-prisma-type
   - `yarn add zod@\<=3.21.1`, see: https://github.com/colinhacks/zod/issues/2184#issuecomment-1573154480
+- audio
+  - 选型
+    - 先用 `react-audio`，结果官方case对hook不友好，而且`Audio.status.Playing`没有此变量
+    - 接着用了 `use-audio`，这个不错
+  - bug
+    - The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page.
+    - 这个bug说明音乐播放需要主动去点击，正好我们有按钮（开始游戏），所以没问题
+  - sources
+    - game-start: 
+      - [超级玛丽里城堡部分的游戏音乐配乐素材下载_mp3格式背景音乐_熊猫办公](https://www.tukuppt.com/muban/lkyjejbp.html)
+    - game-end:
+      - 超级玛丽 游戏_配乐_背景音乐_bgm 免费下载 - 爱给网, https://www.aigei.com/music/game/super_mario

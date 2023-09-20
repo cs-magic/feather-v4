@@ -1,5 +1,5 @@
 import { PLAYER_LIFE_MAX, PLAYER_RAGE_MAX, SERVER_FPS } from "@/config"
-import { PlayerStatus } from "@/app/player-status"
+import { PlayerStatus } from "@/app/components/player-status"
 
 export type PlayerState =
   | "idle"
