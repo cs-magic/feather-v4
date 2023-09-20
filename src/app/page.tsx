@@ -4,7 +4,7 @@ import { useElementSize } from "@mantine/hooks"
 import { Player } from "@/app/player"
 import { PlayerStatus } from "@/app/player-status"
 import { GameHeader } from "@/app/game-header"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { IGame } from "@/game/game-server"
 import useInterval from "@/hooks/interval"
 import { GameOver, GameWaiting } from "@/app/game-waiting"
@@ -29,6 +29,24 @@ export default function Home() {
   useInterval(() => {
     setGame(client.data)
   }, 1000 / CLIENT_FPS)
+
+  /**
+   * set height for mobile browser (safari, chrome ...) to be full of inner height (but invalid !)
+   */
+  useEffect(() => {
+    const setInnerHeight = () => {
+      document.documentElement.style.setProperty(
+        "--app-height",
+        `${window.innerHeight}px`
+      )
+    }
+    window.addEventListener("resize", setInnerHeight)
+
+    setInnerHeight()
+    return () => {
+      window.removeEventListener("resize", setInnerHeight)
+    }
+  }, [])
 
   // console.log(game)
 
