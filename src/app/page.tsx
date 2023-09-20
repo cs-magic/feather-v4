@@ -3,7 +3,7 @@
 import { useElementSize } from "@mantine/hooks"
 import { PlayerStatus } from "@/app/player-status"
 import { GameHeader } from "@/app/game-header"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { IGame } from "@/game/game-server"
 import useInterval from "@/hooks/interval"
 import { GameOver, GameWaiting } from "@/app/game-waiting"
@@ -11,6 +11,7 @@ import { CLIENT_FPS } from "@/config"
 import { client } from "@/game/game-client"
 import { GameMain } from "@/app/game-main"
 import { getMainPlayer } from "@/lib/player"
+import { Player } from "@/app/player"
 
 export default function Home() {
   const [game, setGame] = useState<IGame>(client.data)
@@ -44,7 +45,7 @@ export default function Home() {
   return (
     <main
       className={
-        "w-full md:w-[640px] h-screen mx-auto border border-gray-800 flex flex-col"
+        "w-full md:w-[640px] mx-auto border border-gray-800 flex flex-col"
       }
       ref={ref}
     >
@@ -63,7 +64,13 @@ export default function Home() {
 
       {/*   底部的 人/状态栏 */}
       {game.state !== "waiting" && mainPlayer && (
-        <PlayerStatus player={mainPlayer} />
+        <div className={""}>
+          <div className={"relative h-36"} id={"players"}>
+            <Player container={{ width }} player={mainPlayer} />
+          </div>
+
+          <PlayerStatus player={mainPlayer} />
+        </div>
       )}
     </main>
   )

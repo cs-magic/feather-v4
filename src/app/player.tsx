@@ -16,9 +16,10 @@ export const Player = ({
   container: { width: number }
   player: IPlayer
 }) => {
+  // 不应该用marginLeft，否则就不支持多人了
   const xKey = "left"
 
-  const [lifeCost, setLifeCost] = useState(LIFE_COST_INIT)
+  const [holding, setHolding] = useState(LIFE_COST_INIT)
   const [isDragging, setDragging] = useState(false)
   const [isMoved, setMoved] = useState(false)
   const leftStart = container.width >> 1
@@ -32,13 +33,13 @@ export const Player = ({
   const bind = useGesture(
     {
       onDrag: ({ movement: [mx], offset: [ox] }) => {
-        // console.log("onDrag: ", { mx, ox, [xKey]: style[xKey].get() })
+        // console.log("onDrag: ", { mx, [xKey]: style[xKey].get() })
         if (Math.abs(mx) > 10 && !isMoved) {
           setMoved(true)
-          if (lifeCost > 0) {
+          if (holding > 0) {
             client.do({
               type: "clench-give-up",
-              data: { consumption: lifeCost },
+              data: { consumption: holding },
             })
           }
         }
@@ -50,14 +51,8 @@ export const Player = ({
         console.log("onDragEnd")
 
         // shoot if not moved
-        if (!isMoved && lifeCost > 0) {
-          client.do({
-            type: "blow",
-            data: {
-              type: "rectangle",
-              f: lifeCost,
-            },
-          })
+        if (!isMoved && holding > 0) {
+          client.do({ type: "blow", data: { type: "rectangle" } })
         }
 
         setDragging(false)
@@ -87,12 +82,12 @@ export const Player = ({
     // console.log("interval")
     if (isDragging && !isMoved) {
       // 每个tick都增加1的体力消耗
-      setLifeCost(lifeCost + 1)
-      if (player.life > 0) client.do({ type: "clench" })
+      setHolding(holding + 1)
+      if (player.life > 0 && holding > 0) client.do({ type: "clench" })
     }
 
     if (!isDragging || (isDragging && isMoved)) {
-      setLifeCost(LIFE_COST_INIT)
+      setHolding(LIFE_COST_INIT)
     }
   }, 1000 / CLIENT_FPS)
 
@@ -100,15 +95,16 @@ export const Player = ({
   // console.log({ life, lifeCost })
 
   const img =
-    player.life <= 0 ? "cry" : Math.min(Math.floor(Math.max(lifeCost, 0)), 10)
+    player.life <= 0 ? "cry" : Math.min(Math.floor(Math.max(holding, 0)), 10)
 
   return (
     <animated.div
       {...bind()}
       style={{ [xKey]: style[xKey] }}
       className={clsx(
-        "absolute bottom-0 -translate-x-1/2 touch-none select-none",
-        "w-32 h-36" // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
+        "absolute bottom-0",
+        "-translate-x-1/2 touch-none select-none",
+        "w-32 h-full" // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
       )}
     >
       {DEBUG_SHOW_POS && (

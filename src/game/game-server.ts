@@ -1,4 +1,4 @@
-import { GAME_RAGE_MAX, SERVER_FPS } from "@/config"
+import { GAME_LIFE_MAX, SERVER_FPS } from "@/config"
 import { IPlayer, Player, PlayerAction, PlayerBlowAction } from "@/game/player"
 import {
   CoinObject,
@@ -13,7 +13,7 @@ export interface IGame {
   stage: number
   state: GameState
   tick: number
-  rage: number
+  life: number
   players: IPlayer[]
   objects: IObjectBase[]
 }
@@ -26,25 +26,16 @@ export class GameServer implements IGame {
   public stage = 1 // 关卡
   public state: GameState = "waiting"
   public tick = 0
-  public rage = 0 // 游戏的血条由掉落的羽毛控制
+  public life = GAME_LIFE_MAX // 游戏的血条由掉落的羽毛控制
   public players: Player[] = []
   public objects: GameObject[] = []
-
-  // reset states
-  private reset() {
-    // 玩家、关卡 都不要重置
-    this.state = "waiting"
-    this.tick = 0
-    this.rage = 0
-    this.objects = []
-  }
 
   public serialize(): IGame {
     return {
       stage: this.stage,
       state: this.state,
       tick: this.tick,
-      rage: this.rage,
+      life: this.life,
       players: this.players.map((p) => p.serialize()),
       objects: this.objects.map((f) => f.serialize()),
     }
@@ -84,7 +75,7 @@ export class GameServer implements IGame {
 
           // 羽毛落地，游戏生命值 -1
           else if (y >= 1) {
-            this.rage++
+            this.life--
           }
           break
 
@@ -92,7 +83,7 @@ export class GameServer implements IGame {
           if (y < 0.8) break
           if (y >= 1) {
             this.objects.splice(i, 1)
-            this.rage += 2
+            // this.life -= 2
             break
           }
 
@@ -116,7 +107,7 @@ export class GameServer implements IGame {
       }
     }
 
-    if (this.rage >= GAME_RAGE_MAX) {
+    if (this.life < 0) {
       this.state = "over"
     }
   }, 1000 / SERVER_FPS)
@@ -130,19 +121,35 @@ export class GameServer implements IGame {
   }
 
   public handlePlayerBlow(player: Player, action: PlayerBlowAction) {
-    const { x } = player
-    const { f, type } = action.data
-    console.log("handlePlayerBlow: ", { x, f, type, feathers: this.objects })
+    const { x, rage } = player
+    const { type } = action.data
+    console.log("handlePlayerBlow: ", {
+      x,
+      rage,
+      type,
+      feathers: this.objects,
+    })
     switch (type) {
       case "rectangle":
-        this.objects.forEach((o) => {
+        this.objects.forEach((object) => {
           if (
-            o.type === "feather" &&
-            o.x >= x - 0.1 &&
-            o.x <= x + 0.1 &&
-            o.y >= 1 - (0.2 + f / 200)
-          )
-            o.blew(player.id, action)
+            object.type === "feather" &&
+            object.x >= x - 0.1 &&
+            object.x <= x + 0.1 &&
+            object.y >= 1 - (0.2 + rage / 200)
+          ) {
+            /**
+             * 被吹之后，会获得一个向上的加速度，立马上升，然后再缓慢下降
+             * 数学模型就是，给定一个反向速度（比如 -.4），然后慢慢回升到 .1的初始速度，最后固定
+             * 等于是给了一个加速度，然后重力场的g=0
+             *
+             * 比如 默认是 .1，则在 1 tick 内最小需要 .11 的力才能吹回顶部
+             * 如果考虑连续 tick，则 .4 + .3 + .2 + .1 就可以吹回，也就是最少需要 .5 的力
+             * 这是可行的，因为我们的力的区间就在 (0 - 100 ) / 100
+             */
+            object.ySpeed -= player.rage / 100
+            object.playerBlew = player.id
+          }
         })
         break
       default:
@@ -169,7 +176,6 @@ export class GameServer implements IGame {
         break
 
       case "clench":
-        // player.life -= 20 / SERVER_FPS
         break
 
       case "clench-give-up":
@@ -178,7 +184,6 @@ export class GameServer implements IGame {
         break
 
       case "clench-too-long":
-        // todo
         break
 
       case "blow":
@@ -186,7 +191,7 @@ export class GameServer implements IGame {
         break
 
       case "restart":
-        this.reset()
+        this.restart()
         break
 
       default:
@@ -199,6 +204,18 @@ export class GameServer implements IGame {
   public start() {
     this.state = "playing"
     this.players.forEach((p) => (p.prepared = false))
+  }
+
+  // reset states
+  private restart() {
+    // 玩家、关卡 都不要重置
+    this.state = "waiting"
+    this.tick = 0
+    this.life = GAME_LIFE_MAX
+    this.objects = []
+    this.players.forEach((p) => {
+      p.reset()
+    })
   }
 
   public pause() {

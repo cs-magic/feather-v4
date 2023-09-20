@@ -1,4 +1,4 @@
-import { PLAYER_LIFE_MAX, SERVER_FPS } from "@/config"
+import { PLAYER_LIFE_MAX, PLAYER_RAGE_MAX, SERVER_FPS } from "@/config"
 import { PlayerStatus } from "@/app/player-status"
 
 export type PlayerState =
@@ -68,7 +68,6 @@ export interface PlayerClenchTooLongAction extends PlayerActionBase {
 export interface PlayerBlowAction extends PlayerActionBase {
   type: "blow"
   data: {
-    f: number // [0: 100]
     type:
       | "rectangle"
       | "sector" //扇形
@@ -115,6 +114,15 @@ export class Player implements IPlayer {
     this.id = id
   }
 
+  public reset() {
+    this.state = "idle"
+    this.x = 0.5
+    this.life = PLAYER_LIFE_MAX
+    this.rage = 0
+    this.prepared = false
+    this.score = 0
+  }
+
   public nextTick() {
     const state2lifeAddMap: Partial<Record<PlayerState, number>> = {
       idle: 5,
@@ -123,8 +131,11 @@ export class Player implements IPlayer {
       "clench-give-up": 0,
       "clench-too-long": 0,
     }
-    const life = this.life + (state2lifeAddMap[this.state] ?? 0) / SERVER_FPS
-    this.life = Math.max(Math.min(life, PLAYER_LIFE_MAX), 0)
+    this.life += (state2lifeAddMap[this.state] ?? 0) / SERVER_FPS
+    this.life = Math.max(Math.min(this.life, PLAYER_LIFE_MAX), 0)
+
+    this.rage += this.state === "clench" ? 1 : -1
+    this.rage = Math.max(Math.min(this.rage, PLAYER_RAGE_MAX), 0)
   }
 
   public serialize(): IPlayer {

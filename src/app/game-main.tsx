@@ -1,7 +1,7 @@
 import { IGame } from "@/game/game-server"
 import { useElementSize } from "@mantine/hooks"
 import { LabelLine, ProgressLabelLine } from "@/app/progress"
-import { DEBUG_SHOW_POS, GAME_RAGE_MAX } from "@/config"
+import { DEBUG_SHOW_POS, GAME_LIFE_MAX } from "@/config"
 import Image from "next/image"
 import FeatherImage from "../../public/image/feather.png"
 import CoinImage from "../../public/image/coin.png"
@@ -14,25 +14,31 @@ export const GameMain = ({ game }: { game: IGame }) => {
   const mainPlayer = getMainPlayer(game)
 
   return (
-    <div className={"w-full grow relative"} ref={ref}>
+    <div
+      className={"w-full grow relative border-b border-gray-700 -mb-16"}
+      ref={ref}
+    >
       <div className={"absolute right-4 top-4 flex flex-col gap-2 "}>
         <LabelLine label={"🚪 关卡"}>
           <span className={"text-xs"}>
             {game.stage.toString().padStart(2, "0")}
           </span>
         </LabelLine>
+
         <ProgressLabelLine
-          label={"😡 愤怒值"}
-          value={game.rage}
-          valueMax={GAME_RAGE_MAX}
-          className={"progress-error w-16"}
+          label={"❤️ 生命值"}
+          value={game.life}
+          valueMax={GAME_LIFE_MAX}
+          className={"progress-success w-8"}
         />
       </div>
 
       {game.objects.map((f, i) => (
         <div
           key={i}
-          className={"absolute -translate-x-1/2 -translate-y-1/2 w-12"}
+          className={
+            "absolute -translate-x-1/2 -translate-y-1/2 w-12 select-none"
+          }
           style={{ top: height * f.y, left: width * f.x }}
         >
           {DEBUG_SHOW_POS && (
@@ -51,8 +57,6 @@ export const GameMain = ({ game }: { game: IGame }) => {
           />
         </div>
       ))}
-
-      {mainPlayer && <Player container={{ width }} player={mainPlayer} />}
     </div>
   )
 }

@@ -1,7 +1,4 @@
-import { PlayerBlowAction } from "@/game/player"
 import { SERVER_FPS } from "@/config"
-import exp from "node:constants"
-import { IGame } from "@/game/game-server"
 
 export type GameObjectType = "feather" | "coin"
 
@@ -20,9 +17,11 @@ export interface IObjectBase {
 export interface IFeatherObject extends IObjectBase {
   type: "feather"
 }
+
 export interface ICoinObject extends IObjectBase {
   type: "coin"
 }
+
 export type IGameObject = IFeatherObject | ICoinObject
 
 export type GameObject = FeatherObject | CoinObject
@@ -79,6 +78,7 @@ export class GameObjectBase implements IObjectBase {
 
 export class CoinObject extends GameObjectBase implements ICoinObject {
   public readonly type = "coin"
+
   constructor(x: number) {
     super("coin", x, x, x)
   }
@@ -100,22 +100,5 @@ export class FeatherObject extends GameObjectBase implements IFeatherObject {
 
     // 方向随机控制
     this.xSpeed = (Math.random() > 1 ? 1 : -1) * 0.1
-  }
-
-  /**
-   * 被吹之后，会获得一个向上的加速度，立马上升，然后再缓慢下降
-   * 数学模型就是，给定一个反向速度（比如 -.4），然后慢慢回升到 .1的初始速度，最后固定
-   * 等于是给了一个加速度，然后重力场的g=0
-   *
-   * 比如 默认是 .1，则在 1 tick 内最小需要 .11 的力才能吹回顶部
-   * 如果考虑连续 tick，则 .4 + .3 + .2 + .1 就可以吹回，也就是最少需要 .5 的力
-   * 这是可行的，因为我们的力的区间就在 (0 - 100 ) / 100
-   */
-  public blew(playerId: string, playerAction: PlayerBlowAction) {
-    const { f } = playerAction.data
-    console.log("blew: ", { f })
-    // this.y -= 0.3
-    this.ySpeed -= f / 100
-    this.playerBlew = playerId
   }
 }
