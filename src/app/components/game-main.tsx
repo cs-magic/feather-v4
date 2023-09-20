@@ -75,9 +75,10 @@ export const GameMain = ({ game }: { game: IGame }) => {
       {game.objects.map((f, i) => (
         <div
           key={i}
-          className={
-            "absolute -translate-x-1/2 -translate-y-1/2 w-12 select-none"
-          }
+          className={clsx(
+            "absolute -translate-x-1/2 -translate-y-1/2 w-12 select-none",
+            "animate-bounce"
+          )}
           style={{ top: height * f.y, left: width * f.x }}
         >
           {DEBUG_SHOW_POS && (

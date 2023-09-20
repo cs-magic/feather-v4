@@ -1,6 +1,6 @@
 import { trpc } from "@/lib/trpc"
 
-export const Ranks = () => {
+export const GameRanks = () => {
   const { data: ranks } = trpc.listGameRecords.useQuery({})
   if (!ranks) return "loading"
 
@@ -12,7 +12,7 @@ export const Ranks = () => {
         "暂无数据"
       ) : (
         <div className="overflow-x-auto">
-          <table className="table table-zebra">
+          <table className="table">
             {/* head */}
             <thead>
               <tr>

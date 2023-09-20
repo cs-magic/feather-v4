@@ -3,7 +3,7 @@ import { client } from "@/lib/game/game-client"
 import { trpc } from "@/lib/trpc"
 import { useEffect } from "react"
 import useSound from "use-sound"
-import { Ranks } from "@/app/components/ranks"
+import { GameRanks } from "@/app/components/game-ranks"
 
 export const GameOver = ({ player }: { player: IPlayer }) => {
   const [play, { sound, stop, pause, duration }] = useSound(
@@ -80,7 +80,7 @@ export const GameOver = ({ player }: { player: IPlayer }) => {
             </button>
           </div>
 
-          <Ranks />
+          <GameRanks />
         </form>
       </div>
     </div>

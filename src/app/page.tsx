@@ -48,14 +48,14 @@ export default function Home() {
   return (
     <main
       className={
-        "w-full md:w-[640px] mx-auto border border-gray-800 flex flex-col bg-cover"
+        "w-full h-full overflow-hidden md:w-[640px] mx-auto border border-gray-800 flex flex-col bg-cover"
       }
       style={{
         backgroundImage: `url(/image/rain01.gif)`,
       }}
       ref={ref}
     >
-      <div className={"w-full grow flex flex-col"}>
+      <div className={"w-full grow flex flex-col overflow-auto"}>
         {/*  上部的主界面*/}
 
         {/*  顶部的花西子笔，（基于笔的高度）固定高度 */}
@@ -79,7 +79,7 @@ export default function Home() {
       {/*   底部的 人/状态栏 */}
       {game.state !== "waiting" && mainPlayer && (
         <div
-          className={"select-none touch-none"}
+          className={"select-none touch-none shrink-0"}
           onTouchEnd={(event) => event.preventDefault()}
         >
           <div className={"relative h-36"} id={"players"}>

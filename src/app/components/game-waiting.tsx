@@ -2,7 +2,7 @@ import Image from "next/image"
 import Player1Image from "../../../public/image/player/0.png"
 import Desc from "@/docs/desc.mdx"
 import { OpenSource } from "@/app/components/open-source"
-import { Ranks } from "@/app/components/ranks"
+import { GameRanks } from "@/app/components/game-ranks"
 import clsx from "clsx"
 
 export const GameWaiting = ({ onClick }: { onClick: any }) => {
@@ -21,7 +21,7 @@ export const GameWaiting = ({ onClick }: { onClick: any }) => {
             <Desc />
           </article>
 
-          <Ranks />
+          <GameRanks />
 
           <p className="py-6"></p>
 
