@@ -10,6 +10,8 @@ import { CLIENT_FPS, DEBUG_SHOW_POS } from "@/config"
 import { client } from "@/game/game-client"
 import { IPlayer } from "@/game/player"
 
+export const LIFE_COST_INIT = -10
+
 export const Player = ({
   container,
   player,
@@ -17,7 +19,7 @@ export const Player = ({
   container: { width: number }
   player: IPlayer
 }) => {
-  const [lifeCost, setLifeCost] = useState(0)
+  const [lifeCost, setLifeCost] = useState(LIFE_COST_INIT)
   const [isDragging, setDragging] = useState(false)
   const [isMoved, setMoved] = useState(false)
   const leftStart = container.width >> 1
@@ -35,24 +37,22 @@ export const Player = ({
         // console.log("onDrag: ", { mx, ox, [xKey]: style[xKey].get() })
         if (Math.abs(mx) > 10 && !isMoved) {
           setMoved(true)
-          client.do({
-            type: "clench-give-up",
-            data: { consumption: lifeCost },
-          })
+          if (lifeCost > 0) {
+            client.do({
+              type: "clench-give-up",
+              data: { consumption: lifeCost },
+            })
+          }
         }
         const targetX = leftStart + ox
         client.do({ type: "move", data: { x: targetX / container.width } })
         api.start({ [xKey]: targetX })
       },
-      onDragStart: () => {
-        console.log("onDragStart")
-        setDragging(true)
-      },
       onDragEnd: () => {
         console.log("onDragEnd")
 
         // shoot if not moved
-        if (!isMoved) {
+        if (!isMoved && lifeCost > 0) {
           client.do({
             type: "blow",
             data: {
@@ -64,6 +64,11 @@ export const Player = ({
 
         setDragging(false)
         setMoved(false)
+        client.do({ type: "idle" })
+      },
+      onDragStart: () => {
+        console.log("onDragStart")
+        setDragging(true)
       },
     },
     {
@@ -89,14 +94,15 @@ export const Player = ({
     }
 
     if (!isDragging || (isDragging && isMoved)) {
-      if (lifeCost) {
-        setLifeCost(0)
-      }
+      setLifeCost(LIFE_COST_INIT)
     }
   }, 1000 / CLIENT_FPS)
 
   // console.log({ container, leftStart, left: left.get(), dragConstraint });
   // console.log({ life, lifeCost })
+
+  const img =
+    player.life <= 0 ? "cry" : Math.min(Math.floor(Math.max(lifeCost, 0)), 10)
 
   return (
     <animated.div
@@ -104,8 +110,7 @@ export const Player = ({
       style={{ [xKey]: style[xKey] }}
       className={clsx(
         "-translate-x-1/2 touch-none select-none",
-        "w-32", // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
-        player.life <= 0 && "animate-spin"
+        "w-32 h-36" // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
       )}
     >
       {DEBUG_SHOW_POS && (
@@ -115,12 +120,11 @@ export const Player = ({
       )}
       <Image
         ref={ref}
-        className={"touch-none select-none pointer-events-none w-full h-auto"}
+        className={"touch-none select-none pointer-events-none object-cover"}
         // 大概每两帧一个动画，总共10张吹气+1张蓄力
-        src={`/image/player/${Math.min(Math.floor(lifeCost), 10)}.png`}
+        src={`/image/player/${img}.png`}
         alt={"player"}
-        width={120}
-        height={160}
+        fill
         priority
         sizes={"width:120px;"}
       />

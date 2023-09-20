@@ -169,7 +169,7 @@ export class GameServer implements IGame {
         break
 
       case "clench":
-        player.life -= 20 / SERVER_FPS
+        // player.life -= 20 / SERVER_FPS
         break
 
       case "clench-give-up":
@@ -192,6 +192,8 @@ export class GameServer implements IGame {
       default:
         break
     }
+
+    player.state = type
   }
 
   public start() {

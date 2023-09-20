@@ -1,38 +1,26 @@
 import { PLAYER_LIFE_MAX, SERVER_FPS } from "@/config"
+import { PlayerStatus } from "@/app/player-status"
+
+export type PlayerState =
+  | "idle"
+  | "restart"
+  | "pause"
+  | "resume"
+  | "stop"
+  | "prepare"
+  | "move"
+  | "clench" // 握拳
+  | "clench-give-up"
+  | "clench-too-long"
+  | "blow" // 吹
 
 export interface PlayerActionBase {
-  type:
-    | "restart"
-    | "pause"
-    | "resume"
-    | "stop"
-    | "prepare"
-    | "move"
-    | "clench" // 握拳
-    | "clench-give-up"
-    | "clench-too-long"
-    | "blow" // 吹
+  type: PlayerState
   data?: any
 }
 
-export interface PlayerMoveAction extends PlayerActionBase {
-  type: "move"
-  data: {
-    x: number // [0: 1]
-  }
-}
-
-export interface PlayerBlowAction extends PlayerActionBase {
-  type: "blow"
-  data: {
-    f: number // [0: 100]
-    type:
-      | "rectangle"
-      | "sector" //扇形
-      | "semi-circle" //半圆
-      | "global" // 死亡吟唱
-      | "laser" //激光，数值的
-  }
+export interface PlayerPrepareAction extends PlayerActionBase {
+  type: "prepare"
 }
 
 export interface PlayerRestartAction extends PlayerActionBase {
@@ -51,12 +39,19 @@ export interface PlayerStopAction extends PlayerActionBase {
   type: "stop"
 }
 
-export interface PlayerClenchAction extends PlayerActionBase {
-  type: "clench"
+export interface PlayerIdleAction extends PlayerActionBase {
+  type: "idle"
 }
 
-export interface PlayerPrepareAction extends PlayerActionBase {
-  type: "prepare"
+export interface PlayerMoveAction extends PlayerActionBase {
+  type: "move"
+  data: {
+    x: number // [0: 1]
+  }
+}
+
+export interface PlayerClenchAction extends PlayerActionBase {
+  type: "clench"
 }
 
 export interface PlayerClenchGiveUpAction extends PlayerActionBase {
@@ -70,12 +65,26 @@ export interface PlayerClenchTooLongAction extends PlayerActionBase {
   type: "clench-too-long"
 }
 
+export interface PlayerBlowAction extends PlayerActionBase {
+  type: "blow"
+  data: {
+    f: number // [0: 100]
+    type:
+      | "rectangle"
+      | "sector" //扇形
+      | "semi-circle" //半圆
+      | "global" // 死亡吟唱
+      | "laser" //激光，数值的
+  }
+}
+
 export type PlayerAction =
+  | PlayerPrepareAction
   | PlayerRestartAction
   | PlayerPauseAction
   | PlayerResumeAction
   | PlayerStopAction
-  | PlayerPrepareAction
+  | PlayerIdleAction
   | PlayerMoveAction
   | PlayerBlowAction
   | PlayerClenchAction
@@ -94,6 +103,7 @@ export interface IPlayer {
 export class Player implements IPlayer {
   public id: string
 
+  public state: PlayerState = "idle"
   public x = 0.5 // container内的百分比x坐标
   public life = PLAYER_LIFE_MAX
   public rage = 0
@@ -106,7 +116,15 @@ export class Player implements IPlayer {
   }
 
   public nextTick() {
-    this.life = Math.min(this.life + 3 / SERVER_FPS, PLAYER_LIFE_MAX)
+    const state2lifeAddMap: Partial<Record<PlayerState, number>> = {
+      idle: 5,
+      move: 3,
+      clench: -10,
+      "clench-give-up": 0,
+      "clench-too-long": 0,
+    }
+    const life = this.life + (state2lifeAddMap[this.state] ?? 0) / SERVER_FPS
+    this.life = Math.max(Math.min(life, PLAYER_LIFE_MAX), 0)
   }
 
   public serialize(): IPlayer {
