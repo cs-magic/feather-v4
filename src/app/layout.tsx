@@ -1,5 +1,6 @@
 import "@/style/globals.css"
-import { Providers } from "@/app/providers"
+import { ThemeProvider } from "@/app/provider/theme.provider"
+import { TrpcProvider } from "@/app/provider/trpc.provider"
 
 export const metadata = {
   title: "「吹羽毛」小游戏",
@@ -21,7 +22,9 @@ export default function RootLayout({
       </head>
 
       <body>
-        <Providers>{children}</Providers>
+        <ThemeProvider>
+          <TrpcProvider>{children}</TrpcProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

@@ -40,3 +40,6 @@
   - 基于 framer-motion 的这种设计问题，我还是决定用回 `use-react-gesture` 与 useSpring （使用 useEffect去更新初始数据）
 - 关于蓄力与移动这个的问题，比较简单粗暴地就是直接使用interval不断刷新游戏，而不要用响应式的，代码会比较麻烦
   - 这样我们就可以统一地在 interval 里处理逻辑
+- trpc with nextjs13
+  - https://github.com/wpcodevo/nextjs13-trpc-setup/blob/main/src/app/layout.tsx
+  - 

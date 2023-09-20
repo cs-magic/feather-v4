@@ -2,10 +2,9 @@ import Image from "next/image"
 import Player1Image from "../../public/image/player/0.png"
 import Desc from "@/docs/desc.mdx"
 import { client } from "@/game/game-client"
-import ReactMarkdown from "react-markdown"
-import { IPlayer } from "@/game/player"
 import Link from "next/link"
 import { siteConfig } from "@/config"
+import { trpc } from "@/lib/trpc"
 
 export const CheckRanking = () => (
   <button className="btn m-4" disabled>
@@ -18,6 +17,47 @@ export const OpenSource = () => (
     <button className="btn m-4">开源贡献</button>
   </Link>
 )
+
+export const Ranks = () => {
+  const { data: ranks } = trpc.listGameRecords.useQuery({})
+  if (!ranks) return "loading"
+
+  return (
+    <div className={"py-4 flex flex-col gap-2"}>
+      <h2 className={"text-2xl"}>排行榜</h2>
+
+      {!ranks.length ? (
+        "暂无数据"
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="table table-zebra">
+            {/* head */}
+            <thead>
+              <tr>
+                <th>排名</th>
+                <th>用户名称</th>
+                <th>分数</th>
+                <th>时间</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ranks.map(({ id, score, user }, index) => (
+                <tr key={index}>
+                  <td>{index + 1}</td>
+                  <td>{user.name}</td>
+                  <td>{score}</td>
+                  <td>
+                    {new Date(parseInt(id.slice(1, 9), 36)).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export const GameWaiting = () => {
   return (
@@ -35,7 +75,10 @@ export const GameWaiting = () => {
             <Desc />
           </article>
 
+          <Ranks />
+
           <p className="py-6"></p>
+
           <button
             className="btn btn-primary"
             onClick={() => {
@@ -46,42 +89,6 @@ export const GameWaiting = () => {
           </button>
 
           <OpenSource />
-
-          <CheckRanking />
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export const GameOver = ({ player }: { player: IPlayer }) => {
-  return (
-    <div className="hero h-full">
-      <div className="hero-content flex-col sm:flex-row">
-        <div>
-          <h2 className="py-6 text-2xl">你完蛋啦！</h2>
-
-          <article className={"prose dark:prose-invert"}>
-            <ReactMarkdown>
-              {`
-- 玩家 **${player.id}**
-- 本次得分：**${player.score}**
-
-再接再厉哦！
-            `}
-            </ReactMarkdown>
-          </article>
-
-          <button
-            className="btn btn-primary m-4"
-            onClick={() => {
-              client.do({ type: "restart" })
-            }}
-          >
-            重新开始
-          </button>
-
-          <CheckRanking />
         </div>
       </div>
     </div>

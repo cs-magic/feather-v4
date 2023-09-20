@@ -6,12 +6,14 @@ import { GameHeader } from "@/app/game-header"
 import React, { useEffect, useState } from "react"
 import { IGame } from "@/game/game-server"
 import useInterval from "@/hooks/interval"
-import { GameOver, GameWaiting } from "@/app/game-waiting"
+import { GameWaiting } from "@/app/game-waiting"
 import { CLIENT_FPS } from "@/config"
 import { client } from "@/game/game-client"
 import { GameMain } from "@/app/game-main"
 import { getMainPlayer } from "@/lib/player"
 import { Player } from "@/app/player"
+import { trpc } from "@/lib/trpc"
+import { GameOver } from "@/app/game-over"
 
 export default function Home() {
   const [game, setGame] = useState<IGame>(client.data)
