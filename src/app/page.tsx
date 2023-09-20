@@ -11,6 +11,8 @@ import { GameWaiting } from "@/app/game-waiting"
 import Image from "next/image"
 
 import FeatherImage from "@/../public/image/feather.png"
+import { GAME_LIFE_MAX } from "@/config"
+import { ProgressWithLabel } from "@/app/progress"
 
 export default function Home() {
   const { ref, width, height } = useElementSize()
@@ -37,24 +39,31 @@ export default function Home() {
         {/*    战斗区域*/}
         {game.state === "waiting" && <GameWaiting game={gameRef.current} />}
 
-        <div className={"w-full grow relative"}>
-          {game.state === "playing" && (
-            <>
-              {game.feathers.map((f, i) => (
-                <Image
-                  src={FeatherImage}
-                  alt={"feather"}
-                  width={80}
-                  height={30}
-                  key={i}
-                  className={"h-auto absolute"}
-                  sizes={"width:120px;"}
-                  style={{ top: height * f.y, left: width * f.x }}
-                />
-              ))}
-            </>
-          )}
-        </div>
+        {game.state === "playing" && (
+          <div className={"w-full grow relative"}>
+            <div className={"absolute right-4 top-4 flex gap-2 items-center"}>
+              <ProgressWithLabel
+                label={"机会"}
+                value={game.life}
+                valueMax={GAME_LIFE_MAX}
+                className={"progress-info"}
+              />
+            </div>
+
+            {game.feathers.map((f, i) => (
+              <Image
+                src={FeatherImage}
+                alt={"feather"}
+                width={80}
+                height={30}
+                key={i}
+                className={"h-auto absolute"}
+                sizes={"width:120px;"}
+                style={{ top: height * f.y, left: width * f.x }}
+              />
+            ))}
+          </div>
+        )}
 
         {/*   底部的 人/状态栏 */}
         {game.state !== "waiting" && (
