@@ -6,6 +6,7 @@ import { useGesture } from "@use-gesture/react"
 import Image from "next/image"
 import clsx from "clsx"
 import useInterval from "@/hooks/interval"
+import { SERVER_FPS } from "@/config"
 
 export const Player = ({ container }: { container: { width: number } }) => {
   const { life, rage, setLife, setRage } = usePlayerStore()
@@ -67,22 +68,21 @@ export const Player = ({ container }: { container: { width: number } }) => {
 
   useInterval(() => {
     // console.log("interval")
-    if (isDragging) {
-      // console.log("拖动中")
-      if (!isMoved) {
-        // console.log("蓄力中")
-        setLifeCost(lifeCost + 1)
-        setLife(life - 1)
-      } else {
+    if (isDragging && !isMoved) {
+      setLifeCost(lifeCost + 1)
+      setLife(life - 1)
+    }
+
+    if (!isDragging || (isDragging && isMoved)) {
+      if (lifeCost) {
         setLife(life + lifeCost / 2) // 恢复一半体力消耗
         setLifeCost(0)
       }
-    } else {
     }
-  }, 50) // 50 fps
+  }, 1000 / SERVER_FPS)
 
   // console.log({ container, leftStart, left: left.get(), dragConstraint });
-  // console.log({ life, rage })
+  console.log({ life, lifeCost })
 
   return (
     <animated.div
@@ -96,7 +96,7 @@ export const Player = ({ container }: { container: { width: number } }) => {
       <Image
         ref={ref}
         className={"touch-none select-none pointer-events-none w-full h-auto"}
-        src={"/image/player/1-蓄力.png"}
+        src={`/image/player/${Math.min(Math.floor(lifeCost / 2), 10)}.png`}
         alt={"player"}
         width={120}
         height={160}

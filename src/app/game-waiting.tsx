@@ -1,6 +1,6 @@
 import { Game } from "@/server/game"
 import Image from "next/image"
-import Player1Image from "../../public/image/player/1-蓄力.png"
+import Player1Image from "../../public/image/player/0.png"
 import Desc from "@/docs/desc.mdx"
 
 export const GameWaiting = ({ game }: { game: Game }) => {
