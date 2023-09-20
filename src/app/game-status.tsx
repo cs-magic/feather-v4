@@ -1,22 +1,24 @@
-import { usePlayerStore } from "@/store/player.slice"
 import { PLAYER_LIFE_MAX, PLAYER_RAGE_MAX } from "@/config"
-import { ProgressWithLabel } from "@/app/progress"
+import { LabelLine, ProgressLabelLine } from "@/app/progress"
+import { IPlayer } from "@/game/player"
 
-export const GameStatus = () => {
-  const { life, rage } = usePlayerStore()
+export const GameStatus = ({ player }: { player: IPlayer }) => {
+  const { life, rage, score } = player
 
   return (
-    <div className={"shrink-0 p-2 bg-base-100"}>
+    <div className={"shrink-0 p-2 bg-gray-700"}>
       <div className={"flex flex-col gap-2"}>
-        <ProgressWithLabel
-          label={"😁体力值"}
+        <LabelLine label={"⭐️ 得分"}>{score}</LabelLine>
+
+        <ProgressLabelLine
+          label={"😁 体力值"}
           value={life}
           valueMax={PLAYER_LIFE_MAX}
           className={"progress-accent w-32"}
         />
 
-        <ProgressWithLabel
-          label={"😡愤怒值"}
+        <ProgressLabelLine
+          label={"😡 愤怒值"}
           value={rage}
           valueMax={PLAYER_RAGE_MAX}
           className={"progress-error w-16"}

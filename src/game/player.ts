@@ -2,10 +2,11 @@ import { PLAYER_LIFE_MAX } from "@/config"
 
 export interface PlayerActionBase {
   type:
+    | "prepare"
     | "move"
     | "clench" // 握拳
     | "blow" // 吹
-  data: any
+  data?: any
 }
 
 export interface PlayerMoveAction extends PlayerActionBase {
@@ -30,12 +31,14 @@ export interface PlayerBlowAction extends PlayerActionBase {
 
 export interface PlayerClenchAction extends PlayerActionBase {
   type: "clench"
-  data: {
-    // todo
-  }
+}
+
+export interface PlayerPrepareAction extends PlayerActionBase {
+  type: "prepare"
 }
 
 export type PlayerAction =
+  | PlayerPrepareAction
   | PlayerMoveAction
   | PlayerBlowAction
   | PlayerClenchAction

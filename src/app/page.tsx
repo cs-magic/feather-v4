@@ -4,27 +4,30 @@ import { useElementSize } from "@mantine/hooks"
 import { Player } from "@/app/player"
 import { GameStatus } from "@/app/game-status"
 import { GameHeader } from "@/app/game-header"
-import { useRef, useState } from "react"
-import { Game, IGame } from "@/server/game"
+import { useState } from "react"
+import { IGame } from "@/game/game-server"
 import useInterval from "@/hooks/interval"
 import { GameWaiting } from "@/app/game-waiting"
 import Image from "next/image"
 
 import FeatherImage from "@/../public/image/feather.png"
-import { GAME_LIFE_MAX } from "@/config"
-import { ProgressWithLabel } from "@/app/progress"
+import CoinImage from "@/../public/image/coin.png"
+import { CLIENT_FPS, GAME_LIFE_MAX, PLAYER_DEFAULT_ID } from "@/config"
+import { ProgressLabelLine } from "@/app/progress"
+import { gameClient } from "@/game/game-client"
 
 export default function Home() {
   const { ref, width, height } = useElementSize()
-  const gameRef = useRef(new Game())
 
-  const [game, setGame] = useState<IGame>(gameRef.current.serialize())
+  const [game, setGame] = useState<IGame>(gameClient.data)
 
   useInterval(() => {
-    setGame(gameRef.current.serialize())
-  }, 20)
+    setGame(gameClient.data)
+  }, 1000 / CLIENT_FPS)
 
-  console.log(game)
+  // console.log(game)
+
+  const mainPlayer = game.players.find((p) => p.id === PLAYER_DEFAULT_ID)
 
   return (
     <main
@@ -37,12 +40,12 @@ export default function Home() {
         <GameHeader />
 
         {/*    战斗区域*/}
-        {game.state === "waiting" && <GameWaiting game={gameRef.current} />}
+        {game.state === "waiting" && <GameWaiting />}
 
         {game.state === "playing" && (
           <div className={"w-full grow relative"}>
             <div className={"absolute right-4 top-4 flex gap-2 items-center"}>
-              <ProgressWithLabel
+              <ProgressLabelLine
                 label={"机会"}
                 value={game.life}
                 valueMax={GAME_LIFE_MAX}
@@ -50,14 +53,14 @@ export default function Home() {
               />
             </div>
 
-            {game.feathers.map((f, i) => (
+            {game.objects.map((f, i) => (
               <Image
-                src={FeatherImage}
-                alt={"feather"}
+                src={f.type === "feather" ? FeatherImage : CoinImage}
+                alt={"object"}
                 width={80}
                 height={30}
                 key={i}
-                className={"h-auto absolute"}
+                className={"h-auto absolute -translate-x-1/2 -translate-y-1/2"}
                 sizes={"width:120px;"}
                 style={{ top: height * f.y, left: width * f.x }}
               />
@@ -69,7 +72,7 @@ export default function Home() {
         {game.state !== "waiting" && (
           <div className={"absolute bottom-0 flex flex-col w-full"}>
             <Player container={{ width }} />
-            <GameStatus />
+            {mainPlayer && <GameStatus player={mainPlayer} />}
           </div>
         )}
       </div>

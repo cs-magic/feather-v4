@@ -1,7 +1,21 @@
-import { HTMLAttributes } from "react"
+import { HTMLAttributes, PropsWithChildren } from "react"
 import clsx from "clsx"
+import ReactMarkdown from "react-markdown"
+import children = ReactMarkdown.propTypes.children
 
-export const ProgressWithLabel = ({
+export const LabelLine = ({
+  label,
+  children,
+}: { label: string } & PropsWithChildren) => {
+  return (
+    <div className={"inline-flex gap-2 items-center"}>
+      <span className={"text-xs font-medium"}>{label} </span>
+      {children}
+    </div>
+  )
+}
+
+export const ProgressLabelLine = ({
   label,
   valueMax,
   value,
@@ -13,14 +27,13 @@ export const ProgressWithLabel = ({
   valueMax: number
 } & HTMLAttributes<HTMLProgressElement>) => {
   return (
-    <div className={"inline-flex gap-2 items-center"}>
-      <span className={"text-xs"}>{label} </span>
+    <LabelLine label={label}>
       <progress
         className={clsx("progress w-32", className)}
         value={value}
         max={valueMax}
         {...props}
-      ></progress>
-    </div>
+      />
+    </LabelLine>
   )
 }

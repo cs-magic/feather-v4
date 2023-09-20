@@ -1,9 +1,9 @@
-import { Game } from "@/server/game"
 import Image from "next/image"
 import Player1Image from "../../public/image/player/0.png"
 import Desc from "@/docs/desc.mdx"
+import { gameClient } from "@/game/game-client"
 
-export const GameWaiting = ({ game }: { game: Game }) => {
+export const GameWaiting = () => {
   return (
     <div className="hero">
       <div className="hero-content flex-col sm:flex-row">
@@ -23,7 +23,7 @@ export const GameWaiting = ({ game }: { game: Game }) => {
           <button
             className="btn btn-primary"
             onClick={() => {
-              game.start()
+              gameClient.do({ type: "prepare" })
             }}
           >
             立即开始

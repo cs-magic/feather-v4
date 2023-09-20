@@ -1,11 +1,13 @@
 import { GAME_LIFE_MAX, SERVER_FPS } from "@/config"
+import { IPlayer, Player, PlayerAction, PlayerBlowAction } from "@/game/player"
 import {
-  IPlayer,
-  Player,
-  PlayerAction,
-  PlayerBlowAction,
-} from "@/server/player"
-import { Feather, IObject } from "@/server/object"
+  CoinObject,
+  FeatherObject,
+  GameObject,
+  IObjectBase,
+} from "@/game/object"
+import { util } from "zod"
+import objectKeys = util.objectKeys
 
 export type GameState = "waiting" | "playing" | "paused" | "over"
 
@@ -14,16 +16,18 @@ export interface IGame {
   tick: number
   life: number
   players: IPlayer[]
-  feathers: IObject[]
+  objects: IObjectBase[]
 }
 
-export class Game implements IGame {
+export class GameServer implements IGame {
   public state: GameState = "waiting"
   public tick = 0
   public life = GAME_LIFE_MAX // 游戏的血条由掉落的羽毛控制
 
+  public addFeatherIntervalSeconds = 5
+
   public players: Player[] = []
-  public feathers: Feather[] = []
+  public objects: GameObject[] = []
 
   public serialize(): IGame {
     return {
@@ -31,7 +35,7 @@ export class Game implements IGame {
       tick: this.tick,
       life: this.life,
       players: this.players.map((p) => p.serialize()),
-      feathers: this.feathers.map((f) => f.serialize()),
+      objects: this.objects.map((f) => f.serialize()),
     }
   }
 
@@ -40,28 +44,29 @@ export class Game implements IGame {
     this.tick += 1
 
     // 3 秒一片
-    if (this.tick % (SERVER_FPS * 3) === 1) {
-      this.feathers.push(new Feather())
+    if (this.tick % (SERVER_FPS * this.addFeatherIntervalSeconds) === 1) {
+      this.objects.push(new FeatherObject())
     }
-    this.feathers.forEach((f) => f.nextTick())
+    this.objects.forEach((f) => f.nextTick())
 
     // 逆序遍历 以 mute array
-    for (let i = this.feathers.length - 1; i >= 0; --i) {
-      const feather = this.feathers[i]
-      if (feather.y >= 0 && feather.y < 1) continue
+    for (let i = this.objects.length - 1; i >= 0; --i) {
+      const object = this.objects[i]
+      if (object.y >= 0 && object.y < 1) continue
 
-      this.feathers.splice(i, 1)
+      this.objects.splice(i, 1)
 
       // 羽毛撞到笔，用户奖励 +1
-      if (feather.y < 0) {
-        const player = this.players.find((p) => p.id === feather.playerBlew)
+      if (object.type === "feather" && object.y < 0) {
+        const player = this.players.find((p) => p.id === object.playerBlew)
         if (player) {
           player.score += 1
         }
+        this.objects.push(new CoinObject(object.x))
       }
 
       // 羽毛落地，游戏生命值 -1
-      else if (feather.y >= 1) {
+      else if (object.y >= 1) {
         this.life -= 1
         if (this.life <= 0) {
           this.state = "over"
@@ -79,27 +84,39 @@ export class Game implements IGame {
   }
 
   public handlePlayerBlow(player: Player, action: PlayerBlowAction) {
-    const { f } = action.data
-    switch (action.data.type) {
+    const { x } = player
+    const { f, type } = action.data
+    console.log("handlePlayerBlow: ", { x, f, type, feathers: this.objects })
+    switch (type) {
       case "rectangle":
-        this.feathers
-          .filter(
-            (feather) =>
-              feather.x >= player.x - 0.1 &&
-              feather.x <= player.x + 0.1 &&
-              feather.y >= 1 - (0.5 + f)
+        this.objects.forEach((o) => {
+          if (
+            o.type === "feather" &&
+            o.x >= x - 0.1 &&
+            o.x <= x + 0.1 &&
+            o.y >= 1 - (0.2 + f / 200)
           )
-          .forEach((feather) => {
-            feather.blew(player.id, action)
-          })
+            o.blew(player.id, action)
+        })
+        break
+      default:
+        // todo
+        break
     }
   }
 
   public onPlayerAction(playerId: string, action: PlayerAction) {
+    console.log({ playerId, action })
     const player = this.players.find((p) => p.id === playerId)
     if (!player) return
 
     switch (action.type) {
+      case "prepare":
+        player.prepared = !player.prepared
+        if (this.players.every((p) => p.prepared)) {
+          this.start()
+        }
+        break
       case "move":
         player.x = action.data.x
         break

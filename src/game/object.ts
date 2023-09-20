@@ -1,7 +1,11 @@
-import { PlayerBlowAction } from "@/server/player"
+import { PlayerBlowAction } from "@/game/player"
 import { SERVER_FPS } from "@/config"
+import exp from "node:constants"
+import { IGame } from "@/game/game-server"
 
-export interface IObject {
+export type GameObjectType = "feather" | "coin"
+
+export interface IObjectBase {
   x: number
   xMin: number
   xMax: number
@@ -9,9 +13,22 @@ export interface IObject {
 
   y: number
   ySpeed: number
+
+  type: GameObjectType
 }
 
-export class Object implements IObject {
+export interface IFeatherObject extends IObjectBase {
+  type: "feather"
+}
+export interface ICoinObject extends IObjectBase {
+  type: "coin"
+}
+export type IGameObject = IFeatherObject | ICoinObject
+
+export type GameObject = FeatherObject | CoinObject
+
+export class GameObjectBase implements IObjectBase {
+  public type: GameObjectType
   public x: number
   public xMin: number
   public xMax: number
@@ -20,6 +37,18 @@ export class Object implements IObject {
   public y: number = 0
   public readonly defaultYSpeed = 0.06
   public ySpeed = this.defaultYSpeed
+
+  public constructor(
+    type: GameObjectType,
+    x: number,
+    xMin: number,
+    xMax: number
+  ) {
+    this.type = type
+    this.x = x
+    this.xMin = xMin
+    this.xMax = xMax
+  }
 
   /**
    * 下一个周期内，掉落 +.1
@@ -31,18 +60,13 @@ export class Object implements IObject {
 
     // 回复速度
     if (this.ySpeed < this.defaultYSpeed)
-      this.ySpeed = Math.min(this.defaultYSpeed, this.ySpeed + 0.1)
+      this.ySpeed = Math.min(this.defaultYSpeed, this.ySpeed + 0.3 / SERVER_FPS)
     this.y += this.ySpeed / SERVER_FPS
   }
 
-  public constructor(x: number, xMin: number, xMax: number) {
-    this.x = x
-    this.xMin = xMin
-    this.xMax = xMax
-  }
-
-  public serialize(): IObject {
+  public serialize(): IGameObject {
     return {
+      type: this.type,
       xMax: this.xMax,
       xMin: this.xMin,
       xSpeed: this.xSpeed,
@@ -53,13 +77,15 @@ export class Object implements IObject {
   }
 }
 
-export class Coin extends Object {
+export class CoinObject extends GameObjectBase implements ICoinObject {
+  public readonly type = "coin"
   constructor(x: number) {
-    super(x, x, x)
+    super("coin", x, x, x)
   }
 }
 
-export class Feather extends Object {
+export class FeatherObject extends GameObjectBase implements IFeatherObject {
+  public readonly type = "feather"
   // 羽毛可以在一定横向距离内来回飘动
 
   public xSpeed: number = 0
@@ -70,7 +96,7 @@ export class Feather extends Object {
     const x = Math.random() * (1 - radius * 2) + radius
     const xMin = x - radius
     const xMax = x + radius
-    super(x, xMin, xMax)
+    super("feather", x, xMin, xMax)
 
     // 方向随机控制
     this.xSpeed = (Math.random() > 1 ? 1 : -1) * 0.1
@@ -87,6 +113,8 @@ export class Feather extends Object {
    */
   public blew(playerId: string, playerAction: PlayerBlowAction) {
     const { f } = playerAction.data
+    console.log("blew: ", { f })
+    // this.y -= 0.3
     this.ySpeed -= f / 100
     this.playerBlew = playerId
   }
