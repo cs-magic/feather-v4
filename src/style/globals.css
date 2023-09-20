@@ -2,9 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+
+    -webkit-user-select: none;  /* Disable text selection */
+
+    -webkit-touch-callout: none; /* Disable the iOS long-press action */
+
+}
 
 main {
     height: 100vh;
     /*height: -webkit-fill-available;*/
     height: var(--app-height);
+
+
 }

@@ -99,12 +99,19 @@ export const Player = ({
 
   return (
     <animated.div
+      ref={ref}
       {...bind()}
-      style={{ [xKey]: style[xKey] }}
+      onTouchEnd={(event) => {
+        event.preventDefault()
+      }}
+      style={{
+        left: style.left,
+      }}
       className={clsx(
         "absolute bottom-0",
-        "-translate-x-1/2 touch-none select-none",
-        "w-32 h-full" // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
+        "-translate-x-1/2",
+        "select-none",
+        "w-32 h-36" // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
       )}
     >
       {DEBUG_SHOW_POS && (
@@ -113,8 +120,11 @@ export const Player = ({
         >{`x:${player.x.toFixed(1)}`}</span>
       )}
       <Image
-        ref={ref}
-        className={"touch-none select-none pointer-events-none object-cover"}
+        className={clsx(
+          "object-cover",
+          // 最底下的图片禁止一切动作
+          "pointer-events-none"
+        )}
         // 大概每两帧一个动画，总共10张吹气+1张蓄力
         src={`/image/player/${img}.png`}
         alt={"player"}

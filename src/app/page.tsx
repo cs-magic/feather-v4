@@ -44,12 +44,11 @@ export default function Home() {
   }, [])
 
   const mainPlayer = getMainPlayer(game)
-  // console.log(game)
 
   return (
     <main
       className={
-        "w-full md:w-[640px] mx-auto border border-gray-800 flex flex-col"
+        "w-full md:w-[640px] mx-auto border border-gray-800 flex flex-col "
       }
       ref={ref}
     >
@@ -76,7 +75,10 @@ export default function Home() {
 
       {/*   底部的 人/状态栏 */}
       {game.state !== "waiting" && mainPlayer && (
-        <div className={""}>
+        <div
+          className={"select-none touch-none"}
+          onTouchEnd={(event) => event.preventDefault()}
+        >
           <div className={"relative h-36"} id={"players"}>
             <Player container={{ width }} player={mainPlayer} />
           </div>

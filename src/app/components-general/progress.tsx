@@ -11,7 +11,7 @@ export const LabelLine = ({
     <div
       className={clsx(
         "inline-flex gap-2 items-center ",
-        "select-none" // 关键，否则会误触
+        "select-none touch-none" // 关键，否则会误触
       )}
     >
       <span className={"text-xs font-medium w-16"}>{label} </span>

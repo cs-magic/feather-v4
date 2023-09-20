@@ -66,3 +66,5 @@
       - 超级玛丽 游戏_配乐_背景音乐_bgm 免费下载 - 爱给网, https://www.aigei.com/music/game/super_mario
   - todo
     - 还不知道 resume 怎么写
+- 屏蔽放大镜
+  - 找遍全网（1-2小时），最终答案是在`touchEnd`，参考： https://stackoverflow.com/a/75872162/9422455
