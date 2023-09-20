@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "next lint",
     "update": "DIST=.next-tmp && git stash && git pull -f && yarn && DIST=$DIST yarn build && rm -rf .next && mv $DIST .next"
-
   },
   "dependencies": {
     "@mantine/hooks": "^7.0.0",
@@ -27,6 +26,7 @@
     "eslint-config-next": "13.5.1",
     "framer-motion": "^10.16.4",
     "next": "13.5.1",
+    "next-themes": "^0.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.7",

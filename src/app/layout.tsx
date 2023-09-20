@@ -1,4 +1,5 @@
 import "@/style/globals.css"
+import { ThemeProvider } from "next-themes"
 
 export const metadata = {
   title: "「吹羽毛」小游戏",
@@ -19,7 +20,9 @@ export default function RootLayout({
         />
       </head>
 
-      <body>{children}</body>
+      <ThemeProvider defaultTheme={"dark"}>
+        <body>{children}</body>
+      </ThemeProvider>
     </html>
   )
 }

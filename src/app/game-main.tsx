@@ -4,9 +4,9 @@ import { LabelLine, ProgressLabelLine } from "@/app/progress"
 import { DEBUG_SHOW_POS, GAME_LIFE_MAX } from "@/config"
 import Image from "next/image"
 import FeatherImage from "../../public/image/feather.png"
+import DarkFeatherImage from "../../public/image/feather-dark.png"
 import CoinImage from "../../public/image/coin.png"
 import React from "react"
-import { Player } from "@/app/player"
 import { getMainPlayer } from "@/lib/player"
 
 export const GameMain = ({ game }: { game: IGame }) => {
