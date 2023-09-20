@@ -4,17 +4,25 @@ import { useElementSize } from "@mantine/hooks"
 import { Player } from "@/app/player"
 import { GameStatus } from "@/app/game-status"
 import { GameHeader } from "@/app/game-header"
-import { useRef } from "react"
-import { Game } from "@/server/game"
-
-import Player1Image from "@/../public/image/player/1-蓄力.png"
+import { useRef, useState } from "react"
+import { Game, IGame } from "@/server/game"
+import useInterval from "@/hooks/interval"
+import { GameWaiting } from "@/app/game-waiting"
 import Image from "next/image"
 
-const game = new Game()
+import FeatherImage from "@/../public/image/feather.png"
 
 export default function Home() {
-  // const [ref, { width }] = useMeasure();
-  const { ref, width } = useElementSize()
+  const { ref, width, height } = useElementSize()
+  const gameRef = useRef(new Game())
+
+  const [game, setGame] = useState<IGame>(gameRef.current.serialize())
+
+  useInterval(() => {
+    setGame(gameRef.current.serialize())
+  }, 20)
+
+  console.log(game)
 
   return (
     <main
@@ -22,38 +30,39 @@ export default function Home() {
     >
       <div className={"w-full h-full flex flex-col"} ref={ref}>
         {/*  上部的主界面*/}
+
+        {/*  顶部的花西子笔，（基于笔的高度）固定高度 */}
+        <GameHeader />
+
+        {/*    战斗区域*/}
+        {game.state === "waiting" && <GameWaiting game={gameRef.current} />}
+
         <div className={"w-full grow relative"}>
-          {/*  顶部的花西子笔，（基于笔的高度）固定高度 */}
-          <GameHeader />
-
-          {/*    战斗区域*/}
-          {game.state === "waiting" && (
-            <div className="hero min-h-screen bg-base-200">
-              <div className="hero-content flex-col sm:flex-row">
+          {game.state === "playing" && (
+            <>
+              {game.feathers.map((f, i) => (
                 <Image
-                  priority
-                  width={200}
-                  height={300}
-                  src={Player1Image}
-                  alt={"player"}
-                  className="max-w-sm rounded-lg shadow-2xl"
+                  src={FeatherImage}
+                  alt={"feather"}
+                  width={80}
+                  height={30}
+                  key={i}
+                  className={"h-auto absolute"}
+                  sizes={"width:120px;"}
+                  style={{ top: height * f.y, left: width * f.x }}
                 />
-                <div>
-                  <h1 className="text-5xl font-bold"></h1>
-
-                  <p className="py-6"></p>
-                  <button className="btn btn-primary">立即开始</button>
-                </div>
-              </div>
-            </div>
+              ))}
+            </>
           )}
-
-          {/*   底部的人 */}
-          <Player container={{ width }} />
         </div>
 
-        {/*  底部的状态栏 */}
-        <GameStatus />
+        {/*   底部的 人/状态栏 */}
+        {game.state !== "waiting" && (
+          <div className={"absolute bottom-0 flex flex-col w-full"}>
+            <Player container={{ width }} />
+            <GameStatus />
+          </div>
+        )}
       </div>
     </main>
   )

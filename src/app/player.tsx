@@ -14,7 +14,8 @@ export const Player = ({ container }: { container: { width: number } }) => {
   const [isDragging, setDragging] = useState(false)
   const [isMoved, setMoved] = useState(false)
   const leftStart = container.width >> 1
-  const [{ left }, api] = useSpring(() => ({ left: 0 }))
+  const xKey = "marginLeft"
+  const [style, api] = useSpring(() => ({ [xKey]: 0 }))
 
   const { ref, width } = useElementSize()
 
@@ -32,8 +33,8 @@ export const Player = ({ container }: { container: { width: number } }) => {
         if (Math.abs(mx) > 10 && !isMoved) {
           setMoved(true)
         }
-        console.log({ mx, ox, left: left.get() })
-        api.start({ left: leftStart + ox })
+        console.log({ mx, ox, [xKey]: style[xKey].get() })
+        api.start({ [xKey]: leftStart + ox })
       },
       onDragStart: () => {
         console.log("onDragStart")
@@ -46,7 +47,7 @@ export const Player = ({ container }: { container: { width: number } }) => {
 
         // shoot if not moved
         if (!isMoved) {
-          shoot(left.get(), rage)
+          shoot(style[xKey].get(), rage)
         }
       },
     },
@@ -61,15 +62,15 @@ export const Player = ({ container }: { container: { width: number } }) => {
   )
 
   useEffect(() => {
-    api.set({ left: leftStart })
+    api.set({ [xKey]: leftStart })
   }, [container.width])
 
   useInterval(() => {
-    console.log("interval")
+    // console.log("interval")
     if (isDragging) {
-      console.log("拖动中")
+      // console.log("拖动中")
       if (!isMoved) {
-        console.log("蓄力中")
+        // console.log("蓄力中")
         setLifeCost(lifeCost + 1)
         setLife(life - 1)
       } else {
@@ -81,14 +82,14 @@ export const Player = ({ container }: { container: { width: number } }) => {
   }, 50) // 50 fps
 
   // console.log({ container, leftStart, left: left.get(), dragConstraint });
-  console.log({ life, rage })
+  // console.log({ life, rage })
 
   return (
     <animated.div
       {...bind()}
-      style={{ left }}
+      style={{ [xKey]: style[xKey] }}
       className={clsx(
-        "absolute bottom-0 -translate-x-1/2 touch-none",
+        "-translate-x-1/2 touch-none",
         "w-32" // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
       )}
     >
