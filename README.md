@@ -1,3 +1,28 @@
+## background
+
+根据 [【整活】我把李佳琦道歉视频做成了游戏-游戏日记02](https://www.bilibili.com/video/BV1F14y1k7FN/?spm_id_from=333.880.my_history.page.click&vd_source=9cb028fe6c978c6816626901d9249eb1)，我们对李佳琦小游戏产生了浓厚的兴趣，并打算做一个网页/小程序版的
+
+目标效果（动画版）如下：
+
+![img_1.png](__docs__/target-animation-effect.png)
+
+实际效果（v0.1）如下：
+
+![img.png](__docs__/implemented-effect.png)
+
+如果您也对该项目感兴趣，请加入我们！
+
+具体请联系 wx: markshawn2020，请备注来意。
+
+## roadmap
+
+- [ ] 已经定义了几种用户吹的招式（类似王者荣耀），但目前只做了最基础的矩形，需要加入
+  - 视觉效果
+  - 更多技能模型
+- [ ] 加入bgm与声音效果
+- [ ] 支持双人模式（需要基于socket，目前只是mock了一个服务端（实际是跑在客户机的））
+- [ ] 增量性能优化（目前是服务端50fps全量传输数据到客户端，实际应该可以基于animation之类的优化）
+
 ## notes
 
 - 花西子眉笔的图片要事先处理好，包括角度、高度等，因为我们要使用 repeat 属性直接横向填充，而无法程序性修改
