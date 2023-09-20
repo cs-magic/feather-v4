@@ -22,7 +22,8 @@ export const GameMain = ({ game }: { game: IGame }) => {
 
   return (
     <div
-      className={"w-full grow relative border-b border-gray-700 -mb-16"}
+      className={clsx("w-full grow relative border-b border-gray-700 -mb-16")}
+      style={{}}
       ref={ref}
     >
       {game.players

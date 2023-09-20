@@ -48,8 +48,11 @@ export default function Home() {
   return (
     <main
       className={
-        "w-full md:w-[640px] mx-auto border border-gray-800 flex flex-col "
+        "w-full md:w-[640px] mx-auto border border-gray-800 flex flex-col bg-cover"
       }
+      style={{
+        backgroundImage: `url(/image/rain01.gif)`,
+      }}
       ref={ref}
     >
       <div className={"w-full grow flex flex-col"}>
