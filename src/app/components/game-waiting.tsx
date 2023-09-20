@@ -5,8 +5,11 @@ import { client } from "@/lib/game/game-client"
 import { IGame } from "@/lib/game/game-server"
 import { OpenSource } from "@/app/components/open-source"
 import { Ranks } from "@/app/components/ranks"
+import { useAudio } from "@/hooks/use-audio"
 
-export const GameWaiting = ({ game: { state } }: { game: IGame }) => {
+export const GameWaiting = ({ game }: { game: IGame }) => {
+  const { playStart } = useAudio({ game })
+
   return (
     <div className="hero">
       <div className="hero-content flex-col sm:flex-row">
@@ -29,6 +32,7 @@ export const GameWaiting = ({ game: { state } }: { game: IGame }) => {
           <button
             className="btn btn-primary"
             onClick={() => {
+              playStart() // 需要 在 action 内启动
               client.do({ type: "prepare" })
             }}
           >

@@ -5,42 +5,19 @@ import { PlayerStatus } from "@/app/components/player-status"
 import { GameHeader } from "@/app/components/game-header"
 import React, { useEffect, useState } from "react"
 import { IGame } from "@/lib/game/game-server"
-import useInterval from "@/hooks/interval"
+import useInterval from "@/hooks/use-interval"
 import { GameWaiting } from "@/app/components/game-waiting"
 import { CLIENT_FPS } from "@/config"
 import { client } from "@/lib/game/game-client"
 import { GameMain } from "@/app/components/game-main"
 import { Player } from "@/app/components/player"
 import { GameOver } from "@/app/components/game-over"
-import useSound from "use-sound"
 import { getMainPlayer } from "@/lib/game/player"
 
 export default function Home() {
   const [game, setGame] = useState<IGame>(client.data)
   const { state } = game
   const { ref, width } = useElementSize()
-
-  const [playStart, { sound: soundStart, stop: stopStart, pause: pauseStart }] =
-    useSound("/music/game-start.mp3", {
-      id: "start",
-    })
-  const [playOver, { sound: soundOver, stop: stopOver, pause: pauseOver }] =
-    useSound("/music/game-over.mp3", {
-      id: "over",
-    })
-  // todo: resume ?
-  useEffect(() => {
-    console.log({ state })
-    if (state === "playing") {
-      stopOver()
-      playStart()
-    } else if (state === "over") {
-      stopStart()
-      playOver()
-    } else if (state === "paused") {
-      pauseStart()
-    }
-  }, [state])
 
   useInterval(() => {
     setGame(client.data)

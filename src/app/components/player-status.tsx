@@ -1,6 +1,7 @@
 import { PLAYER_LIFE_MAX, PLAYER_RAGE_MAX } from "@/config"
 import { LabelLine, ProgressLabelLine } from "@/app/components-general/progress"
 import { IPlayer } from "@/lib/game/player"
+import { useAudio } from "@/hooks/use-audio"
 
 export const PlayerStatus = ({ player }: { player: IPlayer }) => {
   const { life, rage, score } = player
