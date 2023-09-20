@@ -13,11 +13,13 @@ import { GameMain } from "@/app/components/game-main"
 import { Player } from "@/app/components/player"
 import { GameOver } from "@/app/components/game-over"
 import { getMainPlayer } from "@/lib/game/player"
+import { useAudio } from "@/hooks/use-audio"
 
 export default function Home() {
   const [game, setGame] = useState<IGame>(client.data)
   const { state } = game
   const { ref, width } = useElementSize()
+  const { setTriggered } = useAudio({ game })
 
   useInterval(() => {
     setGame(client.data)
@@ -58,7 +60,15 @@ export default function Home() {
         <GameHeader />
 
         {/*    战斗区域*/}
-        {game.state === "waiting" && <GameWaiting game={game} />}
+        {game.state === "waiting" && (
+          <GameWaiting
+            onClick={() => {
+              setTriggered(true)
+              client.do({ type: "prepare" })
+            }}
+          />
+        )}
+
         {game.state === "over" && <GameOver player={mainPlayer!} />}
 
         {game.state === "playing" && <GameMain game={game} />}

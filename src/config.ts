@@ -7,7 +7,7 @@ export const siteConfig = {
 // 用于在UI上显示人物与道具的数值，方便调试
 export const DEBUG_SHOW_POS = false
 
-export const GAME_LIFE_MAX = 5
+export const GAME_LIFE_MAX = 0
 
 export const PLAYER_LIFE_MAX = 100
 export const PLAYER_RAGE_MAX = 100

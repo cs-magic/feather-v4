@@ -1,21 +1,34 @@
 import { IGame } from "@/lib/game/game-server"
 import useSound from "use-sound"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 export const useAudio = ({ game }: { game: IGame }) => {
   const { state } = game
-  const [playStart, { sound: soundStart, stop: stopStart, pause: pauseStart }] =
-    useSound("/music/game-start.mp3", {
-      id: "start",
-    })
+  const [triggered, setTriggered] = useState(false)
+
+  const [
+    playStart,
+    {
+      sound: soundStart,
+      stop: stopStart,
+      pause: pauseStart,
+      duration: durationStart,
+    },
+  ] = useSound("/music/game-start.mp3", {})
+
   const [playOver, { sound: soundOver, stop: stopOver, pause: pauseOver }] =
-    useSound("/music/game-over.mp3", {
-      id: "over",
-    })
-  // todo: resume ?
+    useSound("/music/game-over.mp3", {})
+
   useEffect(() => {
-    console.log({ state })
-    if (state === "playing") {
+    // todo: resume ?
+    if (
+      // 当游戏开始后正式开始音乐
+      state === "playing" &&
+      // 基于web规定，在用户没有操纵网页之前，无法自动播放音乐
+      triggered &&
+      // 在音乐没有加载之前，播放会失效，导致没有音乐
+      durationStart
+    ) {
       stopOver()
       playStart()
     } else if (state === "over") {
@@ -24,9 +37,11 @@ export const useAudio = ({ game }: { game: IGame }) => {
     } else if (state === "paused") {
       pauseStart()
     }
-  }, [state])
+  }, [state, triggered, durationStart])
+
+  // console.log({ durationStart })
 
   return {
-    playStart,
+    setTriggered,
   }
 }

@@ -51,6 +51,14 @@
   - bug
     - The AudioContext was not allowed to start. It must be resumed (or created) after a user gesture on the page.
     - 这个bug说明音乐播放需要主动去点击，正好我们有按钮（开始游戏），所以没问题
+    - ```javascript
+      // 当游戏开始后正式开始音乐
+      state === "playing" &&
+      // 基于web规定，在用户没有操纵网页之前，无法自动播放音乐
+      triggered &&
+      // 在音乐没有加载之前，播放会失效，导致没有音乐
+      durationStart
+      ```
   - sources
     - game-start: 
       - [超级玛丽里城堡部分的游戏音乐配乐素材下载_mp3格式背景音乐_熊猫办公](https://www.tukuppt.com/muban/lkyjejbp.html)
