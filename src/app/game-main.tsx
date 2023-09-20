@@ -6,9 +6,12 @@ import Image from "next/image"
 import FeatherImage from "../../public/image/feather.png"
 import CoinImage from "../../public/image/coin.png"
 import React from "react"
+import { Player } from "@/app/player"
+import { getMainPlayer } from "@/lib/player"
 
 export const GameMain = ({ game }: { game: IGame }) => {
   const { ref, width, height } = useElementSize()
+  const mainPlayer = getMainPlayer(game)
 
   return (
     <div className={"w-full grow relative"} ref={ref}>
@@ -48,6 +51,8 @@ export const GameMain = ({ game }: { game: IGame }) => {
           />
         </div>
       ))}
+
+      {mainPlayer && <Player container={{ width }} player={mainPlayer} />}
     </div>
   )
 }

@@ -1,16 +1,16 @@
 "use client"
 
 import { useElementSize } from "@mantine/hooks"
-import { Player } from "@/app/player"
 import { PlayerStatus } from "@/app/player-status"
 import { GameHeader } from "@/app/game-header"
 import { useEffect, useState } from "react"
 import { IGame } from "@/game/game-server"
 import useInterval from "@/hooks/interval"
 import { GameOver, GameWaiting } from "@/app/game-waiting"
-import { CLIENT_FPS, PLAYER_DEFAULT_ID } from "@/config"
+import { CLIENT_FPS } from "@/config"
 import { client } from "@/game/game-client"
 import { GameMain } from "@/app/game-main"
+import { getMainPlayer } from "@/lib/player"
 
 export default function Home() {
   const [game, setGame] = useState<IGame>(client.data)
@@ -38,9 +38,8 @@ export default function Home() {
     }
   }, [])
 
+  const mainPlayer = getMainPlayer(game)
   // console.log(game)
-
-  const mainPlayer = game.players.find((p) => p.id === PLAYER_DEFAULT_ID)
 
   return (
     <main
@@ -64,10 +63,7 @@ export default function Home() {
 
       {/*   底部的 人/状态栏 */}
       {game.state !== "waiting" && mainPlayer && (
-        <div className={"flex flex-col w-full shrink-0"}>
-          <Player container={{ width }} player={mainPlayer} />
-          <PlayerStatus player={mainPlayer} />
-        </div>
+        <PlayerStatus player={mainPlayer} />
       )}
     </main>
   )

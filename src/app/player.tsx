@@ -1,4 +1,3 @@
-import { usePlayerStore } from "@/store/player.slice"
 import { useEffect, useState } from "react"
 import { animated, useSpring } from "@react-spring/web"
 import { useElementSize } from "@mantine/hooks"
@@ -6,11 +5,9 @@ import { useGesture } from "@use-gesture/react"
 import Image from "next/image"
 import clsx from "clsx"
 import useInterval from "@/hooks/interval"
-import { CLIENT_FPS, DEBUG_SHOW_POS } from "@/config"
+import { CLIENT_FPS, DEBUG_SHOW_POS, LIFE_COST_INIT } from "@/config"
 import { client } from "@/game/game-client"
 import { IPlayer } from "@/game/player"
-
-export const LIFE_COST_INIT = -10
 
 export const Player = ({
   container,
@@ -19,11 +16,12 @@ export const Player = ({
   container: { width: number }
   player: IPlayer
 }) => {
+  const xKey = "left"
+
   const [lifeCost, setLifeCost] = useState(LIFE_COST_INIT)
   const [isDragging, setDragging] = useState(false)
   const [isMoved, setMoved] = useState(false)
   const leftStart = container.width >> 1
-  const xKey = "marginLeft"
   const [style, api] = useSpring(() => ({ [xKey]: 0 }))
 
   const { ref, width } = useElementSize()
@@ -109,7 +107,7 @@ export const Player = ({
       {...bind()}
       style={{ [xKey]: style[xKey] }}
       className={clsx(
-        "-translate-x-1/2 touch-none select-none",
+        "absolute bottom-0 -translate-x-1/2 touch-none select-none",
         "w-32 h-36" // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
       )}
     >
