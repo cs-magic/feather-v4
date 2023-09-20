@@ -8,7 +8,7 @@ export const PlayerStatus = ({ player }: { player: IPlayer }) => {
   const { life, rage, score } = player
 
   return (
-    <div className={"shrink-0 p-2 bg-gray-700 z-50"}>
+    <div className={"shrink-0 p-2 bg-gray-800 z-50"}>
       <div className={"flex flex-col gap-2"}>
         <LabelLine label={"⭐️ 得分"}>{score}</LabelLine>
 

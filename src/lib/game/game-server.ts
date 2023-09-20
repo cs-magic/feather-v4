@@ -1,16 +1,13 @@
 import { GAME_LIFE_MAX, SERVER_FPS } from "@/config"
-import {
-  IPlayer,
-  Player,
-  PlayerAction,
-  PlayerBlowAction,
-} from "@/lib/game/player"
+import { IPlayer, Player, PlayerAction } from "@/lib/game/player"
 import {
   CoinObject,
   FeatherObject,
   GameObject,
   IObjectBase,
 } from "@/lib/game/object"
+import { release } from "node:os"
+import { blow } from "@/lib/game/player-blow"
 
 export type GameState = "waiting" | "playing" | "paused" | "over"
 
@@ -125,44 +122,6 @@ export class GameServer implements IGame {
     delete this.players[this.players.findIndex((p) => p.id === playerId)]
   }
 
-  public handlePlayerBlow(player: Player, action: PlayerBlowAction) {
-    const { x, rage } = player
-    const { type } = action.data
-    console.log("handlePlayerBlow: ", {
-      x,
-      rage,
-      type,
-      feathers: this.objects,
-    })
-    switch (type) {
-      case "rectangle":
-        this.objects.forEach((object) => {
-          if (
-            object.type === "feather" &&
-            object.x >= x - 0.1 &&
-            object.x <= x + 0.1 &&
-            object.y >= 1 - (0.2 + rage / 200)
-          ) {
-            /**
-             * 被吹之后，会获得一个向上的加速度，立马上升，然后再缓慢下降
-             * 数学模型就是，给定一个反向速度（比如 -.4），然后慢慢回升到 .1的初始速度，最后固定
-             * 等于是给了一个加速度，然后重力场的g=0
-             *
-             * 比如 默认是 .1，则在 1 tick 内最小需要 .11 的力才能吹回顶部
-             * 如果考虑连续 tick，则 .4 + .3 + .2 + .1 就可以吹回，也就是最少需要 .5 的力
-             * 这是可行的，因为我们的力的区间就在 (0 - 100 ) / 100
-             */
-            object.ySpeed -= player.rage / 100
-            object.playerBlew = player.id
-          }
-        })
-        break
-      default:
-        // todo
-        break
-    }
-  }
-
   public onPlayerAction(playerId: string, action: PlayerAction) {
     // console.log({ playerId, action })
     const { type, data } = action
@@ -192,7 +151,7 @@ export class GameServer implements IGame {
         break
 
       case "blow":
-        this.handlePlayerBlow(player, action)
+        blow(player, action, this.objects)
         break
 
       case "restart":

@@ -4,13 +4,17 @@ import { LabelLine, ProgressLabelLine } from "@/app/components-general/progress"
 import { DEBUG_SHOW_POS, GAME_LIFE_MAX } from "@/config"
 import Image from "next/image"
 import FeatherImage from "../../../public/image/feather.png"
-import DarkFeatherImage from "../../../public/image/feather-dark.png"
 import CoinImage from "../../../public/image/coin.png"
 import React from "react"
 
 import { getMainPlayer } from "@/lib/game/player"
 import { PlayerStatus } from "@/app/components/player-status"
 import { client } from "@/lib/game/game-client"
+import {
+  getRectangleBlowXRadius,
+  getRectangleBlowY,
+} from "@/lib/game/player-blow"
+import clsx from "clsx"
 
 export const GameMain = ({ game }: { game: IGame }) => {
   const { ref, width, height } = useElementSize()
@@ -21,6 +25,26 @@ export const GameMain = ({ game }: { game: IGame }) => {
       className={"w-full grow relative border-b border-gray-700 -mb-16"}
       ref={ref}
     >
+      {game.players
+        .filter((p) => p.rage)
+        .map(({ x, rage, id }) => {
+          return (
+            <div
+              className={clsx(
+                "absolute -translate-x-1/2  rounded-t-xl border-y-0",
+                "bg-gradient-to-t from-indigo-500"
+              )}
+              style={{
+                left: x * width,
+                bottom: 0,
+                width: getRectangleBlowXRadius() * 2 * width,
+                height: getRectangleBlowY(rage) * height,
+              }}
+              key={id}
+            />
+          )
+        })}
+
       <PlayerStatus player={mainPlayer} />
 
       <div className={"absolute right-4 top-2 flex flex-col gap-2 "}>
