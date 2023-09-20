@@ -1,4 +1,4 @@
-import { PLAYER_LIFE_MAX, PLAYER_RAGE_MAX } from "@/config"
+import { PLAYER_LIFE_MAX } from "@/config"
 import { LabelLine, ProgressLabelLine } from "@/app/progress"
 import { IPlayer } from "@/game/player"
 

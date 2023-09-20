@@ -5,4 +5,9 @@ module.exports = {
     extend: {},
   },
   plugins: [require("@tailwindcss/typography"), require("daisyui")],
+
+  // ref: https://daisyui.com/docs/config/
+  daisyui: {
+    logs: false,
+  },
 }
