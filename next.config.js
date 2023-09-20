@@ -3,6 +3,7 @@ const nextConfig = {
   experimental: {
     mdxRs: true,
   },
+  distDir: process.env.DIST ?? ".next",
 }
 
 const withMDX = require("@next/mdx")()
