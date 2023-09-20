@@ -9,16 +9,19 @@ import CoinImage from "../../../public/image/coin.png"
 import React from "react"
 
 import { getMainPlayer } from "@/lib/game/player"
+import { PlayerStatus } from "@/app/components/player-status"
 
 export const GameMain = ({ game }: { game: IGame }) => {
   const { ref, width, height } = useElementSize()
-  const mainPlayer = getMainPlayer(game)
+  const mainPlayer = getMainPlayer(game)!
 
   return (
     <div
       className={"w-full grow relative border-b border-gray-700 -mb-16"}
       ref={ref}
     >
+      <PlayerStatus player={mainPlayer} />
+
       <div className={"absolute right-4 top-4 flex flex-col gap-2 "}>
         <LabelLine label={"🚪 关卡"}>
           <span className={"text-xs"}>

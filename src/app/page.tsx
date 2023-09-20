@@ -82,8 +82,6 @@ export default function Home() {
           <div className={"relative h-36"} id={"players"}>
             <Player container={{ width }} player={mainPlayer} />
           </div>
-
-          <PlayerStatus player={mainPlayer} />
         </div>
       )}
     </main>
