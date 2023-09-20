@@ -8,8 +8,13 @@ export const LabelLine = ({
   children,
 }: { label: string } & PropsWithChildren) => {
   return (
-    <div className={"inline-flex gap-2 items-center"}>
-      <span className={"text-xs font-medium w-14"}>{label} </span>
+    <div
+      className={clsx(
+        "inline-flex gap-2 items-center ",
+        "select-none" // 关键，否则会误触
+      )}
+    >
+      <span className={"text-xs font-medium w-16"}>{label} </span>
       {children}
     </div>
   )
