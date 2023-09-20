@@ -1,5 +1,5 @@
 import "@/style/globals.css"
-import { ThemeProvider } from "next-themes"
+import { Providers } from "@/app/providers"
 
 export const metadata = {
   title: "「吹羽毛」小游戏",
@@ -12,7 +12,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta
           name="viewport"
@@ -20,9 +20,9 @@ export default function RootLayout({
         />
       </head>
 
-      <ThemeProvider defaultTheme={"dark"}>
-        <body>{children}</body>
-      </ThemeProvider>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   )
 }
