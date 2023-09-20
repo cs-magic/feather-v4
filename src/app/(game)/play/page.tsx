@@ -1,13 +1,11 @@
-import { IGame } from "@/lib/game/game-server"
+"use client"
 import { useElementSize } from "@mantine/hooks"
-import { LabelLine, ProgressLabelLine } from "@/app/components-general/progress"
-import { DEBUG_SHOW_POS, GAME_LIFE_MAX } from "@/config"
+import { LabelLine, ProgressLabelLine } from "@/app/components/progress"
+import { CLIENT_FPS, DEBUG_SHOW_POS, GAME_LIFE_MAX } from "@/config"
 import Image from "next/image"
-import FeatherImage from "../../../public/image/feather.png"
-import CoinImage from "../../../public/image/coin.png"
-import React from "react"
-
-import { getMainPlayer } from "@/lib/game/player"
+import FeatherImage from "../../../../public/image/feather.png"
+import CoinImage from "../../../../public/image/coin.png"
+import React, { useState } from "react"
 import { PlayerStatus } from "@/app/components/player-status"
 import { client } from "@/lib/game/game-client"
 import {
@@ -15,14 +13,39 @@ import {
   getRectangleBlowY,
 } from "@/lib/game/player-blow"
 import clsx from "clsx"
+import { useRouter } from "next/navigation"
+import useInterval from "@/hooks/use-interval"
+import { useAudio } from "@/hooks/use-audio"
+import { IGame } from "@/lib/game/game-server"
 
-export const GameMain = ({ game }: { game: IGame }) => {
+/**
+ * 主要在这个函数里，刷新UI
+ *
+ * @constructor
+ */
+export default function PlayMainPage() {
+  const [game, setGame] = useState<IGame>()
   const { ref, width, height } = useElementSize()
-  const mainPlayer = getMainPlayer(game)!
+
+  const router = useRouter()
+
+  useInterval(() => {
+    setGame(client.sync())
+  }, 1000 / CLIENT_FPS)
+
+  useAudio(game?.state)
+
+  if (!game) return "loading"
+
+  if (game.state === "over") {
+    void router.push("/over")
+    return null
+  }
 
   return (
     <div
-      className={clsx("w-full grow relative border-b border-gray-700 -mb-16")}
+      suppressHydrationWarning
+      className={clsx("w-full h-full relative border-b border-gray-700 -mb-16")}
       style={{}}
       ref={ref}
     >
@@ -46,12 +69,13 @@ export const GameMain = ({ game }: { game: IGame }) => {
           )
         })}
 
-      <PlayerStatus player={mainPlayer} />
+      <PlayerStatus player={client.player} />
 
       <div className={"absolute right-4 top-2 flex flex-col gap-2 "}>
         <LabelLine label={"🚪 关卡"}>
           <span className={"text-xs"}>
             {game.stage.toString().padStart(2, "0")}
+            {/*{`(${game.tick})`}*/}
           </span>
         </LabelLine>
 

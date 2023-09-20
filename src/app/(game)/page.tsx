@@ -1,11 +1,20 @@
+"use client"
+
+import { client } from "@/lib/game/game-client"
+import React, { useEffect } from "react"
+import clsx from "clsx"
 import Image from "next/image"
 import Player1Image from "../../../public/image/player/0.png"
 import Desc from "@/docs/desc.mdx"
-import { OpenSource } from "@/app/components/open-source"
 import { GameRanks } from "@/app/components/game-ranks"
-import clsx from "clsx"
+import Link from "next/link"
+import { OpenSource } from "@/app/components/open-source"
 
-export const GameWaiting = ({ onClick }: { onClick: any }) => {
+export default function GameHomePage() {
+  useEffect(() => {
+    client.do({ type: "restart" })
+  }, [])
+
   return (
     <div className={clsx("hero")}>
       <div className="hero-content flex-col sm:flex-row">
@@ -25,9 +34,9 @@ export const GameWaiting = ({ onClick }: { onClick: any }) => {
 
           <p className="py-6"></p>
 
-          <button className="btn btn-primary" onClick={onClick}>
-            立即开始
-          </button>
+          <Link href={"/play"}>
+            <button className="btn btn-primary">立即开始</button>
+          </Link>
 
           <OpenSource />
         </div>

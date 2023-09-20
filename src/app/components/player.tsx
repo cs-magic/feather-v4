@@ -8,6 +8,8 @@ import useInterval from "@/hooks/use-interval"
 import { CLIENT_FPS, DEBUG_SHOW_POS, LIFE_COST_INIT } from "@/config"
 import { client } from "@/lib/game/game-client"
 import { IPlayer } from "@/lib/game/player"
+import { useAudio } from "@/hooks/use-audio"
+import useSound from "use-sound"
 
 export const Player = ({
   container,
@@ -30,6 +32,9 @@ export const Player = ({
   // 玩家一开始居中（anchor也居中），完了，可以朝左或朝右移动到与容器对齐的位置，这两个距离是相等的
   const dragConstraint = (container.width - width) >> 1
 
+  const [playGiveUp, {}] = useSound("/sound/哪里贵了.mp3")
+  const [playWorkHard, {}] = useSound("/sound/有没有认真工作.mp3")
+
   const bind = useGesture(
     {
       onDrag: ({ movement: [mx], offset: [ox] }) => {
@@ -37,6 +42,8 @@ export const Player = ({
         if (Math.abs(mx) > 10 && !isMoved) {
           setMoved(true)
           if (holding > 0) {
+            playGiveUp()
+
             client.do({
               type: "clench-give-up",
               data: { consumption: holding },
@@ -52,6 +59,7 @@ export const Player = ({
 
         // shoot if not moved
         if (!isMoved && holding > 0) {
+          playWorkHard()
           client.do({ type: "blow", data: { type: "rectangle" } })
         }
 
@@ -110,7 +118,7 @@ export const Player = ({
       className={clsx(
         "absolute bottom-0",
         "-translate-x-1/2",
-        "select-none",
+        "select-none touch-none",
         "w-32 h-36" // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
       )}
     >

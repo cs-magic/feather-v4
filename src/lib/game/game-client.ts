@@ -4,13 +4,13 @@ import { CLIENT_FPS, PLAYER_DEFAULT_ID } from "@/config"
 
 export class GameClient {
   private server: GameServer = new GameServer()
-  private player: Player = new Player(PLAYER_DEFAULT_ID)
+  public player: Player = new Player(PLAYER_DEFAULT_ID)
 
-  public data: IGame = this.server.serialize()
+  public game?: IGame
 
-  private interval = setInterval(() => {
-    this.data = this.server.serialize()
-  }, 1000 / CLIENT_FPS)
+  public sync() {
+    return (this.game = this.server.serialize())
+  }
 
   constructor() {
     this.server.addPlayer(this.player)

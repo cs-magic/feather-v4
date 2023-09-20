@@ -1,20 +1,12 @@
-import { IPlayer } from "@/lib/game/player"
+"use client"
+import React from "react"
 import { client } from "@/lib/game/game-client"
 import { trpc } from "@/lib/trpc"
-import { useEffect } from "react"
-import useSound from "use-sound"
 import { GameRanks } from "@/app/components/game-ranks"
+import Link from "next/link"
 
-export const GameOver = ({ player }: { player: IPlayer }) => {
-  const [play, { sound, stop, pause, duration }] = useSound(
-    "/music/game-over.mp3",
-    {}
-  )
-  // todo: resume ?
-  useEffect(() => {
-    play()
-    return stop
-  }, [])
+export default function GameOverPage() {
+  const player = client.player
 
   const utils = trpc.useContext()
   const createUser = trpc.createAndGetUser.useMutation()
@@ -70,14 +62,9 @@ export const GameOver = ({ player }: { player: IPlayer }) => {
               提交排名
             </button>
 
-            <button
-              className="btn btn-primary m-4"
-              onClick={() => {
-                client.do({ type: "restart" })
-              }}
-            >
-              重新开始
-            </button>
+            <Link href={"/"}>
+              <button className="btn btn-primary m-4">重新开始</button>
+            </Link>
           </div>
 
           <GameRanks />
