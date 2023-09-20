@@ -9,7 +9,7 @@ export const LabelLine = ({
 }: { label: string } & PropsWithChildren) => {
   return (
     <div className={"inline-flex gap-2 items-center"}>
-      <span className={"text-xs font-medium"}>{label} </span>
+      <span className={"text-xs font-medium w-14"}>{label} </span>
       {children}
     </div>
   )

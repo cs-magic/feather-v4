@@ -6,12 +6,11 @@ import {
   GameObject,
   IObjectBase,
 } from "@/game/object"
-import { util } from "zod"
-import objectKeys = util.objectKeys
 
 export type GameState = "waiting" | "playing" | "paused" | "over"
 
 export interface IGame {
+  stage: number
   state: GameState
   tick: number
   rage: number
@@ -24,6 +23,7 @@ export class GameServer implements IGame {
   public addFeatherIntervalSeconds = 5
 
   // states
+  public stage = 1 // 关卡
   public state: GameState = "waiting"
   public tick = 0
   public rage = 0 // 游戏的血条由掉落的羽毛控制
@@ -32,15 +32,16 @@ export class GameServer implements IGame {
 
   // reset states
   private reset() {
+    // 玩家、关卡 都不要重置
     this.state = "waiting"
     this.tick = 0
     this.rage = 0
-    // this.players = [] // 玩家不要重置
     this.objects = []
   }
 
   public serialize(): IGame {
     return {
+      stage: this.stage,
       state: this.state,
       tick: this.tick,
       rage: this.rage,
