@@ -1,3 +1,9 @@
+export const siteConfig = {
+  links: {
+    github: "https://github.com/cs-magic/blow-feather",
+  },
+}
+
 export const PLAYER_LIFE_MAX = 100
 export const GAME_RAGE_MAX = 5
 

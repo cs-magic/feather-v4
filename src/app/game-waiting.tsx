@@ -4,11 +4,19 @@ import Desc from "@/docs/desc.mdx"
 import { client } from "@/game/game-client"
 import ReactMarkdown from "react-markdown"
 import { IPlayer } from "@/game/player"
+import Link from "next/link"
+import { siteConfig } from "@/config"
 
 export const CheckRanking = () => (
   <button className="btn m-4" disabled>
     查看排行榜
   </button>
+)
+
+export const OpenSource = () => (
+  <Link href={siteConfig.links.github} target={"_blank"}>
+    <button className="btn m-4">开源贡献</button>
+  </Link>
 )
 
 export const GameWaiting = () => {
@@ -36,6 +44,8 @@ export const GameWaiting = () => {
           >
             立即开始
           </button>
+
+          <OpenSource />
 
           <CheckRanking />
         </div>
