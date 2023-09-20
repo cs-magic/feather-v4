@@ -1,52 +1,52 @@
-import { usePlayerStore } from "@/store/player.slice";
-import { useEffect, useState } from "react";
-import { animated, useSpring } from "@react-spring/web";
-import { useElementSize } from "@mantine/hooks";
-import { useGesture } from "@use-gesture/react";
-import Image from "next/image";
-import clsx from "clsx";
-import useInterval from "@/hooks/interval";
+import { usePlayerStore } from "@/store/player.slice"
+import { useEffect, useState } from "react"
+import { animated, useSpring } from "@react-spring/web"
+import { useElementSize } from "@mantine/hooks"
+import { useGesture } from "@use-gesture/react"
+import Image from "next/image"
+import clsx from "clsx"
+import useInterval from "@/hooks/interval"
 
 export const Player = ({ container }: { container: { width: number } }) => {
-  const { life, rage, setLife, setRage } = usePlayerStore();
+  const { life, rage, setLife, setRage } = usePlayerStore()
 
-  const [lifeCost, setLifeCost] = useState(0);
-  const [isDragging, setDragging] = useState(false);
-  const [isMoved, setMoved] = useState(false);
-  const leftStart = container.width >> 1;
-  const [{ left }, api] = useSpring(() => ({ left: 0 }));
+  const [lifeCost, setLifeCost] = useState(0)
+  const [isDragging, setDragging] = useState(false)
+  const [isMoved, setMoved] = useState(false)
+  const leftStart = container.width >> 1
+  const [{ left }, api] = useSpring(() => ({ left: 0 }))
 
-  const { ref, width } = useElementSize();
+  const { ref, width } = useElementSize()
 
   const shoot = (playerX: number, playerRage: number) => {
     // todo
-  };
+  }
 
   // 玩家一开始居中（anchor也居中），完了，可以朝左或朝右移动到与容器对齐的位置，这两个距离是相等的
-  const dragConstraint = (container.width - width) >> 1;
+  const dragConstraint = (container.width - width) >> 1
 
   const bind = useGesture(
     {
       onDrag: ({ movement: [mx], offset: [ox] }) => {
-        console.log("onDrag");
+        console.log("onDrag")
         if (Math.abs(mx) > 10 && !isMoved) {
-          setMoved(true);
+          setMoved(true)
         }
-        console.log({ mx, ox, left: left.get() });
-        api.start({ left: leftStart + ox });
+        console.log({ mx, ox, left: left.get() })
+        api.start({ left: leftStart + ox })
       },
       onDragStart: () => {
-        console.log("onDragStart");
-        setDragging(true);
+        console.log("onDragStart")
+        setDragging(true)
       },
       onDragEnd: () => {
-        console.log("onDragEnd");
-        setDragging(false);
-        setMoved(false);
+        console.log("onDragEnd")
+        setDragging(false)
+        setMoved(false)
 
         // shoot if not moved
         if (!isMoved) {
-          shoot(left.get(), rage);
+          shoot(left.get(), rage)
         }
       },
     },
@@ -58,30 +58,30 @@ export const Player = ({ container }: { container: { width: number } }) => {
         },
       },
     }
-  );
+  )
 
   useEffect(() => {
-    api.set({ left: leftStart });
-  }, [container.width]);
+    api.set({ left: leftStart })
+  }, [container.width])
 
   useInterval(() => {
-    console.log("interval");
+    console.log("interval")
     if (isDragging) {
-      console.log("拖动中");
+      console.log("拖动中")
       if (!isMoved) {
-        console.log("蓄力中");
-        setLifeCost(lifeCost + 1);
-        setLife(life - 1);
+        console.log("蓄力中")
+        setLifeCost(lifeCost + 1)
+        setLife(life - 1)
       } else {
-        setLife(life + lifeCost / 2); // 恢复一半体力消耗
-        setLifeCost(0);
+        setLife(life + lifeCost / 2) // 恢复一半体力消耗
+        setLifeCost(0)
       }
     } else {
     }
-  }, 50); // 50 fps
+  }, 50) // 50 fps
 
   // console.log({ container, leftStart, left: left.get(), dragConstraint });
-  console.log({ life, rage });
+  console.log({ life, rage })
 
   return (
     <animated.div
@@ -103,5 +103,5 @@ export const Player = ({ container }: { container: { width: number } }) => {
         sizes={"width:120px;"}
       />
     </animated.div>
-  );
-};
+  )
+}
