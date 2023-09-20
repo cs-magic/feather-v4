@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Player1Image from "../../public/image/player/0.png"
 import Desc from "@/docs/desc.mdx"
-import { gameClient } from "@/game/game-client"
+import { client } from "@/game/game-client"
 
 export const GameWaiting = () => {
   return (
@@ -23,7 +23,7 @@ export const GameWaiting = () => {
           <button
             className="btn btn-primary"
             onClick={() => {
-              gameClient.do({ type: "prepare" })
+              client.do({ type: "prepare" })
             }}
           >
             立即开始

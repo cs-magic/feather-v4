@@ -21,4 +21,4 @@ export class GameClient {
   }
 }
 
-export const gameClient = new GameClient()
+export const client = new GameClient()

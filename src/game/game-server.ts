@@ -43,34 +43,67 @@ export class GameServer implements IGame {
     if (this.state !== "playing") return
     this.tick += 1
 
-    // 3 秒一片
-    if (this.tick % (SERVER_FPS * this.addFeatherIntervalSeconds) === 1) {
+    // n 秒新增一片羽毛
+    if (this.tick % (SERVER_FPS * this.addFeatherIntervalSeconds) === 1)
       this.objects.push(new FeatherObject())
-    }
-    this.objects.forEach((f) => f.nextTick())
 
-    // 逆序遍历 以 mute array
+    // 更新玩家的体力等
+    this.players.forEach((p) => p.nextTick())
+
+    // 更新羽毛与花西币等
+    this.objects.forEach((f) => f.nextTick())
     for (let i = this.objects.length - 1; i >= 0; --i) {
       const object = this.objects[i]
-      if (object.y >= 0 && object.y < 1) continue
+      const { x, y } = object
 
-      this.objects.splice(i, 1)
+      switch (object.type) {
+        case "feather":
+          if (y >= 0 && y < 1) break
 
-      // 羽毛撞到笔，用户奖励 +1
-      if (object.type === "feather" && object.y < 0) {
-        const player = this.players.find((p) => p.id === object.playerBlew)
-        if (player) {
-          player.score += 1
-        }
-        this.objects.push(new CoinObject(object.x))
-      }
+          this.objects.splice(i, 1)
 
-      // 羽毛落地，游戏生命值 -1
-      else if (object.y >= 1) {
-        this.life -= 1
-        if (this.life <= 0) {
-          this.state = "over"
-        }
+          // 羽毛撞到笔，用户奖励 +1
+          if (y < 0) {
+            const player = this.players.find((p) => p.id === object.playerBlew)
+            if (player) {
+              player.score += 1
+            }
+            this.objects.push(new CoinObject(x))
+          }
+
+          // 羽毛落地，游戏生命值 -1
+          else if (y >= 1) {
+            this.life -= 1
+            if (this.life <= 0) {
+              this.state = "over"
+            }
+          }
+          break
+
+        case "coin":
+          if (y < 0.8) break
+          if (y >= 1) {
+            this.objects.splice(i, 1)
+            break
+          }
+
+          console.log("coin find player", {
+            coin: { x, y },
+            players: this.players,
+          })
+          // 寻找附近的玩家
+          const adjPlayers = this.players
+            .map((p) => ({ p, distance: Math.abs(p.x - x) }))
+            .sort((a, b) => a.distance - b.distance)
+
+          if (adjPlayers.length) {
+            adjPlayers[0].p.score += 2
+            this.objects.splice(i, 1)
+          }
+          break
+
+        default:
+          break
       }
     }
   }, 1000 / SERVER_FPS)
@@ -106,11 +139,12 @@ export class GameServer implements IGame {
   }
 
   public onPlayerAction(playerId: string, action: PlayerAction) {
-    console.log({ playerId, action })
+    // console.log({ playerId, action })
+    const { type, data } = action
     const player = this.players.find((p) => p.id === playerId)
     if (!player) return
 
-    switch (action.type) {
+    switch (type) {
       case "prepare":
         player.prepared = !player.prepared
         if (this.players.every((p) => p.prepared)) {
@@ -118,15 +152,24 @@ export class GameServer implements IGame {
         }
         break
       case "move":
-        player.x = action.data.x
+        player.x = data.x
+        break
+
+      case "clench":
+        player.life -= 20 / SERVER_FPS
+        break
+
+      case "clench-give-up":
+        console.log("clench-give-up: ", data)
+        player.life += data.consumption / 2 // 返还一半体力
+        break
+
+      case "clench-too-long":
+        // todo
         break
 
       case "blow":
         this.handlePlayerBlow(player, action)
-        break
-
-      case "clench":
-        // todo
         break
 
       default:

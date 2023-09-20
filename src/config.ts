@@ -6,3 +6,5 @@ export const CLIENT_FPS = 50
 export const SERVER_FPS = 50
 
 export const PLAYER_DEFAULT_ID = "ljq"
+
+export const DEBUG_SHOW_POS = true

@@ -1,10 +1,12 @@
-import { PLAYER_LIFE_MAX } from "@/config"
+import { PLAYER_LIFE_MAX, SERVER_FPS } from "@/config"
 
 export interface PlayerActionBase {
   type:
     | "prepare"
     | "move"
     | "clench" // 握拳
+    | "clench-give-up"
+    | "clench-too-long"
     | "blow" // 吹
   data?: any
 }
@@ -37,11 +39,24 @@ export interface PlayerPrepareAction extends PlayerActionBase {
   type: "prepare"
 }
 
+export interface PlayerClenchGiveUpAction extends PlayerActionBase {
+  type: "clench-give-up"
+  data: {
+    consumption: number // life
+  }
+}
+
+export interface PlayerClenchTooLongAction extends PlayerActionBase {
+  type: "clench-too-long"
+}
+
 export type PlayerAction =
   | PlayerPrepareAction
   | PlayerMoveAction
   | PlayerBlowAction
   | PlayerClenchAction
+  | PlayerClenchGiveUpAction
+  | PlayerClenchTooLongAction
 
 export interface IPlayer {
   id: string
@@ -64,6 +79,10 @@ export class Player implements IPlayer {
 
   constructor(id: string) {
     this.id = id
+  }
+
+  public nextTick() {
+    this.life = Math.min(this.life + 3 / SERVER_FPS, PLAYER_LIFE_MAX)
   }
 
   public serialize(): IPlayer {

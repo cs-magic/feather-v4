@@ -12,17 +12,22 @@ import Image from "next/image"
 
 import FeatherImage from "@/../public/image/feather.png"
 import CoinImage from "@/../public/image/coin.png"
-import { CLIENT_FPS, GAME_LIFE_MAX, PLAYER_DEFAULT_ID } from "@/config"
+import {
+  CLIENT_FPS,
+  DEBUG_SHOW_POS,
+  GAME_LIFE_MAX,
+  PLAYER_DEFAULT_ID,
+} from "@/config"
 import { ProgressLabelLine } from "@/app/progress"
-import { gameClient } from "@/game/game-client"
+import { client } from "@/game/game-client"
 
 export default function Home() {
   const { ref, width, height } = useElementSize()
 
-  const [game, setGame] = useState<IGame>(gameClient.data)
+  const [game, setGame] = useState<IGame>(client.data)
 
   useInterval(() => {
-    setGame(gameClient.data)
+    setGame(client.data)
   }, 1000 / CLIENT_FPS)
 
   // console.log(game)
@@ -31,9 +36,11 @@ export default function Home() {
 
   return (
     <main
-      className={"w-full md:w-[640px] h-screen mx-auto border border-gray-800"}
+      className={
+        "w-full md:w-[640px] h-screen mx-auto border border-gray-800 flex flex-col"
+      }
     >
-      <div className={"w-full h-full flex flex-col"} ref={ref}>
+      <div className={"w-full grow flex flex-col"} ref={ref}>
         {/*  上部的主界面*/}
 
         {/*  顶部的花西子笔，（基于笔的高度）固定高度 */}
@@ -54,28 +61,38 @@ export default function Home() {
             </div>
 
             {game.objects.map((f, i) => (
-              <Image
-                src={f.type === "feather" ? FeatherImage : CoinImage}
-                alt={"object"}
-                width={80}
-                height={30}
+              <div
                 key={i}
-                className={"h-auto absolute -translate-x-1/2 -translate-y-1/2"}
-                sizes={"width:120px;"}
+                className={"absolute -translate-x-1/2 -translate-y-1/2"}
                 style={{ top: height * f.y, left: width * f.x }}
-              />
+              >
+                {DEBUG_SHOW_POS && (
+                  <span
+                    className={"absolute right-0 top-0 bg-gray-800"}
+                  >{`x:${f.x.toFixed(1)}, y:${f.y.toFixed(1)}`}</span>
+                )}
+                <Image
+                  src={f.type === "feather" ? FeatherImage : CoinImage}
+                  alt={"object"}
+                  width={80}
+                  height={30}
+                  key={i}
+                  className={"h-auto "}
+                  sizes={"width:120px;"}
+                />
+              </div>
             ))}
           </div>
         )}
-
-        {/*   底部的 人/状态栏 */}
-        {game.state !== "waiting" && (
-          <div className={"absolute bottom-0 flex flex-col w-full"}>
-            <Player container={{ width }} />
-            {mainPlayer && <GameStatus player={mainPlayer} />}
-          </div>
-        )}
       </div>
+
+      {/*   底部的 人/状态栏 */}
+      {game.state !== "waiting" && mainPlayer && (
+        <div className={"flex flex-col w-full shrink-0"}>
+          <Player container={{ width }} player={mainPlayer} />
+          <GameStatus player={mainPlayer} />
+        </div>
+      )}
     </main>
   )
 }

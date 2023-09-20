@@ -6,12 +6,17 @@ import { useGesture } from "@use-gesture/react"
 import Image from "next/image"
 import clsx from "clsx"
 import useInterval from "@/hooks/interval"
-import { CLIENT_FPS } from "@/config"
-import { gameClient } from "@/game/game-client"
+import { CLIENT_FPS, DEBUG_SHOW_POS } from "@/config"
+import { client } from "@/game/game-client"
+import { IPlayer } from "@/game/player"
 
-export const Player = ({ container }: { container: { width: number } }) => {
-  const { life, rage, setLife, setRage } = usePlayerStore()
-
+export const Player = ({
+  container,
+  player,
+}: {
+  container: { width: number }
+  player: IPlayer
+}) => {
   const [lifeCost, setLifeCost] = useState(0)
   const [isDragging, setDragging] = useState(false)
   const [isMoved, setMoved] = useState(false)
@@ -30,9 +35,13 @@ export const Player = ({ container }: { container: { width: number } }) => {
         // console.log("onDrag: ", { mx, ox, [xKey]: style[xKey].get() })
         if (Math.abs(mx) > 10 && !isMoved) {
           setMoved(true)
+          client.do({
+            type: "clench-give-up",
+            data: { consumption: lifeCost },
+          })
         }
         const targetX = leftStart + ox
-        gameClient.do({ type: "move", data: { x: targetX / container.width } })
+        client.do({ type: "move", data: { x: targetX / container.width } })
         api.start({ [xKey]: targetX })
       },
       onDragStart: () => {
@@ -44,7 +53,7 @@ export const Player = ({ container }: { container: { width: number } }) => {
 
         // shoot if not moved
         if (!isMoved) {
-          gameClient.do({
+          client.do({
             type: "blow",
             data: {
               type: "rectangle",
@@ -74,13 +83,13 @@ export const Player = ({ container }: { container: { width: number } }) => {
   useInterval(() => {
     // console.log("interval")
     if (isDragging && !isMoved) {
+      // 每个tick都增加1的体力消耗
       setLifeCost(lifeCost + 1)
-      setLife(life - 1)
+      if (player.life > 0) client.do({ type: "clench" })
     }
 
     if (!isDragging || (isDragging && isMoved)) {
       if (lifeCost) {
-        setLife(life + lifeCost / 2) // 恢复一半体力消耗
         setLifeCost(0)
       }
     }
@@ -95,14 +104,20 @@ export const Player = ({ container }: { container: { width: number } }) => {
       style={{ [xKey]: style[xKey] }}
       className={clsx(
         "-translate-x-1/2 touch-none select-none",
-        "w-32" // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
+        "w-32", // 如果不固定 w 的话，absolute 的机制会让人物拖到右边后被压缩
+        player.life <= 0 && "animate-spin"
       )}
     >
+      {DEBUG_SHOW_POS && (
+        <span
+          className={"absolute right-0 top-0 bg-gray-800"}
+        >{`x:${player.x.toFixed(1)}`}</span>
+      )}
       <Image
         ref={ref}
         className={"touch-none select-none pointer-events-none w-full h-auto"}
         // 大概每两帧一个动画，总共10张吹气+1张蓄力
-        src={`/image/player/${Math.min(Math.floor(lifeCost / 2), 10)}.png`}
+        src={`/image/player/${Math.min(Math.floor(lifeCost), 10)}.png`}
         alt={"player"}
         width={120}
         height={160}
