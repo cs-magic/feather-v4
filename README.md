@@ -42,4 +42,5 @@
   - 这样我们就可以统一地在 interval 里处理逻辑
 - trpc with nextjs13
   - https://github.com/wpcodevo/nextjs13-trpc-setup/blob/main/src/app/layout.tsx
-  - 
+- zod with zod-prisma-type
+  - `yarn add zod@\<=3.21.1`, see: https://github.com/colinhacks/zod/issues/2184#issuecomment-1573154480
