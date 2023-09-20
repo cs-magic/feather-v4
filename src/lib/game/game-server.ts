@@ -1,11 +1,16 @@
 import { GAME_LIFE_MAX, SERVER_FPS } from "@/config"
-import { IPlayer, Player, PlayerAction, PlayerBlowAction } from "@/game/player"
+import {
+  IPlayer,
+  Player,
+  PlayerAction,
+  PlayerBlowAction,
+} from "@/lib/game/player"
 import {
   CoinObject,
   FeatherObject,
   GameObject,
   IObjectBase,
-} from "@/game/object"
+} from "@/lib/game/object"
 
 export type GameState = "waiting" | "playing" | "paused" | "over"
 

@@ -1,5 +1,5 @@
-import { GameServer, IGame } from "@/game/game-server"
-import { Player, PlayerAction } from "@/game/player"
+import { GameServer, IGame } from "@/lib/game/game-server"
+import { Player, PlayerAction } from "@/lib/game/player"
 import { CLIENT_FPS, PLAYER_DEFAULT_ID } from "@/config"
 
 export class GameClient {

@@ -1,5 +1,5 @@
-import { IPlayer } from "@/game/player"
-import { client } from "@/game/game-client"
+import { IPlayer } from "@/lib/game/player"
+import { client } from "@/lib/game/game-client"
 import { trpc } from "@/lib/trpc"
 import { useEffect } from "react"
 import useSound from "use-sound"

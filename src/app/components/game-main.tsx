@@ -1,4 +1,4 @@
-import { IGame } from "@/game/game-server"
+import { IGame } from "@/lib/game/game-server"
 import { useElementSize } from "@mantine/hooks"
 import { LabelLine, ProgressLabelLine } from "@/app/components-general/progress"
 import { DEBUG_SHOW_POS, GAME_LIFE_MAX } from "@/config"
@@ -7,7 +7,8 @@ import FeatherImage from "../../../public/image/feather.png"
 import DarkFeatherImage from "../../../public/image/feather-dark.png"
 import CoinImage from "../../../public/image/coin.png"
 import React from "react"
-import { getMainPlayer } from "@/lib/player"
+
+import { getMainPlayer } from "@/lib/game/player"
 
 export const GameMain = ({ game }: { game: IGame }) => {
   const { ref, width, height } = useElementSize()

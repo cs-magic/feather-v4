@@ -1,8 +1,8 @@
 import Image from "next/image"
 import Player1Image from "../../../public/image/player/0.png"
 import Desc from "@/docs/desc.mdx"
-import { client } from "@/game/game-client"
-import { IGame } from "@/game/game-server"
+import { client } from "@/lib/game/game-client"
+import { IGame } from "@/lib/game/game-server"
 import { OpenSource } from "@/app/components/open-source"
 import { Ranks } from "@/app/components/ranks"
 

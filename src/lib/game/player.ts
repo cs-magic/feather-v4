@@ -1,5 +1,10 @@
-import { PLAYER_LIFE_MAX, PLAYER_RAGE_MAX, SERVER_FPS } from "@/config"
-import { PlayerStatus } from "@/app/components/player-status"
+import {
+  PLAYER_DEFAULT_ID,
+  PLAYER_LIFE_MAX,
+  PLAYER_RAGE_MAX,
+  SERVER_FPS,
+} from "@/config"
+import { IGame } from "@/lib/game/game-server"
 
 export type PlayerState =
   | "idle"
@@ -149,3 +154,6 @@ export class Player implements IPlayer {
     }
   }
 }
+
+export const getMainPlayer = (game: IGame) =>
+  game.players.find((p) => p.id === PLAYER_DEFAULT_ID)

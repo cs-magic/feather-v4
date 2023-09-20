@@ -6,8 +6,8 @@ import Image from "next/image"
 import clsx from "clsx"
 import useInterval from "@/hooks/interval"
 import { CLIENT_FPS, DEBUG_SHOW_POS, LIFE_COST_INIT } from "@/config"
-import { client } from "@/game/game-client"
-import { IPlayer } from "@/game/player"
+import { client } from "@/lib/game/game-client"
+import { IPlayer } from "@/lib/game/player"
 
 export const Player = ({
   container,

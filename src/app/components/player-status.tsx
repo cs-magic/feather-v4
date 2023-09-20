@@ -1,6 +1,6 @@
 import { PLAYER_LIFE_MAX, PLAYER_RAGE_MAX } from "@/config"
 import { LabelLine, ProgressLabelLine } from "@/app/components-general/progress"
-import { IPlayer } from "@/game/player"
+import { IPlayer } from "@/lib/game/player"
 
 export const PlayerStatus = ({ player }: { player: IPlayer }) => {
   const { life, rage, score } = player
