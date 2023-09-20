@@ -2,6 +2,10 @@ import { PLAYER_LIFE_MAX, SERVER_FPS } from "@/config"
 
 export interface PlayerActionBase {
   type:
+    | "restart"
+    | "pause"
+    | "resume"
+    | "stop"
     | "prepare"
     | "move"
     | "clench" // 握拳
@@ -31,6 +35,22 @@ export interface PlayerBlowAction extends PlayerActionBase {
   }
 }
 
+export interface PlayerRestartAction extends PlayerActionBase {
+  type: "restart"
+}
+
+export interface PlayerPauseAction extends PlayerActionBase {
+  type: "pause"
+}
+
+export interface PlayerResumeAction extends PlayerActionBase {
+  type: "resume"
+}
+
+export interface PlayerStopAction extends PlayerActionBase {
+  type: "stop"
+}
+
 export interface PlayerClenchAction extends PlayerActionBase {
   type: "clench"
 }
@@ -51,6 +71,10 @@ export interface PlayerClenchTooLongAction extends PlayerActionBase {
 }
 
 export type PlayerAction =
+  | PlayerRestartAction
+  | PlayerPauseAction
+  | PlayerResumeAction
+  | PlayerStopAction
   | PlayerPrepareAction
   | PlayerMoveAction
   | PlayerBlowAction

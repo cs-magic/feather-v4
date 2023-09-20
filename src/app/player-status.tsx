@@ -2,7 +2,7 @@ import { PLAYER_LIFE_MAX, PLAYER_RAGE_MAX } from "@/config"
 import { LabelLine, ProgressLabelLine } from "@/app/progress"
 import { IPlayer } from "@/game/player"
 
-export const GameStatus = ({ player }: { player: IPlayer }) => {
+export const PlayerStatus = ({ player }: { player: IPlayer }) => {
   const { life, rage, score } = player
 
   return (
@@ -15,13 +15,6 @@ export const GameStatus = ({ player }: { player: IPlayer }) => {
           value={life}
           valueMax={PLAYER_LIFE_MAX}
           className={"progress-accent w-32"}
-        />
-
-        <ProgressLabelLine
-          label={"😡 愤怒值"}
-          value={rage}
-          valueMax={PLAYER_RAGE_MAX}
-          className={"progress-error w-16"}
         />
       </div>
     </div>

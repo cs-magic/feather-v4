@@ -2,12 +2,12 @@
 
 import { useElementSize } from "@mantine/hooks"
 import { Player } from "@/app/player"
-import { GameStatus } from "@/app/game-status"
+import { PlayerStatus } from "@/app/player-status"
 import { GameHeader } from "@/app/game-header"
 import { useState } from "react"
 import { IGame } from "@/game/game-server"
 import useInterval from "@/hooks/interval"
-import { GameWaiting } from "@/app/game-waiting"
+import { GameOver, GameWaiting } from "@/app/game-waiting"
 import Image from "next/image"
 
 import FeatherImage from "@/../public/image/feather.png"
@@ -15,7 +15,7 @@ import CoinImage from "@/../public/image/coin.png"
 import {
   CLIENT_FPS,
   DEBUG_SHOW_POS,
-  GAME_LIFE_MAX,
+  GAME_RAGE_MAX,
   PLAYER_DEFAULT_ID,
 } from "@/config"
 import { ProgressLabelLine } from "@/app/progress"
@@ -48,15 +48,16 @@ export default function Home() {
 
         {/*    战斗区域*/}
         {game.state === "waiting" && <GameWaiting />}
+        {game.state === "over" && <GameOver player={mainPlayer!} />}
 
         {game.state === "playing" && (
           <div className={"w-full grow relative"}>
             <div className={"absolute right-4 top-4 flex gap-2 items-center"}>
               <ProgressLabelLine
-                label={"机会"}
-                value={game.life}
-                valueMax={GAME_LIFE_MAX}
-                className={"progress-info"}
+                label={"😡 愤怒值"}
+                value={game.rage}
+                valueMax={GAME_RAGE_MAX}
+                className={"progress-error w-16"}
               />
             </div>
 
@@ -90,7 +91,7 @@ export default function Home() {
       {game.state !== "waiting" && mainPlayer && (
         <div className={"flex flex-col w-full shrink-0"}>
           <Player container={{ width }} player={mainPlayer} />
-          <GameStatus player={mainPlayer} />
+          <PlayerStatus player={mainPlayer} />
         </div>
       )}
     </main>

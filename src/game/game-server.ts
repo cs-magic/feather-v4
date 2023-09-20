@@ -1,4 +1,4 @@
-import { GAME_LIFE_MAX, SERVER_FPS } from "@/config"
+import { GAME_RAGE_MAX, SERVER_FPS } from "@/config"
 import { IPlayer, Player, PlayerAction, PlayerBlowAction } from "@/game/player"
 import {
   CoinObject,
@@ -14,26 +14,36 @@ export type GameState = "waiting" | "playing" | "paused" | "over"
 export interface IGame {
   state: GameState
   tick: number
-  life: number
+  rage: number
   players: IPlayer[]
   objects: IObjectBase[]
 }
 
 export class GameServer implements IGame {
-  public state: GameState = "waiting"
-  public tick = 0
-  public life = GAME_LIFE_MAX // 游戏的血条由掉落的羽毛控制
-
+  // configurable
   public addFeatherIntervalSeconds = 5
 
+  // states
+  public state: GameState = "waiting"
+  public tick = 0
+  public rage = 0 // 游戏的血条由掉落的羽毛控制
   public players: Player[] = []
   public objects: GameObject[] = []
+
+  // reset states
+  private reset() {
+    this.state = "waiting"
+    this.tick = 0
+    this.rage = 0
+    // this.players = [] // 玩家不要重置
+    this.objects = []
+  }
 
   public serialize(): IGame {
     return {
       state: this.state,
       tick: this.tick,
-      life: this.life,
+      rage: this.rage,
       players: this.players.map((p) => p.serialize()),
       objects: this.objects.map((f) => f.serialize()),
     }
@@ -73,10 +83,7 @@ export class GameServer implements IGame {
 
           // 羽毛落地，游戏生命值 -1
           else if (y >= 1) {
-            this.life -= 1
-            if (this.life <= 0) {
-              this.state = "over"
-            }
+            this.rage++
           }
           break
 
@@ -84,6 +91,7 @@ export class GameServer implements IGame {
           if (y < 0.8) break
           if (y >= 1) {
             this.objects.splice(i, 1)
+            this.rage += 2
             break
           }
 
@@ -105,6 +113,10 @@ export class GameServer implements IGame {
         default:
           break
       }
+    }
+
+    if (this.rage >= GAME_RAGE_MAX) {
+      this.state = "over"
     }
   }, 1000 / SERVER_FPS)
 
@@ -172,6 +184,10 @@ export class GameServer implements IGame {
         this.handlePlayerBlow(player, action)
         break
 
+      case "restart":
+        this.reset()
+        break
+
       default:
         break
     }
@@ -179,6 +195,7 @@ export class GameServer implements IGame {
 
   public start() {
     this.state = "playing"
+    this.players.forEach((p) => (p.prepared = false))
   }
 
   public pause() {
