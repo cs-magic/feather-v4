@@ -70,7 +70,7 @@ export default function Home() {
 
         {game.state === "over" && <GameOver player={mainPlayer!} />}
 
-        {game.state === "playing" && <GameMain game={game} />}
+        {["playing", "paused"].includes(game.state) && <GameMain game={game} />}
       </div>
 
       {/*   底部的 人/状态栏 */}

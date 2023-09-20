@@ -10,6 +10,7 @@ import React from "react"
 
 import { getMainPlayer } from "@/lib/game/player"
 import { PlayerStatus } from "@/app/components/player-status"
+import { client } from "@/lib/game/game-client"
 
 export const GameMain = ({ game }: { game: IGame }) => {
   const { ref, width, height } = useElementSize()
@@ -22,7 +23,7 @@ export const GameMain = ({ game }: { game: IGame }) => {
     >
       <PlayerStatus player={mainPlayer} />
 
-      <div className={"absolute right-4 top-4 flex flex-col gap-2 "}>
+      <div className={"absolute right-4 top-2 flex flex-col gap-2 "}>
         <LabelLine label={"🚪 关卡"}>
           <span className={"text-xs"}>
             {game.stage.toString().padStart(2, "0")}
@@ -35,6 +36,15 @@ export const GameMain = ({ game }: { game: IGame }) => {
           valueMax={GAME_LIFE_MAX}
           className={"progress-success w-8"}
         />
+
+        <button
+          className={"btn btn-xs text-xs"}
+          onClick={() => {
+            client.do({ type: game.state === "paused" ? "resume" : "pause" })
+          }}
+        >
+          {game.state === "paused" ? "继续" : "暂停"}
+        </button>
       </div>
 
       {game.objects.map((f, i) => (

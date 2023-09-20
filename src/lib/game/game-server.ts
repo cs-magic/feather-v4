@@ -199,6 +199,14 @@ export class GameServer implements IGame {
         this.restart()
         break
 
+      case "pause":
+        this.pause()
+        break
+
+      case "resume":
+        this.resume()
+        break
+
       default:
         break
     }
