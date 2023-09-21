@@ -119,17 +119,22 @@ const getPlayerImg = (player: IPlayer, withCry?: boolean) => {
 
 export const PlayerStatus = ({ player }: { player: IPlayer }) => {
   return (
-    <div className={"flex gap-2"}>
+    <div
+      className={clsx(
+        "flex h-fit items-end gap-2"
+        // "bg-cyan-800"
+      )}
+    >
       <Image
         // 左上角要哭
         src={getPlayerImg(player, true)}
         alt={"player"}
         width={60}
         height={80}
-        className={"h-auto shrink-0 w-20"}
+        className={"h-fit shrink-0"}
         priority
       />
-      <div className={"flex flex-col gap-2"}>
+      <div className={"flex flex-col gap-1"}>
         <LabelLine label={"⭐️ 得分"}>{player.score}</LabelLine>
 
         <ProgressLabelLine

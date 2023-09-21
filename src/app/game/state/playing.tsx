@@ -87,51 +87,53 @@ export const GamePlaying = ({
         </ObjContainer>
       ))}
 
-      {/* 左上： 玩家状态 */}
+      {/* 状态栏 */}
       <div
         className={clsx(
-          "absolute inset-0 shrink-0 p-2 z-50 flex flex-col gap-2 "
+          "absolute inset-0 w-full flex gap-2 justify-between p-2 sm:p-4"
           // "scale-[70%] -translate-x-[80px] -translate-y-[80px]"
         )}
       >
+        {/* 左上： 玩家状态 */}
+
         <PlayerStatus player={player} />
-      </div>
 
-      {/* 右上： 游戏状态*/}
-      <div className={"absolute right-4 top-2 flex flex-col gap-2 "}>
-        <LabelLine label={"🚪 关卡"}>
-          <span className={"text-xs"}>
-            {data.stage.toString().padStart(2, "0")}
-            {/*{`(${game.tick})`}*/}
-          </span>
-        </LabelLine>
+        {/* 右上： 游戏状态*/}
+        <div className={"flex flex-col gap-1 "}>
+          <LabelLine label={"🚪 关卡"}>
+            <span className={"text-xs"}>
+              {data.stage.toString().padStart(2, "0")}
+              {/*{`(${game.tick})`}*/}
+            </span>
+          </LabelLine>
 
-        <ProgressLabelLine
-          label={"❤️ 生命"}
-          value={data.life}
-          valueMax={GAME_LIFE_MAX}
-          className={"progress-success w-8"}
-        />
+          <ProgressLabelLine
+            label={"❤️ 生命"}
+            value={data.life}
+            valueMax={GAME_LIFE_MAX}
+            className={"progress-success w-8"}
+          />
 
-        <button
-          className={"btn btn-xs text-xs z-50"}
-          onClick={() => {
-            console.log(data.state)
-            client.do({ type: data.state === "paused" ? "resume" : "pause" })
-          }}
-        >
-          {data.state === "paused" ? "继续" : "暂停"}
-        </button>
-        {process.env.NODE_ENV === "development" && (
           <button
             className={"btn btn-xs text-xs z-50"}
             onClick={() => {
-              setTesting(!isTesting)
+              console.log(data.state)
+              client.do({ type: data.state === "paused" ? "resume" : "pause" })
             }}
           >
-            测试 ({isTesting ? "on" : "off"})
+            {data.state === "paused" ? "继续" : "暂停"}
           </button>
-        )}
+          {process.env.NODE_ENV === "development" && (
+            <button
+              className={"btn btn-xs text-xs z-50"}
+              onClick={() => {
+                setTesting(!isTesting)
+              }}
+            >
+              测试 ({isTesting ? "on" : "off"})
+            </button>
+          )}
+        </div>
       </div>
 
       {/* 玩家 */}
