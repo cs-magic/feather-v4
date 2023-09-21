@@ -110,7 +110,11 @@ export class Player implements IPlayer {
     if (this.state === "idle" && this.pressing) {
       // idle --> moving
       if (Math.abs(this.x - this.pressDownX) > 0.01) {
-        console.log("player state: idle --> moving")
+        console.log(`player state: idle --> moving`)
+        console.log({
+          curX: this.x.toFixed(2),
+          downX: this.pressDownX.toFixed(2),
+        })
         this.state = "moving"
       }
       // idle --> clenching

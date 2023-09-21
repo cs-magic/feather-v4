@@ -34,7 +34,6 @@ export const Player = ({ player }: { player: IPlayer }) => {
   const vh = sh - TOP // 游戏区域的高度
   const X = vw >> 1 // 初始的 x 位置
 
-  const [isMoved, setMoved] = useState(false)
   const [{ left }, api] = useSpring(() => ({
     left: vw >> 1,
   }))
@@ -46,7 +45,8 @@ export const Player = ({ player }: { player: IPlayer }) => {
     {
       onDragStart: () => {
         console.log("onDragStart")
-        client.do({ type: "pressDown", x: left.get() / vw })
+        // note: !important: 不能用正在的动画位置，否则会脱节，因为过 x ms后位置就不在这了
+        client.do({ type: "pressDown", x: (left.animation.to as number) / vw })
       },
       onDrag: ({ movement: [mx], offset: [ox] }) => {
         // console.log("onDrag: ", { mx })

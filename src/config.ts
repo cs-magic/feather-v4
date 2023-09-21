@@ -4,7 +4,7 @@ export const siteConfig = {
   },
 }
 
-export const GAME_LIFE_MAX = 5
+export const GAME_LIFE_MAX = 50
 
 export const PLAYER_LIFE_MAX = 100
 export const PLAYER_RAGE_MAX = 100

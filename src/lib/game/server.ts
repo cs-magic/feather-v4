@@ -180,12 +180,13 @@ export class GameServer implements IGameData {
         break
 
       case "move":
-        console.log("onMove")
+        // console.log("onMove")
         player.x = action.x
         break
 
       case "pressDown":
         console.log("onPressDown")
+        console.log({ x: action.x.toFixed(2) })
         player.pressing = true
         player.pressDownTime = Date.now()
         player.pressDownX = action.x
