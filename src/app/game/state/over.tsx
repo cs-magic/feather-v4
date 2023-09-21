@@ -1,4 +1,4 @@
-import { client } from "@/lib/game/client"
+import { client, GameClient, restartClient } from "@/lib/game/client"
 import { trpc } from "@/lib/trpc"
 import { GameRanks } from "@/app/game/comp/ranks"
 import React from "react"
@@ -33,7 +33,7 @@ export const GameOver = () => {
               },
               score: player.score,
             })
-            client.restart()
+            restartClient()
           }}
         >
           <h2 className="py-6 text-2xl">你完蛋啦！</h2>
@@ -61,12 +61,7 @@ export const GameOver = () => {
               提交排名
             </button>
 
-            <button
-              className="btn btn-ghost m-4"
-              onClick={() => {
-                client.restart()
-              }}
-            >
+            <button className="btn btn-ghost m-4" onClick={restartClient}>
               重新开始
             </button>
           </div>

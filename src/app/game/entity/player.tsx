@@ -75,7 +75,7 @@ export const Player = ({ player }: { player: IPlayer }) => {
         className={"-translate-y-[50%] z-50"}
         style={{
           width: vw * 0.28,
-          height: 220,
+          height: vw * 0.28 * 1.2,
         }}
         {...bind()}
       >
@@ -83,8 +83,7 @@ export const Player = ({ player }: { player: IPlayer }) => {
           src={getPlayerImg(player)}
           alt={"player"}
           fill
-          objectFit={"cover"}
-          className={"pointer-events-none"}
+          className={"pointer-events-none object-cover"}
           priority
           onDragEnd={ignore}
           sizes={"width=200px;"}
@@ -127,15 +126,24 @@ export const PlayerStatus = ({ player }: { player: IPlayer }) => {
         // "bg-cyan-800"
       )}
     >
-      <Image
-        // 左上角要哭
-        src={getPlayerImg(player, true)}
-        alt={"player"}
-        width={60}
-        height={80}
-        className={"h-fit shrink-0"}
-        priority
-      />
+      <div className={"relative w-14 h-16 shrink-0 "}>
+        <Image
+          // 左上角要哭
+          src={getPlayerImg(player, true)}
+          alt={"player"}
+          fill
+          className={"object-cover"}
+        />
+      </div>
+      {/*<Image*/}
+      {/*  // 左上角要哭*/}
+      {/*  src={getPlayerImg(player, true)}*/}
+      {/*  alt={"player"}*/}
+      {/*  width={60}*/}
+      {/*  height={80}*/}
+      {/*  className={"h-fit shrink-0"}*/}
+      {/*  priority*/}
+      {/*/>*/}
       <div className={"flex flex-col gap-1"}>
         <LabelLine label={"⭐️ 得分"}>{player.score}</LabelLine>
 

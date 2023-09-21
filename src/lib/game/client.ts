@@ -32,4 +32,8 @@ export class GameClient {
   }
 }
 
-export const client = new GameClient()
+export let client = new GameClient()
+
+export const restartClient = () => {
+  client = new GameClient()
+}
