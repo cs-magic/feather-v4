@@ -68,3 +68,11 @@
     - 还不知道 resume 怎么写
 - 屏蔽放大镜
   - 找遍全网（1-2小时），最终答案是在`touchEnd`，参考： https://stackoverflow.com/a/75872162/9422455
+- 旋转金币
+  - coin-1
+    - 最酷炫，改了自己的图片
+    - CSS3实战：实现一个旋转的3D金币 - 掘金, https://juejin.cn/post/6965372708905287717
+  - coin-2
+    - 不太好看
+  - coin-3: 8bit bitcoin
+    - 用keyframe写的，最流畅，但是不知道怎么改大小

@@ -1,3 +1,7 @@
+@import "coin1.css";
+@import "coin2.css";
+@import "coin-3-bitcoin.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

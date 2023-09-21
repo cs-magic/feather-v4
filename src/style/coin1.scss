@@ -1,0 +1,223 @@
+$coin-diameter: 64px;
+
+$coin-thickness: 1px;
+
+$coin-color: rgb(255, 223, 95);
+
+$coin-front: "/image/coin.png";
+        //"https://tosv.byted.org/obj/maat/img/d2FuZ3NoaXpoZW4uNzUzMA/file_178a58ae02711.png";
+
+$coin-back:"/image/coin.png";
+        //"https://tosv.byted.org/obj/maat/img/d2FuZ3NoaXpoZW4uNzUzMA/file_178a58ae0276.png";
+
+$edge-faces: 100;
+
+$edge-face-length: 3.14 * $coin-diameter / $edge-faces;
+
+$turn-time: 8s;
+
+
+
+.coin {
+
+  position: relative;
+
+  width: $coin-diameter;
+
+  height: $coin-diameter;
+
+  margin: 0 auto;
+
+  transform-style: preserve-3d;
+
+  animation: rotate3d $turn-time linear infinite;
+
+  transition: all 0.3s;
+
+}
+
+
+
+.coin__front,
+
+.coin__back {
+
+  position: absolute;
+
+  width: $coin-diameter;
+
+  height: $coin-diameter;
+
+  border-radius: 50%;
+
+  overflow: hidden;
+
+  background-color: $coin-color;
+
+  color: #000;
+
+  font-size: $coin-diameter * 0.6;
+
+  // 金币表面的闪动 buling~buling~~
+
+  &:after {
+
+    content: "";
+
+    position: absolute;
+
+    left: -$coin-diameter / 2;
+
+    bottom: 100%;
+
+    display: block;
+
+    height: $coin-diameter / 1.5;
+
+    width: $coin-diameter * 2;
+
+    background: #fff;
+
+    opacity: 0.3;
+
+    animation: shine linear $turn-time / 2 infinite;
+
+  }
+
+}
+
+
+
+.coin__front {
+
+  background-image: url($coin-front);
+
+  background-size: cover;
+
+  transform: translateZ($coin-thickness / 2);
+
+}
+
+.coin__back {
+
+  background-image: url($coin-back);
+
+  background-size: cover;
+
+  transform: translateZ(-$coin-thickness / 2) rotateY(180deg);
+
+}
+
+
+
+.coin__edge {
+
+  > div {
+
+    position: absolute;
+
+    height: $edge-face-length;
+
+    width: $coin-thickness;
+
+  }
+
+  @for $i from 1 through $edge-faces {
+
+    div:nth-child(#{$i}) {
+
+      background: $coin-color;
+
+      // 另一种移动逻辑
+
+      // transform: translateY($coin-diameter / 2 - $edge-face-length / 2)
+
+      //   translateX($coin-diameter / 2 - $coin-thickness / 2)
+
+      //   rotateZ(360deg / $edge-faces * $i + 90)
+
+      //   translateX($coin-diameter / 2)
+
+      //   rotateY(90deg);
+
+      // rotateZ(360deg / $edge-faces * $i + 90)
+
+      transform: translateY($coin-diameter / 2 - $edge-face-length / 2)
+
+      translateX($coin-diameter / 2 - $coin-thickness / 2)
+
+      rotateY(90deg)
+
+      rotateX(360deg / $edge-faces * $i + 90)
+
+      translateZ($coin-diameter / 2);
+
+    }
+
+  }
+
+}
+
+
+
+// 阴影 css
+
+.coin__shadow {
+
+  position: absolute;
+
+  width: $coin-diameter;
+
+  height: $coin-thickness;
+
+  border-radius: 50%;
+
+  background: #000;
+
+  box-shadow: 0 0 $coin-thickness * 5 $coin-thickness * 5 #000;
+
+  opacity: 0.125;
+
+  transform: rotateX(90deg) translateZ(-$coin-diameter * 1.1) scale(0.5);
+
+}
+
+
+
+@keyframes rotate3d {
+
+  0% {
+
+    transform: perspective(1000px) rotateY(0deg);
+
+  }
+
+
+
+  100% {
+
+    transform: perspective(1000px) rotateY(360deg);
+
+  }
+
+}
+
+
+
+@keyframes shine {
+
+  0%,
+
+  15% {
+
+    transform: translateY($coin-diameter * 2) rotate(-40deg);
+
+  }
+
+  50% {
+
+    transform: translateY(-$coin-diameter) rotate(-40deg);
+
+  }
+
+}

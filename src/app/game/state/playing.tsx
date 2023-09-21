@@ -10,8 +10,7 @@ import React from "react"
 import Image from "next/image"
 import { useTestStore } from "@/store"
 import { Assets } from "@/assets"
-import { JoystickController } from "@/app/game/comp/joystick"
-import { Shoot } from "@/app/game/comp/shoot"
+import { Coin1, Coin2, Coin3 } from "@/app/game/comp/coin"
 
 export const GamePlaying = ({ game }: { game: IGame }) => {
   const { width, height: sh } = useScreenStore()
@@ -36,12 +35,15 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
           y={f.y * height}
           className={clsx("animate-bounce")}
         >
-          <Image
-            width={80}
-            height={20}
-            src={f.type === "feather" ? Assets.feather.src : Assets.coin.src}
-            alt={"object"}
-          />
+          {f.type === "feather" && (
+            <Image
+              width={80}
+              height={20}
+              src={Assets.feather.src}
+              alt={"object"}
+            />
+          )}
+          {f.type === "coin" && <Coin1 />}
         </ObjContainer>
       ))}
 

@@ -1,0 +1,39 @@
+.father {
+    width:100px;
+    height:100px;
+    border-radius: 50px;
+    position: relative;
+    transform-style: preserve-3d;
+    /* 开启3d效果，否则z轴上的transform是没有效果的 */
+    animation: rotate 2s linear infinite;
+}
+.father:hover {
+    animation-play-state: paused;
+}
+@keyframes rotate {
+    0% {
+        transform: rotateY(0deg);
+    }
+    100% {
+        transform: rotateY(360deg);
+    }
+}
+.positive, .negative {
+    position:absolute;
+    left:0px;
+    top:0px;
+    width: inherit;
+    height:inherit;
+    border-radius:inherit;
+}
+.positive {
+    background-color:red;
+    transform:translateZ(10px)
+    /* 使正反面的图案分离，否则无法呈现正反面不同的颜色 */
+}
+.negative {
+    background-color: blue;
+}
+/*————————————————*/
+/*版权声明：本文为CSDN博主「wendyma111」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。*/
+/*                                                         原文链接：https://blog.csdn.net/m16041902/article/details/104795703*/

@@ -14,7 +14,7 @@ import {
 import { client } from "@/lib/game/game-client"
 import { IPlayer } from "@/lib/game/player"
 import useSound from "use-sound"
-import { Obj } from "@/app/game/entity/obj"
+import { Obj, ObjContainer } from "@/app/game/entity/obj"
 
 import { useScreenStore } from "@/hooks/use-screen"
 import {
@@ -107,16 +107,31 @@ export const Player = ({ player }: { player: IPlayer }) => {
 
   return (
     <>
-      <Obj
-        ref={ref}
-        w={180}
-        h={160}
+      <ObjContainer
         x={style.left}
         y={vh}
-        bg={getPlayerImg(player, pressedTicks)}
-        className={"-translate-y-[100%] z-50"}
+        className={"-translate-y-[50%] z-50"}
         {...bind()}
-      />
+      >
+        <Image
+          src={getPlayerImg(player, pressedTicks)}
+          alt={"player"}
+          width={200}
+          height={180}
+          className={"h-auto pointer-events-none"}
+          priority
+        />
+      </ObjContainer>
+      {/*<Obj*/}
+      {/*  ref={ref}*/}
+      {/*  w={180}*/}
+      {/*  h={160}*/}
+      {/*  x={style.left}*/}
+      {/*  y={vh}*/}
+      {/*  bg={getPlayerImg(player, pressedTicks)}*/}
+      {/*  className={"-translate-y-[100%] z-50"}*/}
+      {/*  {...bind()}*/}
+      {/*/>*/}
 
       <Obj
         w={2 * sw * getRectangleBlowXRadius()}
@@ -124,7 +139,7 @@ export const Player = ({ player }: { player: IPlayer }) => {
         x={style.left}
         y={vh}
         className={clsx(
-          // "z-50",
+          // "z-50 pointer-events-none",
           "-translate-y-[100%] ",
           "border-y-0 bg-gradient-to-t from-indigo-500"
         )}
