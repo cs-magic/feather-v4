@@ -1,4 +1,4 @@
-import { IGame } from "@/lib/game/game-server"
+import { IGameData, GameEvent } from "@/lib/game/game-server"
 import { useScreenStore } from "@/hooks/use-screen"
 import { GAME_LIFE_MAX, TOP } from "@/config"
 import { client } from "@/lib/game/game-client"
@@ -12,14 +12,51 @@ import { useTestStore } from "@/store"
 import { Assets } from "@/assets"
 import { Coin1, Coin2, Coin3 } from "@/app/game/comp/coin"
 import { ignore } from "@/lib/helpers"
+import useSound from "use-sound"
 
-export const GamePlaying = ({ game }: { game: IGame }) => {
+export const GamePlaying = ({
+  data,
+  events,
+}: {
+  data: IGameData
+  events: GameEvent[]
+}) => {
   const { width, height: sh } = useScreenStore()
   const height = sh - TOP
 
   const { isTesting, setTesting } = useTestStore()
 
   const { player } = client
+
+  const [playGotCoin] = useSound("/sound/吃金币.mp3")
+  const [playBlowLow] = useSound("/sound/吹.mp3", { volume: 0.5 })
+  const [playBlowHigh] = useSound("/sound/吹.mp3", { volume: 1 })
+  const [playFeatherTobeCoin] = useSound("/sound/羽毛变金币.wav", { volume: 1 })
+  const [playSigh79] = useSound("/sound/欸79.mp3", { volume: 1 })
+  const [playToBeMad] = useSound("/sound/我真地快疯掉了.mp3", { volume: 1 })
+
+  events.forEach((e) => {
+    switch (e.type) {
+      case "blow":
+        const play = e.player.rage > 80 ? playBlowHigh : playBlowLow
+        play()
+        break
+      case "feather-onto-ground":
+        playSigh79()
+        break
+      case "coin-onto-ground":
+        playToBeMad()
+        break
+      case "feather-tobe-coin":
+        playFeatherTobeCoin()
+        break
+      case "player-got-coin":
+        playGotCoin()
+        break
+      default:
+        break
+    }
+  })
 
   return (
     <div
@@ -42,14 +79,14 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
       <div className={"absolute right-4 top-2 flex flex-col gap-2 "}>
         <LabelLine label={"🚪 关卡"}>
           <span className={"text-xs"}>
-            {game.stage.toString().padStart(2, "0")}
+            {data.stage.toString().padStart(2, "0")}
             {/*{`(${game.tick})`}*/}
           </span>
         </LabelLine>
 
         <ProgressLabelLine
           label={"❤️ 生命值"}
-          value={game.life}
+          value={data.life}
           valueMax={GAME_LIFE_MAX}
           className={"progress-success w-8"}
         />
@@ -57,11 +94,11 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
         <button
           className={"btn btn-xs text-xs z-50"}
           onClick={() => {
-            console.log(game.state)
-            client.do({ type: game.state === "paused" ? "resume" : "pause" })
+            console.log(data.state)
+            client.do({ type: data.state === "paused" ? "resume" : "pause" })
           }}
         >
-          {game.state === "paused" ? "继续" : "暂停"}
+          {data.state === "paused" ? "继续" : "暂停"}
         </button>
         {process.env.NODE_ENV === "development" && (
           <button
@@ -87,7 +124,7 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
       {/*</div>*/}
 
       {/* 全屏：道具： */}
-      {game.objs.map((f, i) => (
+      {data.objs.map((f, i) => (
         <ObjContainer
           key={i}
           x={f.x * width}

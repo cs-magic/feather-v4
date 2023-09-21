@@ -2,7 +2,7 @@
 
 import { client } from "@/lib/game/game-client"
 import React, { useState } from "react"
-import { IGame } from "@/lib/game/game-server"
+import { IGameData, GameEvent } from "@/lib/game/game-server"
 import useInterval from "@/hooks/use-interval"
 import { CLIENT_FPS } from "@/config"
 import { useAudio } from "@/hooks/use-audio"
@@ -11,20 +11,23 @@ import { GameOver } from "@/app/game/state/over"
 import { GamePlaying } from "@/app/game/state/playing"
 
 export default function GamePage() {
-  const [game, setGame] = useState<IGame>()
+  const [gameData, setGameData] = useState<IGameData>()
+  const [gameEvents, setGameEvents] = useState<GameEvent[]>([])
 
   useInterval(() => {
-    setGame(client.sync())
+    setGameData(client.sync())
+    setGameEvents(client.server.events.slice(client.eventsRead))
+    client.eventsRead = client.server.events.length
   }, 1000 / CLIENT_FPS)
 
-  useAudio(game?.state)
+  useAudio(gameData?.state)
 
-  switch (game?.state) {
+  switch (gameData?.state) {
     case "waiting":
       return <GameWaiting />
     case "playing":
     case "paused":
-      return <GamePlaying game={game} />
+      return <GamePlaying data={gameData} events={gameEvents} />
     case "over":
       return <GameOver />
     default:

@@ -5,7 +5,7 @@ import { FeatherObject } from "@/lib/game/object/feather"
 import { CoinObject } from "@/lib/game/object/coin"
 import { GameObj, IGameObj } from "@/lib/game/object/objects"
 
-export type ServerEvent =
+export type GameEvent =
   | {
       type: "player-got-coin"
       playerId: PlayerID
@@ -24,10 +24,14 @@ export type ServerEvent =
       type: "coin-onto-ground"
       objId: ObjID
     }
+  | {
+      type: "blow"
+      player: IPlayer
+    }
 
 export type GameState = "waiting" | "playing" | "paused" | "over"
 
-export interface IGame {
+export interface IGameData {
   stage: number
   state: GameState
   tick: number
@@ -36,7 +40,7 @@ export interface IGame {
   objs: IGameObj[]
 }
 
-export class GameServer implements IGame {
+export class GameServer implements IGameData {
   // configurable
   public addFeatherIntervalSeconds = 5
 
@@ -49,7 +53,7 @@ export class GameServer implements IGame {
   public objs: GameObj[] = []
   public featherId = 0
 
-  public events: ServerEvent[] = []
+  public events: GameEvent[] = []
 
   constructor() {
     setInterval(() => {
@@ -95,8 +99,7 @@ export class GameServer implements IGame {
             else if (y >= 1) {
               this.life--
               this.events.push({
-                type: "feather-tobe-coin",
-                playerId: obj.playerBlew!,
+                type: "feather-onto-ground",
                 objId: obj.id,
               })
             }
@@ -192,6 +195,7 @@ export class GameServer implements IGame {
         console.log("onPressUp")
         //  既可以是 idle，也可以是 clenching，吹气
         if (player.state !== "moving") {
+          this.events.push({ type: "blow", player })
           player.blow(this.objs)
         }
 
@@ -225,7 +229,7 @@ export class GameServer implements IGame {
     this.state = "over"
   }
 
-  public serialize(): IGame {
+  public serialize(): IGameData {
     return {
       stage: this.stage,
       state: this.state,

@@ -1,12 +1,14 @@
-import { GameServer, IGame, ServerEvent } from "@/lib/game/game-server"
+import { GameServer, IGameData, GameEvent } from "@/lib/game/game-server"
 import { Player, PlayerAction } from "@/lib/game/player"
 import { PLAYER_DEFAULT_ID } from "@/config"
 
 export class GameClient {
-  private server: GameServer
+  public server: GameServer
   public player: Player = new Player(PLAYER_DEFAULT_ID)
 
-  public game?: IGame
+  public game?: IGameData
+
+  public eventsRead = 0
 
   public sync() {
     return (this.game = this.server.serialize())
@@ -26,7 +28,7 @@ export class GameClient {
     this.server.onPlayerAction(this.player.id, action)
   }
 
-  public on(event: ServerEvent) {}
+  public on(event: GameEvent) {}
 }
 
 export const client = new GameClient()

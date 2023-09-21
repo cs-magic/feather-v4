@@ -25,7 +25,7 @@ export const GameOver = () => {
             if (!username) return
 
             const user = await createUser.mutateAsync({ name: username })
-            const record = await pushGameRecord.mutateAsync({
+            await pushGameRecord.mutateAsync({
               user: {
                 connect: {
                   id: user.id,
@@ -33,6 +33,7 @@ export const GameOver = () => {
               },
               score: player.score,
             })
+            client.restart()
           }}
         >
           <h2 className="py-6 text-2xl">你完蛋啦！</h2>
@@ -60,7 +61,12 @@ export const GameOver = () => {
               提交排名
             </button>
 
-            <button className="btn btn-primary m-4" onClick={client.restart}>
+            <button
+              className="btn btn-ghost m-4"
+              onClick={() => {
+                client.restart()
+              }}
+            >
               重新开始
             </button>
           </div>
