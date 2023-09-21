@@ -1,11 +1,9 @@
-"use client"
-import React from "react"
 import { client } from "@/lib/game/game-client"
 import { trpc } from "@/lib/trpc"
-import { GameRanks } from "@/app/components/game-ranks"
-import Link from "next/link"
+import { GameRanks } from "@/app/game/comp/ranks"
+import React from "react"
 
-export default function GameOverPage() {
+export const GameOver = () => {
   const player = client.player
 
   const utils = trpc.useContext()
@@ -62,9 +60,14 @@ export default function GameOverPage() {
               提交排名
             </button>
 
-            <Link href={"/"}>
-              <button className="btn btn-primary m-4">重新开始</button>
-            </Link>
+            <button
+              className="btn btn-primary m-4"
+              onClick={() => {
+                client.do({ type: "restart" })
+              }}
+            >
+              重新开始
+            </button>
           </div>
 
           <GameRanks />

@@ -6,7 +6,7 @@ export const GameRanks = () => {
 
   return (
     <div className={"py-4 flex flex-col gap-2"}>
-      <h2 className={"text-2xl"}>排行榜</h2>
+      <h2 className={"text-2xl font-bold"}>排行榜</h2>
 
       {!ranks.length ? (
         "暂无数据"

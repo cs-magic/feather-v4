@@ -3,7 +3,7 @@ import { GameObject } from "@/lib/game/object"
 
 export const getRectangleBlowY = (rage: number) => 0.2 + rage / 400
 
-export const getRectangleBlowXRadius = () => 0.1
+export const getRectangleBlowXRadius = () => 0.15
 
 export const blow = (
   player: Player,
@@ -31,7 +31,7 @@ export const blow = (
            * 如果考虑连续 tick，则 .4 + .3 + .2 + .1 就可以吹回，也就是最少需要 .5 的力
            * 这是可行的，因为我们的力的区间就在 (0 - 100 ) / 100
            */
-          object.ySpeed -= player.rage / 100
+          object.ySpeed -= 0.2 + player.rage / 200
           object.playerBlew = player.id
         }
       })
