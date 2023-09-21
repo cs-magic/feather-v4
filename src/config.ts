@@ -25,3 +25,5 @@ export const Player = {
     max: 0.95,
   },
 }
+
+export const PlayerImageWidth = 200

@@ -27,26 +27,6 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
         "w-full grow overflow-hidden"
       )}
     >
-      {/* 全屏：道具： */}
-      {game.objects.map((f, i) => (
-        <ObjContainer
-          key={i}
-          x={f.x * width}
-          y={f.y * height}
-          className={clsx("animate-bounce")}
-        >
-          {f.type === "feather" && (
-            <Image
-              width={80}
-              height={20}
-              src={Assets.feather.src}
-              alt={"object"}
-            />
-          )}
-          {f.type === "coin" && <Coin1 />}
-        </ObjContainer>
-      ))}
-
       {/* 左上： 玩家状态 */}
       <div
         className={clsx(
@@ -104,6 +84,28 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
       {/*<div className={"absolute right-12 bottom-12 z-50"}>*/}
       {/*  <Shoot />*/}
       {/*</div>*/}
+
+      {/* 全屏：道具： */}
+      {game.objects.map((f, i) => (
+        <ObjContainer
+          key={i}
+          x={f.x * width}
+          y={f.y * height}
+          className={clsx("animate-bounce z-50 pointer-events-none")}
+        >
+          {f.type === "feather" && (
+            <Image
+              width={80}
+              height={20}
+              src={Assets.feather.src}
+              alt={"object"}
+              className={"pointer-events-none"}
+              onDragEnd={(e) => e.preventDefault()}
+            />
+          )}
+          {f.type === "coin" && <Coin1 />}
+        </ObjContainer>
+      ))}
     </div>
   )
 }
