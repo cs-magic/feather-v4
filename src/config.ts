@@ -26,4 +26,4 @@ export const Player = {
   },
 }
 
-export const PlayerImageWidth = 200
+export const PLAYER_IMAGE_WIDTH = 200

@@ -11,6 +11,7 @@ import Image from "next/image"
 import { useTestStore } from "@/store"
 import { Assets } from "@/assets"
 import { Coin1, Coin2, Coin3 } from "@/app/game/comp/coin"
+import { ignore } from "@/lib/helpers"
 
 export const GamePlaying = ({ game }: { game: IGame }) => {
   const { width, height: sh } = useScreenStore()
@@ -86,7 +87,7 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
       {/*</div>*/}
 
       {/* 全屏：道具： */}
-      {game.objects.map((f, i) => (
+      {game.objs.map((f, i) => (
         <ObjContainer
           key={i}
           x={f.x * width}
@@ -100,7 +101,7 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
               src={Assets.feather.src}
               alt={"object"}
               className={"pointer-events-none"}
-              onDragEnd={(e) => e.preventDefault()}
+              onDragEnd={ignore}
             />
           )}
           {f.type === "coin" && <Coin1 />}

@@ -60,12 +60,7 @@ export const GameOver = () => {
               提交排名
             </button>
 
-            <button
-              className="btn btn-primary m-4"
-              onClick={() => {
-                client.do({ type: "restart" })
-              }}
-            >
+            <button className="btn btn-primary m-4" onClick={client.restart}>
               重新开始
             </button>
           </div>

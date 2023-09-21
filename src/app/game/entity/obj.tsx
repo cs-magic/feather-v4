@@ -4,6 +4,7 @@ import { animated } from "@react-spring/web"
 import { pos2str, SNumber } from "@/lib/number"
 import { useElementSize } from "@mantine/hooks"
 import { useTestStore } from "@/store"
+import { ignore } from "@/lib/helpers"
 
 export type IObjContainer = {
   // 坐标
@@ -38,9 +39,7 @@ export const ObjContainer = ({
         left: (typeof x === "number" ? x : x.get()) - (width >> 1),
         ...style,
       }}
-      onTouchEnd={(event) => {
-        event.preventDefault()
-      }}
+      onTouchEnd={ignore}
       {...props}
     >
       {isTesting && (
@@ -93,9 +92,7 @@ export const Obj = forwardRef<HTMLDivElement, IObj>(
           backgroundImage: bg ? `url(${bg})` : undefined,
           ...style,
         }}
-        onTouchEnd={(event) => {
-          event.preventDefault()
-        }}
+        onTouchEnd={ignore}
         {...props}
       >
         {isTesting && (

@@ -1,28 +1,26 @@
 import React, { useState } from "react"
-import { config, easings, useSpring } from "@react-spring/web"
+import { useSpring } from "@react-spring/web"
 import { useGesture } from "@use-gesture/react"
 import clsx from "clsx"
-import useInterval from "@/hooks/use-interval"
 import {
-  CLIENT_FPS,
   PLAYER_LIFE_MAX,
   PLAYER_RAGE_MAX,
-  PlayerImageWidth,
+  PLAYER_IMAGE_WIDTH,
   TOP,
 } from "@/config"
 import { client } from "@/lib/game/game-client"
-import { IPlayer } from "@/lib/game/player"
+import {
+  getRectangleBlowXRadius,
+  getRectangleBlowY,
+  IPlayer,
+} from "@/lib/game/player"
 import useSound from "use-sound"
 import { Obj, ObjContainer } from "@/app/game/entity/obj"
 
 import { useScreenStore } from "@/hooks/use-screen"
-import {
-  getRectangleBlowXRadius,
-  getRectangleBlowY,
-} from "@/lib/game/player-blow"
-import { Assets } from "@/assets"
 import Image from "next/image"
 import { LabelLine, ProgressLabelLine } from "@/app/utils/label.line"
+import { ignore } from "@/lib/helpers"
 
 /**
  * todo: 对 drag 进行一层封装
@@ -32,137 +30,66 @@ import { LabelLine, ProgressLabelLine } from "@/app/utils/label.line"
 export const Player = ({ player }: { player: IPlayer }) => {
   const { width: sw, height: sh } = useScreenStore()
 
-  // 初始的 x 位置
-  const X = sw >> 1
-  // 游戏区域的高度
-  const vh = sh - TOP
+  const vw = sw // 游戏区域的宽度
+  const vh = sh - TOP // 游戏区域的高度
+  const X = vw >> 1 // 初始的 x 位置
 
   const [isMoved, setMoved] = useState(false)
-  const [{ pressedTicks, left }, api] = useSpring(() => ({
-    pressedTicks: 0,
-    left: sw >> 1,
+  const [{ left }, api] = useSpring(() => ({
+    left: vw >> 1,
   }))
 
   const [playGiveUp, {}] = useSound("/sound/有没有认真工作.mp3")
   const [playWorkHard, {}] = useSound("/sound/哪里贵了.mp3")
 
-  const blow = {
-    onFinal: () => {
-      api.start({
-        pressedTicks: 0,
-        config: config.molasses,
-      })
-    },
-
-    onCancel: () => {
-      setMoved(true)
-      if (pressedTicks.get() > longPressingTicks) {
-        playGiveUp()
-
-        client.do({
-          type: "clench-give-up",
-          data: { consumption: pressedTicks.get() },
-        })
-      }
-      blow.onFinal()
-    },
-
-    onSuccess: () => {
-      playWorkHard()
-      client.do({ type: "blow", data: { type: "rectangle" } })
-      blow.onFinal()
-    },
-  }
-
   const bind = useGesture(
     {
       onDragStart: () => {
-        api.start({ pressedTicks: 1 })
         console.log("onDragStart")
+        client.do({ type: "pressDown", x: left.get() / vw })
       },
-
       onDrag: ({ movement: [mx], offset: [ox] }) => {
-        // console.log("onDrag: ", { mx, [xKey]: style[xKey].get() })
-
-        // cancel blow if move too far
-        if (Math.abs(mx) > 10 && !isMoved) blow.onCancel()
-
+        // console.log("onDrag: ", { mx })
+        // 应该直接传最终效果，毕竟屏幕上只是动画
+        client.do({ type: "move", x: (X + ox) / vw })
         api.start({ left: X + ox })
       },
-
       onDragEnd: () => {
         console.log("onDragEnd")
-
-        // blow if not moved
-        if (!isMoved && pressedTicks.get() > longPressingTicks) blow.onSuccess()
-
-        setMoved(false)
-        client.do({ type: "idle" })
+        client.do({ type: "pressUp" })
       },
     },
     {
       drag: {
         bounds: {
           // 玩家一开始居中（anchor也居中），完了，可以朝左或朝右移动到与容器对齐的位置，这两个距离是相等的
-          left: -(sw - PlayerImageWidth) >> 1,
-          right: (sw - PlayerImageWidth) >> 1,
+          left: -(vw - PLAYER_IMAGE_WIDTH) >> 1,
+          right: (vw - PLAYER_IMAGE_WIDTH) >> 1,
         },
       },
     }
   )
-
-  useInterval(() => {
-    // note: UI 与后端 left 保持一致
-    client.do({ type: "move", data: { x: left.get() / sw } })
-
-    const released = pressedTicks.animation.to === 0
-
-    if (!released && !isMoved) {
-      // 每个tick都增加1的体力消耗
-      api.start({ pressedTicks: (pressedTicks.animation.to as number) + 1 })
-      if (player.life > 0 && pressedTicks.get() > 0)
-        client.do({ type: "clench" })
-    }
-  }, 1000 / CLIENT_FPS)
-
-  // console.log({ container, leftStart, left: left.get(), dragConstraint });
-  // console.log({ life, lifeCost })
-  // console.log({ pressedTicks, longPressingTicks })
-
-  const pressed = pressedTicks.get()
-  console.log({ pressed })
 
   return (
     <>
       <ObjContainer
         x={left}
         y={vh}
-        className={"-translate-y-[50%] z-50 w-48 h-52"}
+        className={"-translate-y-[50%] z-50"}
         {...bind()}
       >
         <Image
-          src={getPlayerImg(player, pressed)}
+          src={getPlayerImg(player)}
           alt={"player"}
-          fill
-          className={"pointer-events-none"}
+          width={PLAYER_IMAGE_WIDTH}
+          height={240}
+          className={"pointer-events-none h-auto"}
           priority
-          sizes={"width:120px;"}
-          onDragEnd={(e) => e.preventDefault()}
+          onDragEnd={ignore}
         />
       </ObjContainer>
-      {/*<Obj*/}
-      {/*  ref={ref}*/}
-      {/*  w={180}*/}
-      {/*  h={160}*/}
-      {/*  x={style.left}*/}
-      {/*  y={vh}*/}
-      {/*  bg={getPlayerImg(player, pressedTicks)}*/}
-      {/*  className={"-translate-y-[100%] z-50"}*/}
-      {/*  {...bind()}*/}
-      {/*/>*/}
-
       <Obj
-        w={2 * sw * getRectangleBlowXRadius()}
+        w={2 * vw * getRectangleBlowXRadius()}
         h={vh * getRectangleBlowY(player.rage)}
         x={left}
         y={vh}
@@ -176,14 +103,7 @@ export const Player = ({ player }: { player: IPlayer }) => {
   )
 }
 
-// .5 s
-const longPressingTicks = Math.floor(CLIENT_FPS / 5)
-
-const getPlayerImg = (
-  player: IPlayer,
-  pressedTicks: number,
-  withCry?: boolean
-) => {
+const getPlayerImg = (player: IPlayer, withCry?: boolean) => {
   // 启动200 ms
   // 2 秒走完10张，每秒5张，1张200ms
   // 最大 pressingTicks = 2.5 * 50 = 125
@@ -192,12 +112,8 @@ const getPlayerImg = (
   const filename =
     withCry && player.life <= 1
       ? "cry"
-      : Math.floor(
-          Math.min(
-            (Math.max(pressedTicks - longPressingTicks, 0) / CLIENT_FPS) * 5,
-            10
-          )
-        )
+      : // [0-100] --> [0, 10]
+        Math.floor(player.rage / 10)
   return `/image/player/ljq/${filename}.png`
 }
 
@@ -206,7 +122,7 @@ export const PlayerStatus = ({ player }: { player: IPlayer }) => {
     <div className={"flex gap-2"}>
       <Image
         // 左上角要哭
-        src={getPlayerImg(player, player.rage, true)}
+        src={getPlayerImg(player, true)}
         alt={"player"}
         width={60}
         height={80}
