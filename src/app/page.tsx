@@ -1,33 +1,67 @@
 "use client"
 
-import { client } from "@/lib/game/client"
-import React, { useState } from "react"
-import { IGameData, GameEvent } from "@/lib/game/server"
+import { client, IClientGameData } from "@/lib/game/client"
+import React, { useEffect, useState } from "react"
 import useInterval from "@/hooks/use-interval"
 import { CLIENT_FPS } from "@/config"
 import { useAudio } from "@/hooks/use-audio"
 import { GameWaiting } from "@/app/game/state/waiting"
 import { GameOver } from "@/app/game/state/over"
 import { GamePlaying } from "@/app/game/state/playing"
+import clsx from "clsx"
+import { useElementSize } from "@mantine/hooks"
+import { useViewportStore } from "@/hooks/use-viewpoint"
 
 export default function GamePage() {
-  const [gameData, setGameData] = useState<IGameData>()
-  const [gameEvents, setGameEvents] = useState<GameEvent[]>([])
+  const { setHeight, setWidth } = useViewportStore()
+  const { ref, width, height } = useElementSize()
+  const gameComp = useGame()
+
+  useEffect(() => {
+    setWidth(width)
+    setHeight(height)
+  }, [width, height])
+
+  return (
+    <main
+      className={clsx(
+        "w-full h-full overflow-auto",
+        "md:w-[640px] mx-auto border border-gray-800 flex flex-col bg-cover"
+      )}
+      style={{
+        backgroundImage: `url(/image/rain01.gif)`,
+      }}
+    >
+      {/*  顶部的花西子笔，（基于笔的高度）固定高度 */}
+      <div
+        className="bg-repeat-x w-full shrink-0 h-16"
+        style={{
+          backgroundImage: "url(/image/pen2.png)",
+        }}
+      />
+
+      <div className={"w-full grow relative"} ref={ref}>
+        {gameComp}
+      </div>
+    </main>
+  )
+}
+
+const useGame = () => {
+  const [game, setGame] = useState<IClientGameData>()
 
   useInterval(() => {
-    setGameData(client.sync())
-    setGameEvents(client.server.events.slice(client.eventsRead))
-    client.eventsRead = client.server.events.length
+    setGame(client.sync())
   }, 1000 / CLIENT_FPS)
 
-  useAudio(gameData?.state)
+  useAudio(game?.data.state)
 
-  switch (gameData?.state) {
+  switch (game?.data.state) {
     case "waiting":
       return <GameWaiting />
     case "playing":
     case "paused":
-      return <GamePlaying data={gameData} events={gameEvents} />
+      return <GamePlaying data={game!.data} events={game!.events} />
     case "over":
       return <GameOver />
     default:

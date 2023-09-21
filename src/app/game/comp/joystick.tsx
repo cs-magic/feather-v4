@@ -4,7 +4,7 @@ import { IJoystickUpdateEvent } from "react-joystick-component/build/lib/Joystic
 
 import useInterval from "@/hooks/use-interval"
 import { usePlayerStore } from "@/store"
-import { Player } from "@/config"
+import { PLAYER } from "@/config"
 
 export const JoystickController = () => {
   const [playerSpeed, setPlayerSpeed] = useState(0)
@@ -24,8 +24,8 @@ export const JoystickController = () => {
     if (playerSpeed) {
       let x = x0
       x += playerSpeed * 0.3
-      x = Math.max(x, Player.x.min)
-      x = Math.min(x, Player.x.max)
+      x = Math.max(x, PLAYER.x.min)
+      x = Math.min(x, PLAYER.x.max)
       setX(x)
     }
   }, 20) // 50fps

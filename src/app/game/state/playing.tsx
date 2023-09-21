@@ -1,19 +1,19 @@
-import { IGameData, GameEvent } from "@/lib/game/server"
-import { useScreenStore } from "@/hooks/use-screen"
-import { GAME_LIFE_MAX, TOP, TOTAL_PROGRESS } from "@/config"
+import { GameEvent, IGameData } from "@/lib/game/server"
+import { GAME_LIFE_MAX, TOTAL_PROGRESS } from "@/config"
 import { client } from "@/lib/game/client"
 import clsx from "clsx"
 import { ObjContainer } from "@/app/game/entity/obj"
-import { LabelLine, ProgressLabelLine } from "@/app/utils/label.line"
+import { LabelLine } from "@/app/utils/label.line"
 import { Player, PlayerStatus } from "@/app/game/entity/player"
 import React from "react"
 import Image from "next/image"
 import { useTestStore } from "@/store"
 import { Assets } from "@/assets"
-import { Coin1, Coin2, Coin3 } from "@/app/game/comp/coin"
+import { Coin1 } from "@/app/game/comp/coin"
 import { ignore } from "@/lib/helpers"
 import useSound from "use-sound"
 import { range } from "lodash"
+import { useViewportStore } from "@/hooks/use-viewpoint"
 
 export const GamePlaying = ({
   data,
@@ -22,8 +22,7 @@ export const GamePlaying = ({
   data: IGameData
   events: GameEvent[]
 }) => {
-  const { width, height: sh } = useScreenStore()
-  const height = sh - TOP
+  const { width: vw, height: vh } = useViewportStore()
 
   const { isTesting, setTesting } = useTestStore()
 
@@ -60,18 +59,13 @@ export const GamePlaying = ({
   })
 
   return (
-    <div
-      className={clsx(
-        "relative", // 花西子口红下方是实际操作区域
-        "w-full grow overflow-hidden"
-      )}
-    >
+    <>
       {/* 全屏：道具： */}
       {data.objs.map((f, i) => (
         <ObjContainer
           key={i}
-          x={f.x * width}
-          y={f.y * height}
+          x={f.x * vw}
+          y={f.y * vh}
           className={clsx("animate-bounce z-50 pointer-events-none")}
         >
           {f.type === "feather" && (
@@ -104,7 +98,7 @@ export const GamePlaying = ({
           <LabelLine label={"⚙️ 设置"}>
             <button
               className={
-                "btn btn-xs btn-ghost text-xs z-50 p-0 !min-h-[16px] h-4"
+                "btn btn-xs btn-ghost text-xs z-50 p-0 !min-h-[16px] h-4 border-none"
               }
               onClick={() => {
                 console.log(data.state)
@@ -173,6 +167,6 @@ export const GamePlaying = ({
       {/*<div className={"absolute right-12 bottom-12 z-50"}>*/}
       {/*  <Shoot />*/}
       {/*</div>*/}
-    </div>
+    </>
   )
 }

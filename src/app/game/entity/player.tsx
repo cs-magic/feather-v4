@@ -1,13 +1,8 @@
-import React, { useState } from "react"
+import React from "react"
 import { useSpring } from "@react-spring/web"
 import { useGesture } from "@use-gesture/react"
 import clsx from "clsx"
-import {
-  PLAYER_LIFE_MAX,
-  PLAYER_RAGE_MAX,
-  PLAYER_IMAGE_WIDTH,
-  TOP,
-} from "@/config"
+import { PLAYER_IMAGE_WIDTH, PLAYER_LIFE_MAX, PLAYER_RAGE_MAX } from "@/config"
 import { client } from "@/lib/game/client"
 import {
   getRectangleBlowXRadius,
@@ -16,11 +11,11 @@ import {
 } from "@/lib/game/player"
 import useSound from "use-sound"
 import { Obj, ObjContainer } from "@/app/game/entity/obj"
-
-import { useScreenStore } from "@/hooks/use-screen"
 import Image from "next/image"
 import { LabelLine, ProgressLabelLine } from "@/app/utils/label.line"
 import { ignore } from "@/lib/helpers"
+import { useToggle, useVibrate } from "react-use"
+import { useViewportStore } from "@/hooks/use-viewpoint"
 
 /**
  * todo: 对 drag 进行一层封装
@@ -28,10 +23,8 @@ import { ignore } from "@/lib/helpers"
  * @constructor
  */
 export const Player = ({ player }: { player: IPlayer }) => {
-  const { width: sw, height: sh } = useScreenStore()
+  const { width: vw, height: vh } = useViewportStore()
 
-  const vw = sw // 游戏区域的宽度
-  const vh = sh - TOP // 游戏区域的高度
   const X = vw >> 1 // 初始的 x 位置
 
   const [{ left }, api] = useSpring(() => ({
@@ -40,6 +33,10 @@ export const Player = ({ player }: { player: IPlayer }) => {
 
   const [playGiveUp, {}] = useSound("/sound/有没有认真工作.mp3")
   const [playWorkHard, {}] = useSound("/sound/哪里贵了.mp3")
+
+  const [vibrating, toggleVibrating] = useToggle(true)
+
+  useVibrate(vibrating, [300, 100, 200, 100, 1000, 300], false)
 
   const bind = useGesture(
     {
@@ -76,16 +73,21 @@ export const Player = ({ player }: { player: IPlayer }) => {
         x={left}
         y={vh}
         className={"-translate-y-[50%] z-50"}
+        style={{
+          width: vw * 0.28,
+          height: 220,
+        }}
         {...bind()}
       >
         <Image
           src={getPlayerImg(player)}
           alt={"player"}
-          width={PLAYER_IMAGE_WIDTH}
-          height={240}
-          className={"pointer-events-none h-auto"}
+          fill
+          objectFit={"cover"}
+          className={"pointer-events-none"}
           priority
           onDragEnd={ignore}
+          sizes={"width=200px;"}
         />
       </ObjContainer>
       <Obj
