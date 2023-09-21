@@ -3,7 +3,7 @@ import clsx from "clsx"
 import { animated } from "@react-spring/web"
 import { pos2str, SNumber } from "@/lib/number"
 import { useElementSize } from "@mantine/hooks"
-import { useTestStore } from "@/store/player.slice"
+import { useTestStore } from "@/store"
 
 export type IObjContainer = {
   // 坐标
@@ -21,7 +21,7 @@ export const ObjContainer = ({
 }: IObjContainer) => {
   const { isTesting } = useTestStore()
   const { ref, width, height } = useElementSize()
-  console.log("obj: ", { width, height })
+  // console.log("obj: ", { width, height })
   return (
     <animated.div
       ref={ref}

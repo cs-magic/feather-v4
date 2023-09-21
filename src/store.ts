@@ -2,6 +2,9 @@ import { create } from "zustand"
 import { PLAYER_LIFE_MAX } from "@/config"
 
 export interface PlayerState {
+  x: number
+  setX: (x: number) => void
+
   life: number
   setLife: (life: number) => void
 
@@ -10,6 +13,9 @@ export interface PlayerState {
 }
 
 export const usePlayerStore = create<PlayerState>((set) => ({
+  x: 0.5,
+  setX: (x) => set({ x }),
+
   life: PLAYER_LIFE_MAX,
   setLife: (life: number) => set({ life }),
 

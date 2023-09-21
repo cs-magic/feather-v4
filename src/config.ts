@@ -17,3 +17,11 @@ export const PLAYER_DEFAULT_ID = "ljq"
 export const LIFE_COST_INIT = -10
 
 export const TOP = 64 // 花西子口红的高度，用于后续游戏布局的减值
+
+export const Player = {
+  x: {
+    default: 0.5,
+    min: 0.05,
+    max: 0.95,
+  },
+}

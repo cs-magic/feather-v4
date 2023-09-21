@@ -3,14 +3,15 @@ import { useScreenStore } from "@/hooks/use-screen"
 import { GAME_LIFE_MAX, PLAYER_LIFE_MAX, PLAYER_RAGE_MAX, TOP } from "@/config"
 import { client } from "@/lib/game/game-client"
 import clsx from "clsx"
-import { Obj, ObjContainer } from "@/app/game/entity/obj"
-import FeatherImage from "../../../public/image/feather.png"
-import CoinImage from "../../../public/image/coin.png"
+import { ObjContainer } from "@/app/game/entity/obj"
 import { LabelLine, ProgressLabelLine } from "@/app/utils/label.line"
 import { Player } from "@/app/game/entity/player"
 import React from "react"
 import Image from "next/image"
-import { useTestStore } from "@/store/player.slice"
+import { useTestStore } from "@/store"
+import { Assets } from "@/assets"
+import { JoystickController } from "@/app/game/comp/joystick"
+import { Shoot } from "@/app/game/comp/shoot"
 
 export const GamePlaying = ({ game }: { game: IGame }) => {
   const { width, height: sh } = useScreenStore()
@@ -38,30 +39,66 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
           <Image
             width={80}
             height={20}
-            src={f.type === "feather" ? FeatherImage.src : CoinImage.src}
+            src={f.type === "feather" ? Assets.feather.src : Assets.coin.src}
             alt={"object"}
           />
         </ObjContainer>
       ))}
 
       {/* 左上： 玩家状态 */}
-      <div className={clsx("absolute inset-0 shrink-0 p-2 z-50")}>
-        <div className={"flex flex-col gap-2"}>
-          <LabelLine label={"⭐️ 得分"}>{player.score}</LabelLine>
-
-          <ProgressLabelLine
-            label={"😁 体力值"}
-            value={player.life}
-            valueMax={PLAYER_LIFE_MAX}
-            className={"progress-accent w-32"}
+      <div
+        className={clsx(
+          "absolute inset-0 shrink-0 p-2 z-50 flex flex-col gap-2 scale-[70%] -translate-x-[80px] -translate-y-[80px]"
+        )}
+      >
+        <div className={"flex gap-2"}>
+          <Image
+            src={Assets.ljq.idle}
+            alt={"player"}
+            className={"h-auto shrink-0 w-20"}
           />
+          <div className={"flex flex-col gap-2"}>
+            <LabelLine label={"⭐️ 得分"}>{player.score}</LabelLine>
 
-          <ProgressLabelLine
-            label={"🔥 充能条"}
-            value={player.rage}
-            valueMax={PLAYER_RAGE_MAX}
-            className={"progress-warning w-32"}
+            <ProgressLabelLine
+              label={"😁 体力值"}
+              value={player.life}
+              valueMax={PLAYER_LIFE_MAX}
+              className={"progress-accent w-32"}
+            />
+
+            <ProgressLabelLine
+              label={"🔥 充能条"}
+              value={player.rage}
+              valueMax={PLAYER_RAGE_MAX}
+              className={"progress-warning w-32"}
+            />
+          </div>
+        </div>
+
+        <div className={"flex gap-2"}>
+          <Image
+            src={Assets.zsy.idle}
+            alt={"player"}
+            className={"h-auto shrink-0 w-20"}
           />
+          <div className={"flex flex-col gap-2"}>
+            <LabelLine label={"⭐️ 得分"}>{player.score}</LabelLine>
+
+            <ProgressLabelLine
+              label={"😁 体力值"}
+              value={player.life}
+              valueMax={PLAYER_LIFE_MAX}
+              className={"progress-accent w-32"}
+            />
+
+            <ProgressLabelLine
+              label={"🔥 充能条"}
+              value={player.rage}
+              valueMax={PLAYER_RAGE_MAX}
+              className={"progress-warning w-32"}
+            />
+          </div>
         </div>
       </div>
 
@@ -104,6 +141,14 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
 
       {/* 玩家 */}
       <Player player={player} />
+
+      <div className={"absolute left-12 bottom-12 z-50"}>
+        <JoystickController />
+      </div>
+
+      <div className={"absolute right-12 bottom-12 z-50"}>
+        <Shoot />
+      </div>
     </div>
   )
 }

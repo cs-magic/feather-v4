@@ -15,6 +15,7 @@ import {
   getRectangleBlowXRadius,
   getRectangleBlowY,
 } from "@/lib/game/player-blow"
+import { Assets } from "@/assets"
 
 export const Player = ({ player }: { player: IPlayer }) => {
   const { width: sw, height: sh } = useScreenStore()
@@ -94,7 +95,7 @@ export const Player = ({ player }: { player: IPlayer }) => {
 
   // console.log({ container, leftStart, left: left.get(), dragConstraint });
   // console.log({ life, lifeCost })
-  console.log({ pressedTicks, longPressingTicks })
+  // console.log({ pressedTicks, longPressingTicks })
 
   return (
     <>
@@ -128,6 +129,8 @@ export const Player = ({ player }: { player: IPlayer }) => {
 const longPressingTicks = CLIENT_FPS / 2
 
 const getPlayerImg = (player: IPlayer, pressedTicks: number) => {
+  return Assets.maliao.src
+
   // 启动200 ms
   // 2 秒走完10张，每秒5张，1张200ms
   // 最大 pressingTicks = 2.5 * 50 = 125
