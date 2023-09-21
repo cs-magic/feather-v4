@@ -4,7 +4,13 @@ import { useElementSize } from "@mantine/hooks"
 import { useGesture } from "@use-gesture/react"
 import clsx from "clsx"
 import useInterval from "@/hooks/use-interval"
-import { CLIENT_FPS, LIFE_COST_INIT, TOP } from "@/config"
+import {
+  CLIENT_FPS,
+  LIFE_COST_INIT,
+  PLAYER_LIFE_MAX,
+  PLAYER_RAGE_MAX,
+  TOP,
+} from "@/config"
 import { client } from "@/lib/game/game-client"
 import { IPlayer } from "@/lib/game/player"
 import useSound from "use-sound"
@@ -16,6 +22,8 @@ import {
   getRectangleBlowY,
 } from "@/lib/game/player-blow"
 import { Assets } from "@/assets"
+import Image from "next/image"
+import { LabelLine, ProgressLabelLine } from "@/app/utils/label.line"
 
 export const Player = ({ player }: { player: IPlayer }) => {
   const { width: sw, height: sh } = useScreenStore()
@@ -106,7 +114,7 @@ export const Player = ({ player }: { player: IPlayer }) => {
         x={style.left}
         y={vh}
         bg={getPlayerImg(player, pressedTicks)}
-        className={"-translate-y-[70%] z-50"}
+        className={"-translate-y-[100%] z-50"}
         {...bind()}
       />
 
@@ -129,8 +137,6 @@ export const Player = ({ player }: { player: IPlayer }) => {
 const longPressingTicks = CLIENT_FPS / 2
 
 const getPlayerImg = (player: IPlayer, pressedTicks: number) => {
-  return Assets.maliao.src
-
   // 启动200 ms
   // 2 秒走完10张，每秒5张，1张200ms
   // 最大 pressingTicks = 2.5 * 50 = 125
@@ -144,5 +150,34 @@ const getPlayerImg = (player: IPlayer, pressedTicks: number) => {
             10
           )
         )
-  return `/image/player/${fileName}.png`
+  return `/image/player/ljq/${fileName}.png`
+}
+
+export const PlayerStatus = ({ player }: { player: IPlayer }) => {
+  return (
+    <div className={"flex gap-2"}>
+      <Image
+        src={Assets.ljq.idle}
+        alt={"player"}
+        className={"h-auto shrink-0 w-20"}
+      />
+      <div className={"flex flex-col gap-2"}>
+        <LabelLine label={"⭐️ 得分"}>{player.score}</LabelLine>
+
+        <ProgressLabelLine
+          label={"😁 体力值"}
+          value={player.life}
+          valueMax={PLAYER_LIFE_MAX}
+          className={"progress-accent w-32"}
+        />
+
+        <ProgressLabelLine
+          label={"🔥 充能条"}
+          value={player.rage}
+          valueMax={PLAYER_RAGE_MAX}
+          className={"progress-warning w-32"}
+        />
+      </div>
+    </div>
+  )
 }

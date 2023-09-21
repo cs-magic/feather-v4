@@ -6,9 +6,9 @@ import { IGame } from "@/lib/game/game-server"
 import useInterval from "@/hooks/use-interval"
 import { CLIENT_FPS } from "@/config"
 import { useAudio } from "@/hooks/use-audio"
-import { GameWaiting } from "@/app/game/waiting"
-import { GameOver } from "@/app/game/over"
-import { GamePlaying } from "@/app/game/playing"
+import { GameWaiting } from "@/app/game/state/waiting"
+import { GameOver } from "@/app/game/state/over"
+import { GamePlaying } from "@/app/game/state/playing"
 
 export default function GamePage() {
   const [game, setGame] = useState<IGame>()
