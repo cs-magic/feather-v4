@@ -1,4 +1,4 @@
-import { GAME_LIFE_MAX, SERVER_FPS } from "@/config"
+import { GAME_LIFE_MAX, SERVER_FPS, TOTAL_PROGRESS } from "@/config"
 import { IPlayer, Player, PlayerAction, PlayerID } from "@/lib/game/player"
 import { ObjID } from "@/lib/game/object/base"
 import { FeatherObject } from "@/lib/game/object/feather"
@@ -35,6 +35,7 @@ export interface IGameData {
   stage: number
   state: GameState
   tick: number
+  progress: number
   life: number
   players: IPlayer[]
   objs: IGameObj[]
@@ -51,7 +52,7 @@ export class GameServer implements IGameData {
   public life = GAME_LIFE_MAX // 游戏的血条由掉落的羽毛控制
   public players: Player[] = []
   public objs: GameObj[] = []
-  public featherId = 0
+  public progress = 0
 
   public events: GameEvent[] = []
 
@@ -61,10 +62,10 @@ export class GameServer implements IGameData {
 
       this.tick += 1
 
-      if (this.featherId < 79) {
+      if (this.progress < TOTAL_PROGRESS) {
         // n 秒新增一片羽毛
         if (this.tick % (SERVER_FPS * this.addFeatherIntervalSeconds) === 1)
-          this.objs.push(new FeatherObject(++this.featherId))
+          this.objs.push(new FeatherObject(++this.progress))
       }
 
       // 更新玩家的体力等
@@ -238,6 +239,7 @@ export class GameServer implements IGameData {
       life: this.life,
       players: this.players.map((p) => p.serialize()),
       objs: this.objs.map((f) => f.serialize()),
+      progress: this.progress,
     }
   }
 }

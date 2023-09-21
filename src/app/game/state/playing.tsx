@@ -1,6 +1,6 @@
 import { IGameData, GameEvent } from "@/lib/game/server"
 import { useScreenStore } from "@/hooks/use-screen"
-import { GAME_LIFE_MAX, TOP } from "@/config"
+import { GAME_LIFE_MAX, TOP, TOTAL_PROGRESS } from "@/config"
 import { client } from "@/lib/game/client"
 import clsx from "clsx"
 import { ObjContainer } from "@/app/game/entity/obj"
@@ -13,6 +13,7 @@ import { Assets } from "@/assets"
 import { Coin1, Coin2, Coin3 } from "@/app/game/comp/coin"
 import { ignore } from "@/lib/helpers"
 import useSound from "use-sound"
+import { range } from "lodash"
 
 export const GamePlaying = ({
   data,
@@ -32,7 +33,7 @@ export const GamePlaying = ({
   const [playBlowLow] = useSound("/sound/吹.mp3", { volume: 0.5 })
   const [playBlowHigh] = useSound("/sound/吹.mp3", { volume: 1 })
   const [playFeatherTobeCoin] = useSound("/sound/羽毛变金币.wav", { volume: 1 })
-  const [playSigh79] = useSound("/sound/欸79.mp3", { volume: 1 })
+  const [playSigh] = useSound("/sound/欸79.mp3", { volume: 1 })
   const [playToBeMad] = useSound("/sound/我真地快疯掉了.mp3", { volume: 1 })
 
   events.forEach((e) => {
@@ -42,7 +43,7 @@ export const GamePlaying = ({
         play()
         break
       case "feather-onto-ground":
-        playSigh79()
+        playSigh()
         break
       case "coin-onto-ground":
         playToBeMad()
@@ -100,29 +101,55 @@ export const GamePlaying = ({
 
         {/* 右上： 游戏状态*/}
         <div className={"flex flex-col gap-1 "}>
-          <LabelLine label={"🚪 关卡"}>
-            <span className={"text-xs"}>
-              {data.stage.toString().padStart(2, "0")}
-              {/*{`(${game.tick})`}*/}
-            </span>
+          <LabelLine label={"⚙️ 设置"}>
+            <button
+              className={
+                "btn btn-xs btn-ghost text-xs z-50 p-0 !min-h-[16px] h-4"
+              }
+              onClick={() => {
+                console.log(data.state)
+                client.do({
+                  type: data.state === "paused" ? "resume" : "pause",
+                })
+              }}
+            >
+              {data.state === "paused" ? "继续" : "暂停"}
+            </button>
           </LabelLine>
 
-          <ProgressLabelLine
-            label={"❤️ 生命"}
-            value={data.life}
-            valueMax={GAME_LIFE_MAX}
-            className={"progress-success w-8"}
-          />
+          <LabelLine label={"🚪 关卡"}>
+            <p className={"text-xs font-medium text-primary"}>
+              {data.stage.toString().padStart(2, "0")}
+            </p>
+          </LabelLine>
 
-          <button
-            className={"btn btn-xs text-xs z-50"}
-            onClick={() => {
-              console.log(data.state)
-              client.do({ type: data.state === "paused" ? "resume" : "pause" })
-            }}
-          >
-            {data.state === "paused" ? "继续" : "暂停"}
-          </button>
+          <LabelLine label={"💫 进度"}>
+            <p className={"text-xs font-medium"}>
+              {`${data.progress
+                .toString()
+                .padStart(2, "0")} / ${TOTAL_PROGRESS}`}
+            </p>
+          </LabelLine>
+
+          <LabelLine label={"❤️ 生命"}>
+            <div className={"flex h-full divide-x border border-gray-200"}>
+              {range(GAME_LIFE_MAX).map((k, i) => (
+                <div
+                  className={clsx(
+                    "w-2 h-full border-gray-300",
+                    i < data.life &&
+                      (data.life <= GAME_LIFE_MAX * 0.2
+                        ? "bg-red-500"
+                        : data.life <= GAME_LIFE_MAX * 0.4
+                        ? "bg-yellow-500"
+                        : "bg-green-500")
+                  )}
+                  key={i}
+                />
+              ))}
+            </div>
+          </LabelLine>
+
           {process.env.NODE_ENV === "development" && (
             <button
               className={"btn btn-xs text-xs z-50"}

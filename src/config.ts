@@ -4,7 +4,7 @@ export const siteConfig = {
   },
 }
 
-export const GAME_LIFE_MAX = 50
+export const GAME_LIFE_MAX = 5
 
 export const PLAYER_LIFE_MAX = 100
 export const PLAYER_RAGE_MAX = 100
@@ -27,3 +27,4 @@ export const Player = {
 }
 
 export const PLAYER_IMAGE_WIDTH = 200
+export const TOTAL_PROGRESS = 79
