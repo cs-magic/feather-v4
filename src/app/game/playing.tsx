@@ -33,10 +33,7 @@ export const GamePlaying = ({ game }: { game: IGame }) => {
           key={i}
           x={f.x * width}
           y={f.y * height}
-          className={
-            clsx()
-            // "animate-bounce"
-          }
+          className={clsx("animate-bounce")}
         >
           <Image
             width={80}
