@@ -1,4 +1,4 @@
-import { GameServer, IGameData, GameEvent } from "@/lib/game/game-server"
+import { GameServer, IGameData, GameEvent } from "@/lib/game/server"
 import { Player, PlayerAction } from "@/lib/game/player"
 import { PLAYER_DEFAULT_ID } from "@/config"
 
@@ -21,6 +21,7 @@ export class GameClient {
 
   public restart() {
     this.server = new GameServer()
+    this.player = new Player(PLAYER_DEFAULT_ID)
     this.server.onPlayerJoin(this.player)
   }
 

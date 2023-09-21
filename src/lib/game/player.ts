@@ -121,8 +121,8 @@ export class Player implements IPlayer {
     }
 
     const lifeAddSpeed: Record<PlayerStateInGame, number> = {
-      idle: 5, // 躺平，体力恢复最快
-      moving: 3, // 摸鱼，体力略微恢复
+      idle: 10, // 躺平，体力恢复最快
+      moving: 5, // 摸鱼，体力略微恢复
       clenching: -10, // 奋斗中，体力高速衰退
       dizzy: 0, // 奋斗过头，会收到额外惩罚
     }

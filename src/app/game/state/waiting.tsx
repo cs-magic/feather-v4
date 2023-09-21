@@ -1,7 +1,7 @@
 import clsx from "clsx"
 import Desc from "@/docs/desc.mdx"
 import { GameRanks } from "@/app/game/comp/ranks"
-import { client } from "@/lib/game/game-client"
+import { client } from "@/lib/game/client"
 import React from "react"
 import Link from "next/link"
 import { siteConfig } from "@/config"

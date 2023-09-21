@@ -14,7 +14,7 @@ export const LabelLine = ({
         "select-none touch-none" // 关键，否则会误触
       )}
     >
-      <span className={"text-xs font-medium w-16"}>{label} </span>
+      <span className={"text-xs font-medium w-10"}>{label} </span>
       {children}
     </div>
   )

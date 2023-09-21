@@ -1,7 +1,7 @@
-import { IGameData, GameEvent } from "@/lib/game/game-server"
+import { IGameData, GameEvent } from "@/lib/game/server"
 import { useScreenStore } from "@/hooks/use-screen"
 import { GAME_LIFE_MAX, TOP } from "@/config"
-import { client } from "@/lib/game/game-client"
+import { client } from "@/lib/game/client"
 import clsx from "clsx"
 import { ObjContainer } from "@/app/game/entity/obj"
 import { LabelLine, ProgressLabelLine } from "@/app/utils/label.line"
@@ -65,6 +65,28 @@ export const GamePlaying = ({
         "w-full grow overflow-hidden"
       )}
     >
+      {/* 全屏：道具： */}
+      {data.objs.map((f, i) => (
+        <ObjContainer
+          key={i}
+          x={f.x * width}
+          y={f.y * height}
+          className={clsx("animate-bounce z-50 pointer-events-none")}
+        >
+          {f.type === "feather" && (
+            <Image
+              width={80}
+              height={20}
+              src={Assets.feather.src}
+              alt={"object"}
+              className={"pointer-events-none"}
+              onDragEnd={ignore}
+            />
+          )}
+          {f.type === "coin" && <Coin1 />}
+        </ObjContainer>
+      ))}
+
       {/* 左上： 玩家状态 */}
       <div
         className={clsx(
@@ -85,7 +107,7 @@ export const GamePlaying = ({
         </LabelLine>
 
         <ProgressLabelLine
-          label={"❤️ 生命值"}
+          label={"❤️ 生命"}
           value={data.life}
           valueMax={GAME_LIFE_MAX}
           className={"progress-success w-8"}
@@ -122,28 +144,6 @@ export const GamePlaying = ({
       {/*<div className={"absolute right-12 bottom-12 z-50"}>*/}
       {/*  <Shoot />*/}
       {/*</div>*/}
-
-      {/* 全屏：道具： */}
-      {data.objs.map((f, i) => (
-        <ObjContainer
-          key={i}
-          x={f.x * width}
-          y={f.y * height}
-          className={clsx("animate-bounce z-50 pointer-events-none")}
-        >
-          {f.type === "feather" && (
-            <Image
-              width={80}
-              height={20}
-              src={Assets.feather.src}
-              alt={"object"}
-              className={"pointer-events-none"}
-              onDragEnd={ignore}
-            />
-          )}
-          {f.type === "coin" && <Coin1 />}
-        </ObjContainer>
-      ))}
     </div>
   )
 }

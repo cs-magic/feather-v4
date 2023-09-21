@@ -1,4 +1,4 @@
-import { GameState } from "@/lib/game/game-server"
+import { GameState } from "@/lib/game/server"
 import useSound from "use-sound"
 import { useEffect, useState } from "react"
 

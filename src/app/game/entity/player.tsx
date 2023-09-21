@@ -8,7 +8,7 @@ import {
   PLAYER_IMAGE_WIDTH,
   TOP,
 } from "@/config"
-import { client } from "@/lib/game/game-client"
+import { client } from "@/lib/game/client"
 import {
   getRectangleBlowXRadius,
   getRectangleBlowY,
@@ -133,17 +133,17 @@ export const PlayerStatus = ({ player }: { player: IPlayer }) => {
         <LabelLine label={"⭐️ 得分"}>{player.score}</LabelLine>
 
         <ProgressLabelLine
-          label={"😁 体力值"}
+          label={"😁 体力"}
           value={player.life}
           valueMax={PLAYER_LIFE_MAX}
-          className={"progress-accent w-32"}
+          className={"progress-accent w-12"}
         />
 
         <ProgressLabelLine
-          label={"🔥 充能条"}
+          label={"🔥 怒气"}
           value={player.rage}
           valueMax={PLAYER_RAGE_MAX}
-          className={"progress-warning w-32"}
+          className={"progress-warning w-12"}
         />
       </div>
     </div>

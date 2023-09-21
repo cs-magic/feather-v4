@@ -1,8 +1,8 @@
 "use client"
 
-import { client } from "@/lib/game/game-client"
+import { client } from "@/lib/game/client"
 import React, { useState } from "react"
-import { IGameData, GameEvent } from "@/lib/game/game-server"
+import { IGameData, GameEvent } from "@/lib/game/server"
 import useInterval from "@/hooks/use-interval"
 import { CLIENT_FPS } from "@/config"
 import { useAudio } from "@/hooks/use-audio"
