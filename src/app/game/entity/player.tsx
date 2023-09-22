@@ -13,9 +13,9 @@ import useSound from "use-sound"
 import { Obj, ObjContainer } from "@/app/game/entity/obj"
 import Image from "next/image"
 import { LabelLine, ProgressLabelLine } from "@/app/utils/label.line"
-import { ignore } from "@/lib/helpers"
 import { useToggle, useVibrate } from "react-use"
 import { useViewportStore } from "@/hooks/use-viewpoint"
+import { PlayerImageMemo } from "@/app/game/entity/player-image"
 
 /**
  * todo: 对 drag 进行一层封装
@@ -79,15 +79,7 @@ export const Player = ({ player }: { player: IPlayer }) => {
         }}
         {...bind()}
       >
-        <Image
-          src={getPlayerImg(player)}
-          alt={"player"}
-          fill
-          className={"pointer-events-none object-cover"}
-          priority
-          onDragEnd={ignore}
-          sizes={"width=200px;"}
-        />
+        <PlayerImageMemo i={Math.floor(player.rage / 10)} />
       </ObjContainer>
       <Obj
         w={2 * vw * getRectangleBlowXRadius()}
@@ -104,20 +96,6 @@ export const Player = ({ player }: { player: IPlayer }) => {
   )
 }
 
-const getPlayerImg = (player: IPlayer, withCry?: boolean) => {
-  // 启动200 ms
-  // 2 秒走完10张，每秒5张，1张200ms
-  // 最大 pressingTicks = 2.5 * 50 = 125
-  //（实际按到2.5秒的时候已经接近了3秒）
-
-  const filename =
-    withCry && player.life <= 1
-      ? "cry"
-      : // [0-100] --> [0, 10]
-        Math.floor(player.rage / 10)
-  return `/image/player/ljq/${filename}.png`
-}
-
 export const PlayerStatus = ({ player }: { player: IPlayer }) => {
   return (
     <div
@@ -127,23 +105,19 @@ export const PlayerStatus = ({ player }: { player: IPlayer }) => {
       )}
     >
       <div className={"relative w-14 h-16 shrink-0 "}>
-        <Image
-          // 左上角要哭
-          src={getPlayerImg(player, true)}
-          alt={"player"}
-          fill
-          className={"object-cover"}
+        <PlayerImageMemo
+          i={player.life <= 1 ? 11 : Math.floor(player.rage / 10)}
         />
+        {/*<Image*/}
+        {/*  // 左上角要哭*/}
+        {/*  src={getPlayerImg(player, true)}*/}
+        {/*  alt={"player"}*/}
+        {/*  fill*/}
+        {/*  className={"object-cover w-full h-auto"}*/}
+        {/*  sizes={"width:80px"}*/}
+        {/*/>*/}
       </div>
-      {/*<Image*/}
-      {/*  // 左上角要哭*/}
-      {/*  src={getPlayerImg(player, true)}*/}
-      {/*  alt={"player"}*/}
-      {/*  width={60}*/}
-      {/*  height={80}*/}
-      {/*  className={"h-fit shrink-0"}*/}
-      {/*  priority*/}
-      {/*/>*/}
+
       <div className={"flex flex-col gap-1"}>
         <LabelLine label={"⭐️ 得分"}>{player.score}</LabelLine>
 

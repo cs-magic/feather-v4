@@ -59,7 +59,7 @@ export const GamePlaying = ({
   })
 
   return (
-    <>
+    <div className={"w-full h-full overflow-hidden relative"}>
       {/* 全屏：道具： */}
       {data.objs.map((f, i) => (
         <ObjContainer
@@ -74,7 +74,7 @@ export const GamePlaying = ({
               height={20}
               src={Assets.feather.src}
               alt={"object"}
-              className={"pointer-events-none"}
+              className={"pointer-events-none w-full h-auto"}
               onDragEnd={ignore}
             />
           )}
@@ -167,6 +167,6 @@ export const GamePlaying = ({
       {/*<div className={"absolute right-12 bottom-12 z-50"}>*/}
       {/*  <Shoot />*/}
       {/*</div>*/}
-    </>
+    </div>
   )
 }
