@@ -1,7 +1,7 @@
 "use client"
 
 import { client, IClientGameData } from "@/lib/game/client"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import useInterval from "@/hooks/use-interval"
 import { CLIENT_FPS } from "@/config"
 import { useAudio } from "@/hooks/use-audio"
@@ -11,6 +11,7 @@ import { GamePlaying } from "@/app/game/state/playing"
 import clsx from "clsx"
 import { useElementSize } from "@mantine/hooks"
 import { useViewportStore } from "@/hooks/use-viewpoint"
+import { GameCanvas } from "@/app/game/game-canvas"
 
 export default function GamePage() {
   const { setHeight, setWidth } = useViewportStore()
@@ -61,6 +62,7 @@ const useGame = () => {
       return <GameWaiting />
     case "playing":
     case "paused":
+      // return <GameCanvas game={game} />
       return <GamePlaying data={game!.data} events={game!.events} />
     case "over":
       return <GameOver />

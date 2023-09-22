@@ -14,6 +14,8 @@ import { ignore } from "@/lib/helpers"
 import useSound from "use-sound"
 import { range } from "lodash"
 import { useViewportStore } from "@/hooks/use-viewpoint"
+import { IGameObj } from "@/lib/game/object/objects"
+import { GameCanvas } from "@/app/game/game-canvas"
 
 export const GamePlaying = ({
   data,
@@ -22,8 +24,6 @@ export const GamePlaying = ({
   data: IGameData
   events: GameEvent[]
 }) => {
-  const { width: vw, height: vh } = useViewportStore()
-
   const { isTesting, setTesting } = useTestStore()
 
   const { player } = client
@@ -60,27 +60,10 @@ export const GamePlaying = ({
 
   return (
     <div className={"w-full h-full overflow-hidden relative"}>
+      {/*<GameObjs objs={data.objs}/>*/}
+
       {/* 全屏：道具： */}
-      {data.objs.map((f, i) => (
-        <ObjContainer
-          key={i}
-          x={f.x * vw}
-          y={f.y * vh}
-          className={clsx("animate-bounce z-50 pointer-events-none")}
-        >
-          {f.type === "feather" && (
-            <Image
-              width={80}
-              height={20}
-              src={Assets.feather.src}
-              alt={"object"}
-              className={"pointer-events-none w-full h-auto"}
-              onDragEnd={ignore}
-            />
-          )}
-          {f.type === "coin" && <Coin1 />}
-        </ObjContainer>
-      ))}
+      <GameCanvas data={data} events={events} />
 
       {/* 状态栏 */}
       <div
@@ -169,4 +152,29 @@ export const GamePlaying = ({
       {/*</div>*/}
     </div>
   )
+}
+
+export const GameObjs = ({ objs }: { objs: IGameObj[] }) => {
+  const { width: vw, height: vh } = useViewportStore()
+
+  return objs.map((f, i) => (
+    <ObjContainer
+      key={i}
+      x={f.x * vw}
+      y={f.y * vh}
+      className={clsx("animate-bounce z-50 pointer-events-none")}
+    >
+      {f.type === "feather" && (
+        <Image
+          width={80}
+          height={20}
+          src={Assets.feather.src}
+          alt={"object"}
+          className={"pointer-events-none w-full h-auto"}
+          onDragEnd={ignore}
+        />
+      )}
+      {f.type === "coin" && <Coin1 />}
+    </ObjContainer>
+  ))
 }
