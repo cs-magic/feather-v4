@@ -22,7 +22,7 @@ export class GameClient {
   }
 
   constructor() {
-    this.server = new GameServer()
+    this.server = new GameServer(0.1, 0.03)
     this.player = new Player(PLAYER.id.default)
     this.server.onPlayerJoin(this.player)
   }

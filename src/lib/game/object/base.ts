@@ -29,21 +29,24 @@ export class GameObjectBase<T extends GameObjectType> implements IObjBase<T> {
   public xSpeed = 0
 
   public y: number = 0
-  public readonly defaultYSpeed = 0.06
-  public ySpeed = this.defaultYSpeed
+  public readonly defaultYSpeed // .06 恰好
+  public ySpeed
 
   public constructor(
     type: T,
     id: ObjID,
     x: number,
     xMin: number,
-    xMax: number
+    xMax: number,
+    defaultYSpeed: number = 0.06
   ) {
     this.id = id
     this.type = type
     this.x = x
     this.xMin = xMin
     this.xMax = xMax
+    this.defaultYSpeed = defaultYSpeed
+    this.ySpeed = this.defaultYSpeed
   }
 
   /**

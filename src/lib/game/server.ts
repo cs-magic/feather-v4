@@ -43,7 +43,7 @@ export interface IGameData {
 
 export class GameServer implements IGameData {
   // configurable
-  public addFeatherIntervalSeconds = 5
+  public featherInterval
 
   // states
   public state: GameState = "waiting"
@@ -56,7 +56,9 @@ export class GameServer implements IGameData {
 
   public events: GameEvent[] = []
 
-  constructor() {
+  constructor(featherInterval: number = 5, defaultYSpeed: number = 0.06) {
+    this.featherInterval = featherInterval
+
     setInterval(() => {
       if (this.state !== "playing") return
 
@@ -64,8 +66,8 @@ export class GameServer implements IGameData {
 
       if (this.progress < TOTAL_PROGRESS) {
         // n 秒新增一片羽毛
-        if (this.tick % (SERVER_FPS * this.addFeatherIntervalSeconds) === 1)
-          this.objs.push(new FeatherObject(++this.progress))
+        if (this.tick % (SERVER_FPS * this.featherInterval) === 1)
+          this.objs.push(new FeatherObject(++this.progress, defaultYSpeed))
       }
 
       // 更新玩家的体力等
