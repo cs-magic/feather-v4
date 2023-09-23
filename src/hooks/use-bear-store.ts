@@ -28,7 +28,10 @@ const createBearSlice =
     } as BearSlice<K, V>
   }
 
-export const useBearStore =
+/**
+ * 不能命名为useBearStore，这样会违反 react-hook 不能在 top level 调用的规则
+ */
+export const createBearStore =
   <V extends any>() =>
   <K extends string>(k: K, defaultValue: V) =>
     create<BearSlice<K, V>>()((...a) => ({
