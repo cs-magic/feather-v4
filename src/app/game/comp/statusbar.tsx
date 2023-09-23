@@ -4,10 +4,34 @@ import { useTestStore } from "@/store"
 import clsx from "clsx"
 import { PlayerStatus } from "@/app/game/entity/player"
 import { LabelLine } from "@/app/utils/label.line"
-import { client } from "@/lib/game/client"
 import { GAME_LIFE_MAX, TOTAL_PROGRESS } from "@/config"
 import { range } from "lodash"
-import React from "react"
+import React, { useState } from "react"
+import * as Select from "@radix-ui/react-select"
+import { SelectItemProps } from "@radix-ui/react-select"
+import classnames from "classnames"
+import { CheckIcon } from "@radix-ui/react-icons"
+import { GameSettingsContainer } from "@/app/game/comp/settings"
+
+export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
+  ({ children, className, ...props }, forwardedRef) => {
+    return (
+      <Select.Item
+        className={classnames(
+          "text-[13px] leading-none text-violet11 rounded-[3px] flex items-center h-[25px] pr-[35px] pl-[25px] relative select-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:outline-none data-[highlighted]:bg-violet9 data-[highlighted]:text-violet1",
+          className
+        )}
+        {...props}
+        ref={forwardedRef}
+      >
+        <Select.ItemText>{children}</Select.ItemText>
+        <Select.ItemIndicator className="absolute left-0 w-[25px] inline-flex items-center justify-center">
+          <CheckIcon />
+        </Select.ItemIndicator>
+      </Select.Item>
+    )
+  }
+)
 
 export const GameStatusbar = ({
   player,
@@ -17,6 +41,7 @@ export const GameStatusbar = ({
   data: IGameData
 }) => {
   const { isTesting, setTesting } = useTestStore()
+  const [settingOpened, setSettingOpened] = useState(false)
 
   return (
     <div
@@ -31,21 +56,9 @@ export const GameStatusbar = ({
 
       {/* 右上： 游戏状态*/}
       <div className={"flex flex-col gap-1 "}>
-        <LabelLine label={"⚙️ 设置"}>
-          <button
-            className={
-              "btn btn-xs btn-ghost text-xs z-50 p-0 !min-h-[16px] h-4 border-none"
-            }
-            onClick={() => {
-              console.log(data.state)
-              client.do({
-                type: data.state === "paused" ? "resume" : "pause",
-              })
-            }}
-          >
-            {data.state === "paused" ? "继续" : "暂停"}
-          </button>
-        </LabelLine>
+        <GameSettingsContainer>
+          <LabelLine label={"⚙️ 设置"}>{""}</LabelLine>
+        </GameSettingsContainer>
 
         <LabelLine label={"🚪 关卡"}>
           <p className={"text-xs font-medium text-primary"}>

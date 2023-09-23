@@ -17,7 +17,7 @@ export const GameRender = ({ data }: { data: IGameData }) => {
   const { width: vw, height: vh } = useViewportStore()
 
   switch (renderMode) {
-    case RenderMode.CSS:
+    case "CSS":
       return data.objs.map((f, i) => (
         <ObjContainer
           key={i}
@@ -39,7 +39,7 @@ export const GameRender = ({ data }: { data: IGameData }) => {
         </ObjContainer>
       ))
 
-    case RenderMode.Canvas:
+    case "Canvas":
       return (
         <Canvas>
           {data.objs.map((obj, index) => (

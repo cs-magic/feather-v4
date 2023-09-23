@@ -1,16 +1,17 @@
 import Desc from "@/docs/desc.mdx"
 import { GameRanks } from "@/app/game/comp/ranks"
-import { client } from "@/lib/game/client"
 import React from "react"
-import Link from "next/link"
 import { siteConfig } from "@/config"
 import { Assets } from "@/assets"
 import Image from "next/image"
 import { useGameStore } from "@/store"
+import { Button, Link } from "@radix-ui/themes"
+import { GameSettingsContainer } from "@/app/game/comp/settings"
+import { LabelLine } from "@/app/utils/label.line"
 
 export const GameWaiting = () => (
   <div className={"h-full flex flex-col gap-8 p-8"}>
-    <div className={"flex items-center justify-between flex-wrap gap-8"}>
+    <div className={"flex items-center justify-between gap-8"}>
       <Image
         priority
         width={240}
@@ -22,17 +23,20 @@ export const GameWaiting = () => (
 
       <article className={"grow prose dark:prose-invert"}>
         <Desc />
+
+        <StartButton />
       </article>
     </div>
 
     <GameRanks />
 
-    <div className={"w-full flex items-center "}>
-      <StartButton />
+    <div className={"w-full flex items-center gap-4"}>
+      <GameSettingsContainer>
+        <Link underline={"always"} size={"3"} highContrast>
+          ⚙️ 设置
+        </Link>
+      </GameSettingsContainer>
       <OpensourceButton />
-    </div>
-
-    <div className={"w-full"}>
       <CompanyButton />
     </div>
   </div>
@@ -41,25 +45,37 @@ export const GameWaiting = () => (
 const StartButton = () => {
   const { setState } = useGameStore()
   return (
-    <button
-      className="btn btn-primary"
+    <Button
       onClick={() => {
         setState("playing")
       }}
     >
       立即开始
-    </button>
+    </Button>
   )
 }
+const SettingsButton = () => <></>
 
 const OpensourceButton = () => (
-  <Link href={siteConfig.links.github} target={"_blank"}>
-    <button className="btn btn-neutral m-4">开源贡献</button>
+  <Link
+    href={siteConfig.links.github}
+    target={"_blank"}
+    underline={"always"}
+    size={"3"}
+    highContrast
+  >
+    开源代码
   </Link>
 )
 
 const CompanyButton = () => (
-  <Link href={siteConfig.links.company} target={"_blank"}>
-    <button className="btn btn-link m-4">关于我们</button>
+  <Link
+    href={siteConfig.links.company}
+    target={"_blank"}
+    underline={"always"}
+    highContrast
+    size={"3"}
+  >
+    关于我们
   </Link>
 )

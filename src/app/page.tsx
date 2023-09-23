@@ -22,8 +22,8 @@ export default function GamePage() {
   return (
     <main
       className={clsx(
-        "w-full h-full overflow-auto",
-        "md:w-[640px] mx-auto border border-gray-800 flex flex-col bg-cover"
+        "overflow-auto",
+        "border border-gray-800 flex flex-col bg-cover"
       )}
       style={{
         backgroundImage: `url(/image/rain01.gif)`,
@@ -37,7 +37,7 @@ export default function GamePage() {
         }}
       />
 
-      <div className={"w-full grow relative"} ref={ref}>
+      <div className={"md:w-[640px] mx-auto  grow relative"} ref={ref}>
         <GameCore />
       </div>
     </main>

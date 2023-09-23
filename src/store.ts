@@ -2,10 +2,11 @@ import { create } from "zustand"
 import { PLAYER_LIFE_MAX } from "@/config"
 import { GameState } from "@/lib/game/server"
 
-export enum RenderMode {
-  CSS = "CSS",
-  Canvas = "Canvas",
-}
+export type RenderMode = "CSS" | "Canvas"
+
+export type ControlMode = "gesture" | "joystick"
+
+export type UIMode = "radix-ui" | "daisyui"
 
 export interface IGameStore {
   state: GameState
@@ -13,14 +14,26 @@ export interface IGameStore {
 
   renderMode: RenderMode
   setRenderMode: (renderMode: RenderMode) => void
+
+  controlMode: ControlMode
+  setControlMode: (controlMode: ControlMode) => void
+
+  uiMode: UIMode
+  setUIMode: (uiMode: UIMode) => void
 }
 
 export const useGameStore = create<IGameStore>((set) => ({
   state: "waiting",
   setState: (state) => set({ state }),
 
-  renderMode: RenderMode.CSS,
+  renderMode: "CSS",
   setRenderMode: (renderMode) => set({ renderMode }),
+
+  controlMode: "gesture",
+  setControlMode: (controlMode) => set({ controlMode }),
+
+  uiMode: "daisyui",
+  setUIMode: (uiMode) => set({ uiMode }),
 }))
 
 export interface PlayerState {

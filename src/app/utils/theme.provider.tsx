@@ -5,6 +5,8 @@ import { PropsWithChildren } from "react"
 
 export function ThemeProvider({ children }: PropsWithChildren) {
   return (
-    <NextThemeProvider defaultTheme={"light"}>{children}</NextThemeProvider>
+    <NextThemeProvider attribute={"class"} defaultTheme={"light"}>
+      {children}
+    </NextThemeProvider>
   )
 }

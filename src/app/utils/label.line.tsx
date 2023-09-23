@@ -1,4 +1,4 @@
-import { HTMLAttributes, PropsWithChildren } from "react"
+import { HTMLAttributes, PropsWithChildren, ReactNode } from "react"
 import clsx from "clsx"
 import ReactMarkdown from "react-markdown"
 import children = ReactMarkdown.propTypes.children
@@ -6,7 +6,7 @@ import children = ReactMarkdown.propTypes.children
 export const LabelLine = ({
   label,
   children,
-}: { label: string } & PropsWithChildren) => {
+}: { label: ReactNode } & PropsWithChildren) => {
   return (
     <div
       className={clsx(
