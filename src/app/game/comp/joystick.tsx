@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Joystick } from "react-joystick-component"
 import { IJoystickUpdateEvent } from "react-joystick-component/build/lib/Joystick"
 
 import useInterval from "@/hooks/use-interval"
-import { usePlayerStore } from "@/store"
+import { usePlayerX } from "@/store"
 import { PLAYER } from "@/config"
 
 export const JoystickController = () => {
   const [playerSpeed, setPlayerSpeed] = useState(0)
-  const { x: x0, setX } = usePlayerStore()
+  const { x: x0, setX } = usePlayerX()
 
   const handleMove = (event: IJoystickUpdateEvent) => {
     setPlayerSpeed((x) => event.x ?? 0)

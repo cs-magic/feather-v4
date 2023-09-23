@@ -1,15 +1,168 @@
-import React, { PropsWithChildren, ReactNode, useState } from "react"
-import { useGameStore } from "@/store"
+import React, { PropsWithChildren, useState } from "react"
+import {
+  ControlMode,
+  RenderMode,
+  UILibrary,
+  useBGM,
+  useControlMode,
+  useLabel,
+  useRenderMode,
+  useUILibrary,
+} from "@/store"
 import * as Dialog from "@radix-ui/react-dialog"
+import { DialogTriggerProps } from "@radix-ui/react-dialog"
 import { client } from "@/lib/game/client"
 import * as Select from "@radix-ui/react-select"
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
 import { SelectItem } from "@/app/game/comp/statusbar"
+import * as Switch from "@radix-ui/react-switch"
+import * as Separator from "@radix-ui/react-separator"
+import { config } from "@/config"
+import { IBearStore, ISelects, ISwitch } from "@/ds"
 
-export const GameSettingsContainer = ({ children }: PropsWithChildren) => {
+const TheField = ({
+  label,
+  children,
+}: { label: string } & PropsWithChildren) => (
+  <fieldset className="mb-[15px] flex items-center gap-5">
+    <label className="text-violet11 w-[90px] text-right text-[15px]">
+      {label}
+    </label>
+
+    {children}
+  </fieldset>
+)
+
+const SelectField = <T extends string>({
+  label,
+  value,
+  onValueChange,
+}: {
+  label: string
+  value: T
+  onValueChange: (v: T) => void
+} & PropsWithChildren) => {
+  return (
+    <TheField label={label}>
+      <Select.Root value={value} onValueChange={onValueChange}>
+        <Select.Trigger
+          className="inline-flex items-center justify-center rounded px-[15px] text-[13px] leading-none h-[35px] gap-[5px] bg-white text-violet11 shadow-[0_2px_10px] shadow-black/10 hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black data-[placeholder]:text-violet9 outline-none"
+          aria-label="render mode"
+        >
+          <Select.Value />
+          <Select.Icon className="text-violet11">
+            <ChevronDownIcon />
+          </Select.Icon>
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content className="overflow-hidden bg-white rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+            <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-violet11 cursor-default">
+              <ChevronUpIcon />
+            </Select.ScrollUpButton>
+
+            <Select.Viewport className="p-[5px]">
+              <Select.Group>
+                <SelectItem value={"CSS"}>
+                  标准模式（对设备性能要求略高）
+                </SelectItem>
+                <SelectItem value={"Canvas"}>Beta模式（画面更流畅）</SelectItem>
+              </Select.Group>
+            </Select.Viewport>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
+    </TheField>
+  )
+}
+
+export const SwitchComp = ({
+  label,
+  setValue,
+  value,
+}: ISwitch & IBearStore<boolean>) => (
+  <fieldset className="mb-[15px] flex items-center gap-5">
+    <label className="text-violet11 w-[90px] text-right text-[15px]">
+      {label}
+    </label>
+
+    <Switch.Root
+      checked={value}
+      onCheckedChange={setValue}
+      className="w-[42px] h-[25px]  rounded-full relative shadow-[0_2px_10px] shadow-blackA7 focus:shadow-[0_0_0_2px] focus:shadow-black data-[state=checked]:bg-primary outline-none cursor-default"
+      id="airplane-mode"
+    >
+      <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full shadow-[0_2px_2px] shadow-blackA7 transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
+    </Switch.Root>
+  </fieldset>
+)
+
+export const SelectComp = <T extends string>({
+  label,
+  values,
+  value,
+  setValue,
+}: ISelects<T> & IBearStore<T>) => {
+  return (
+    <fieldset className="mb-[15px] flex items-center gap-5">
+      <label className="text-violet11 w-[90px] text-right text-[15px]">
+        {label}
+      </label>
+
+      <Select.Root value={value} onValueChange={setValue}>
+        <Select.Trigger
+          className="inline-flex items-center justify-center rounded px-[15px] text-[13px] leading-none h-[35px] gap-[5px] bg-white text-violet11 shadow-[0_2px_10px] shadow-black/10 hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black data-[placeholder]:text-violet9 outline-none"
+          aria-label={label}
+        >
+          <Select.Value />
+          <Select.Icon className="text-violet11">
+            <ChevronDownIcon />
+          </Select.Icon>
+        </Select.Trigger>
+        <Select.Portal>
+          <Select.Content className="overflow-hidden bg-white rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+            <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-violet11 cursor-default">
+              <ChevronUpIcon />
+            </Select.ScrollUpButton>
+            <Select.Viewport className="p-[5px]">
+              <Select.Group>
+                {values.map((v) => (
+                  <SelectItem value={v.value}>{v.desc || v.value}</SelectItem>
+                ))}
+              </Select.Group>
+            </Select.Viewport>
+          </Select.Content>
+        </Select.Portal>
+      </Select.Root>
+    </fieldset>
+  )
+}
+
+export const GameSettingsContainer = ({
+  ...props
+}: PropsWithChildren & DialogTriggerProps) => {
+  const controlModeProps: ISelects<ControlMode> & IBearStore<ControlMode> = {
+    ...config.userPreference.controlMode,
+    ...useControlMode(),
+  }
+  const renderModeProps: ISelects<RenderMode> & IBearStore<RenderMode> = {
+    ...config.userPreference.renderMode,
+    ...useRenderMode(),
+  }
+  const uiLibraryProps: ISelects<UILibrary> & IBearStore<UILibrary> = {
+    ...config.userPreference.uiLibrary,
+    ...useUILibrary(),
+  }
+  const labelProps: ISwitch & IBearStore<boolean> = {
+    ...config.userPreference.label,
+    ...useLabel(),
+  }
+  const bgmProps: ISwitch & IBearStore<boolean> = {
+    ...config.userPreference.bgm,
+    ...useBGM(),
+  }
+
   const [settingOpened, setSettingOpened] = useState(false)
-  const { renderMode, setRenderMode, controlMode, setControlMode } =
-    useGameStore()
+
   return (
     <Dialog.Root
       open={settingOpened}
@@ -18,7 +171,7 @@ export const GameSettingsContainer = ({ children }: PropsWithChildren) => {
         setSettingOpened(v)
       }}
     >
-      <Dialog.Trigger>{children}</Dialog.Trigger>
+      <Dialog.Trigger {...props} />
 
       <Dialog.Overlay className="bg-blackA9 data-[state=open]:animate-overlayShow fixed inset-0" />
 
@@ -31,75 +184,18 @@ export const GameSettingsContainer = ({ children }: PropsWithChildren) => {
             超神的操作离不开非凡的设置
           </Dialog.Description>
 
-          <fieldset className="mb-[15px] flex items-center gap-5">
-            <label className="text-violet11 w-[90px] text-right text-[15px]">
-              渲染引擎
-            </label>
+          <SelectComp {...controlModeProps} />
 
-            <Select.Root value={renderMode} onValueChange={setRenderMode}>
-              <Select.Trigger
-                className="inline-flex items-center justify-center rounded px-[15px] text-[13px] leading-none h-[35px] gap-[5px] bg-white text-violet11 shadow-[0_2px_10px] shadow-black/10 hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black data-[placeholder]:text-violet9 outline-none"
-                aria-label="render mode"
-              >
-                <Select.Value />
-                <Select.Icon className="text-violet11">
-                  <ChevronDownIcon />
-                </Select.Icon>
-              </Select.Trigger>
-              <Select.Portal>
-                <Select.Content className="overflow-hidden bg-white rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
-                  <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-violet11 cursor-default">
-                    <ChevronUpIcon />
-                  </Select.ScrollUpButton>
-                  <Select.Viewport className="p-[5px]">
-                    <Select.Group>
-                      <SelectItem value={"CSS"}>
-                        标准模式（对设备性能要求略高）
-                      </SelectItem>
-                      <SelectItem value={"Canvas"}>
-                        Beta模式（画面更流畅）
-                      </SelectItem>
-                    </Select.Group>
-                  </Select.Viewport>
-                </Select.Content>
-              </Select.Portal>
-            </Select.Root>
-          </fieldset>
+          <Separator.Root className="bg-violet6 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px my-[15px]" />
 
-          <fieldset className="mb-[15px] flex items-center gap-5">
-            <label className="text-violet11 w-[90px] text-right text-[15px]">
-              操控模式
-            </label>
+          <SelectComp {...renderModeProps} />
 
-            <Select.Root value={controlMode} onValueChange={setControlMode}>
-              <Select.Trigger
-                className="inline-flex items-center justify-center rounded px-[15px] text-[13px] leading-none h-[35px] gap-[5px] bg-white text-violet11 shadow-[0_2px_10px] shadow-black/10 hover:bg-mauve3 focus:shadow-[0_0_0_2px] focus:shadow-black data-[placeholder]:text-violet9 outline-none"
-                aria-label="control mode"
-              >
-                <Select.Value />
-                <Select.Icon className="text-violet11">
-                  <ChevronDownIcon />
-                </Select.Icon>
-              </Select.Trigger>
-              <Select.Portal>
-                <Select.Content className="overflow-hidden bg-white rounded-md shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
-                  <Select.ScrollUpButton className="flex items-center justify-center h-[25px] bg-white text-violet11 cursor-default">
-                    <ChevronUpIcon />
-                  </Select.ScrollUpButton>
-                  <Select.Viewport className="p-[5px]">
-                    <Select.Group>
-                      <SelectItem value={"gesture"}>
-                        手势（操作更简单，可以单手）
-                      </SelectItem>
-                      <SelectItem value={"joystick"}>
-                        摇杆（操作更灵活）
-                      </SelectItem>
-                    </Select.Group>
-                  </Select.Viewport>
-                </Select.Content>
-              </Select.Portal>
-            </Select.Root>
-          </fieldset>
+          <SwitchComp {...bgmProps} />
+          <SwitchComp {...labelProps} />
+
+          <Separator.Root className="bg-violet6 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px my-[15px]" />
+
+          <SelectComp {...uiLibraryProps} />
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

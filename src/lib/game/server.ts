@@ -5,7 +5,7 @@ import { FeatherObject } from "@/lib/game/object/feather"
 import { CoinObject } from "@/lib/game/object/coin"
 import { GameObj, IGameObj } from "@/lib/game/object/objects"
 
-export type GameEvent =
+export type IGameEvent =
   | {
       type: "player-got-coin"
       playerId: PlayerID
@@ -29,11 +29,26 @@ export type GameEvent =
       player: IPlayer
     }
 
-export type GameState = "waiting" | "playing" | "paused" | "over"
+/**
+ * 这是服务器的状态，但也可以表示用户的状态
+ *
+ * 但是我们的机制设置为，用户在client端基于do触发服务器状态更新
+ * 于是用户最好额外维护一个客户端的状态
+ */
+export type GameServerState =
+  // 用户在主页
+  | "waiting"
+  // 用户在结束页
+  | "over"
+  // 用户 playing / paused 都代表在玩游戏
+  | "playing"
+  | "paused"
 
-export interface IGameData {
+export type IClientState = GameServerState
+
+export interface IGame {
   stage: number
-  state: GameState
+  state: GameServerState
   tick: number
   progress: number
   life: number
@@ -41,12 +56,12 @@ export interface IGameData {
   objs: IGameObj[]
 }
 
-export class GameServer implements IGameData {
+export class GameServer implements IGame {
   // configurable
   public featherInterval
 
   // states
-  public state: GameState = "waiting"
+  public state: GameServerState = "waiting"
   public stage = 1 // 关卡
   public tick = 0
   public life = GAME_LIFE_MAX // 游戏的血条由掉落的羽毛控制
@@ -54,7 +69,7 @@ export class GameServer implements IGameData {
   public objs: GameObj[] = []
   public progress = 0
 
-  public events: GameEvent[] = []
+  public events: IGameEvent[] = []
 
   constructor(featherInterval: number = 5, defaultYSpeed: number = 0.06) {
     this.featherInterval = featherInterval
@@ -233,7 +248,7 @@ export class GameServer implements IGameData {
     this.state = "over"
   }
 
-  public serialize(): IGameData {
+  public serialize(): IGame {
     return {
       stage: this.stage,
       state: this.state,

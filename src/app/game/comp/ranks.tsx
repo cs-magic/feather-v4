@@ -1,11 +1,11 @@
 import { trpc } from "@/lib/trpc"
-import { useGameStore } from "@/store"
+import { useUILibrary } from "@/store"
 import { Table } from "@radix-ui/themes"
 
 export const GameRanks = () => {
   const { data: ranks } = trpc.listGameRecords.useQuery({})
 
-  const { uiMode } = useGameStore()
+  const { value: uiLibrary } = useUILibrary()
   const columns = ["排名", "用户名称", "分数", "时间"]
 
   return (
@@ -16,7 +16,7 @@ export const GameRanks = () => {
         "loading ..."
       ) : !ranks.length ? (
         "暂无数据"
-      ) : uiMode === "daisyui" ? (
+      ) : uiLibrary === "daisyui" ? (
         <div className="overflow-x-auto">
           <table className="table">
             {/* head */}

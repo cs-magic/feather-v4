@@ -121,17 +121,21 @@ export const PlayerStatus = ({ player }: { player: IPlayer }) => {
       </div>
 
       <div className={"flex flex-col gap-1"}>
-        <LabelLine label={"⭐️ 得分"}>{player.score}</LabelLine>
+        <LabelLine icon={"⭐"} label={"得分"}>
+          {player.score}
+        </LabelLine>
 
         <ProgressLabelLine
-          label={"😁 体力"}
+          icon={"😁"}
+          label={"体力"}
           value={player.life}
           valueMax={PLAYER_LIFE_MAX}
           className={"progress-accent w-12"}
         />
 
         <ProgressLabelLine
-          label={"🔥 怒气"}
+          icon={"🔥"}
+          label={"怒气"}
           value={player.rage}
           valueMax={PLAYER_RAGE_MAX}
           className={"progress-warning w-12"}

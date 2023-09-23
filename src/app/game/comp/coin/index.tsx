@@ -6,7 +6,8 @@ import { useFrame } from "@react-three/fiber"
 import { useViewportStore } from "@/hooks/use-viewpoint"
 import { ObjContainer } from "@/app/game/entity/obj"
 import clsx from "clsx"
-import { Coin1 } from "@/app/game/comp/coin/types"
+
+import { Coin1 } from "@/app/game/comp/coin/coin1"
 
 const CSSCoin = ({ obj }: { obj: ICoinObj }) => {
   const { width: vw, height: vh } = useViewportStore()

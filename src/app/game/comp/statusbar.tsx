@@ -1,12 +1,12 @@
 import { IPlayer } from "@/lib/game/player"
-import { IGameData } from "@/lib/game/server"
-import { useTestStore } from "@/store"
+import { IGame } from "@/lib/game/server"
+import { useTesting } from "@/store"
 import clsx from "clsx"
 import { PlayerStatus } from "@/app/game/entity/player"
 import { LabelLine } from "@/app/utils/label.line"
 import { GAME_LIFE_MAX, TOTAL_PROGRESS } from "@/config"
 import { range } from "lodash"
-import React, { useState } from "react"
+import React from "react"
 import * as Select from "@radix-ui/react-select"
 import { SelectItemProps } from "@radix-ui/react-select"
 import classnames from "classnames"
@@ -35,13 +35,12 @@ export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
 
 export const GameStatusbar = ({
   player,
-  data,
+  game,
 }: {
   player: IPlayer
-  data: IGameData
+  game: IGame
 }) => {
-  const { isTesting, setTesting } = useTestStore()
-  const [settingOpened, setSettingOpened] = useState(false)
+  const { isTesting, setIsTesting } = useTesting()
 
   return (
     <div
@@ -56,32 +55,34 @@ export const GameStatusbar = ({
 
       {/* 右上： 游戏状态*/}
       <div className={"flex flex-col gap-1 "}>
-        <GameSettingsContainer>
-          <LabelLine label={"⚙️ 设置"}>{""}</LabelLine>
+        <GameSettingsContainer asChild>
+          <button className={"text-left"}>
+            <LabelLine icon={"⚙️"} label={"设置"} />
+          </button>
         </GameSettingsContainer>
 
-        <LabelLine label={"🚪 关卡"}>
+        <LabelLine icon={"🚪"} label={"关卡"}>
           <p className={"text-xs font-medium text-primary"}>
-            {data.stage.toString().padStart(2, "0")}
+            {game.stage.toString().padStart(2, "0")}
           </p>
         </LabelLine>
 
-        <LabelLine label={"💫 进度"}>
+        <LabelLine icon={"💫"} label={"进度"}>
           <p className={"text-xs font-medium"}>
-            {`${data.progress.toString().padStart(2, "0")} / ${TOTAL_PROGRESS}`}
+            {`${game.progress.toString().padStart(2, "0")} / ${TOTAL_PROGRESS}`}
           </p>
         </LabelLine>
 
-        <LabelLine label={"❤️ 生命"}>
+        <LabelLine icon={"❤️"} label={"生命"}>
           <div className={"flex h-full divide-x border border-gray-200"}>
             {range(GAME_LIFE_MAX).map((k, i) => (
               <div
                 className={clsx(
                   "w-2 h-full border-gray-300",
-                  i < data.life &&
-                    (data.life <= GAME_LIFE_MAX * 0.2
+                  i < game.life &&
+                    (game.life <= GAME_LIFE_MAX * 0.2
                       ? "bg-red-500"
-                      : data.life <= GAME_LIFE_MAX * 0.4
+                      : game.life <= GAME_LIFE_MAX * 0.4
                       ? "bg-yellow-500"
                       : "bg-green-500")
                 )}
@@ -95,7 +96,7 @@ export const GameStatusbar = ({
           <button
             className={"btn btn-xs text-xs z-50"}
             onClick={() => {
-              setTesting(!isTesting)
+              setIsTesting(!isTesting)
             }}
           >
             测试 ({isTesting ? "on" : "off"})

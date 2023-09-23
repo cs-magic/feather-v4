@@ -4,10 +4,9 @@ import React from "react"
 import { siteConfig } from "@/config"
 import { Assets } from "@/assets"
 import Image from "next/image"
-import { useGameStore } from "@/store"
 import { Button, Link } from "@radix-ui/themes"
 import { GameSettingsContainer } from "@/app/game/comp/settings"
-import { LabelLine } from "@/app/utils/label.line"
+import { useClientState } from "@/store"
 
 export const GameWaiting = () => (
   <div className={"h-full flex flex-col gap-8 p-8"}>
@@ -31,11 +30,7 @@ export const GameWaiting = () => (
     <GameRanks />
 
     <div className={"w-full flex items-center gap-4"}>
-      <GameSettingsContainer>
-        <Link underline={"always"} size={"3"} highContrast>
-          ⚙️ 设置
-        </Link>
-      </GameSettingsContainer>
+      <SettingsButton />
       <OpensourceButton />
       <CompanyButton />
     </div>
@@ -43,18 +38,27 @@ export const GameWaiting = () => (
 )
 
 const StartButton = () => {
-  const { setState } = useGameStore()
+  const { setClientState, clientState } = useClientState()
+  console.log({ clientState, setClientState })
   return (
     <Button
       onClick={() => {
-        setState("playing")
+        //   用户进入房间，自动跳转到游戏页
+        setClientState("playing")
       }}
     >
       立即开始
     </Button>
   )
 }
-const SettingsButton = () => <></>
+
+const SettingsButton = () => (
+  <GameSettingsContainer>
+    <Link underline={"always"} size={"3"} highContrast>
+      ⚙️ 设置
+    </Link>
+  </GameSettingsContainer>
+)
 
 const OpensourceButton = () => (
   <Link

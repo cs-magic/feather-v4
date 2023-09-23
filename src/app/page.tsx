@@ -1,14 +1,14 @@
 "use client"
 
 import React, { useEffect } from "react"
-import { useAudio } from "@/hooks/use-audio"
+import { useEndingBGM, usePlayingBGM } from "@/hooks/use-bgm"
 import { GameWaiting } from "@/app/game/waiting"
 import { GameOver } from "@/app/game/over"
 import { GamePlaying } from "@/app/game/playing"
 import clsx from "clsx"
 import { useElementSize } from "@mantine/hooks"
 import { useViewportStore } from "@/hooks/use-viewpoint"
-import { useGameStore } from "@/store"
+import { useClientState } from "@/store"
 
 export default function GamePage() {
   const { setHeight, setWidth } = useViewportStore()
@@ -37,7 +37,7 @@ export default function GamePage() {
         }}
       />
 
-      <div className={"md:w-[640px] mx-auto  grow relative"} ref={ref}>
+      <div className={"w-full md:w-[640px] mx-auto  grow relative"} ref={ref}>
         <GameCore />
       </div>
     </main>
@@ -45,18 +45,18 @@ export default function GamePage() {
 }
 
 const GameCore = () => {
-  const { state } = useGameStore()
-  useAudio(state)
+  const { clientState } = useClientState()
+  usePlayingBGM()
+  useEndingBGM()
 
-  switch (state) {
-    case "waiting":
-      return <GameWaiting />
+  switch (clientState) {
     case "playing":
     case "paused":
       return <GamePlaying />
     case "over":
       return <GameOver />
+    case "waiting":
     default:
-      return "loading"
+      return <GameWaiting />
   }
 }
