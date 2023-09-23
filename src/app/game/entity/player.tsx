@@ -48,7 +48,7 @@ export const Player = ({ player }: { player: IPlayer }) => {
 
   useEffect(() => {
     // console.log({ x: player.x, speed })
-    move(player.x + speed * 0.05)
+    move(player.x + speed * 0.02)
   }, [speed])
 
   const bind = useGesture(

@@ -1,5 +1,5 @@
 import React from "react"
-import Image, { ImageProps, StaticImageData } from "next/image"
+import Image from "next/image"
 import { ignore } from "@/lib/helpers"
 import { Assets } from "@/assets"
 import clsx from "clsx"

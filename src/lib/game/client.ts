@@ -7,6 +7,12 @@ export class GameClient {
   public player: Player
   private eventsRead = 0
 
+  constructor() {
+    this.server = new GameServer(0.1, 0.03)
+    this.player = new Player(PLAYER.id.default)
+    this.server.onPlayerJoin(this.player)
+  }
+
   public sync() {
     const events = this.server.events.slice(this.eventsRead)
     this.eventsRead = this.server.events.length
@@ -14,12 +20,6 @@ export class GameClient {
       game: this.server.serialize(),
       events,
     }
-  }
-
-  constructor() {
-    this.server = new GameServer(0.1, 0.03)
-    this.player = new Player(PLAYER.id.default)
-    this.server.onPlayerJoin(this.player)
   }
 
   public do(action: PlayerAction) {

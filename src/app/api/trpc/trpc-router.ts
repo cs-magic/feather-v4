@@ -2,13 +2,8 @@ import { initTRPC } from "@trpc/server"
 import superjson from "superjson"
 import {
   GameRecordCreateInputSchema,
-  GameRecordCreateWithoutUserInputSchema,
   GameRecordWhereInputSchema,
-  UserCreateInputSchema,
   UserUncheckedCreateInputSchema,
-  UserUncheckedCreateWithoutGameRecordInputSchema,
-  UserWhereInputSchema,
-  UserWhereUniqueInputSchema,
 } from "../../../../prisma/generated/zod"
 import { prisma } from "@/lib/db"
 

@@ -3,7 +3,13 @@ import React, { useState } from "react"
 import clsx from "clsx"
 import { useGesture } from "@use-gesture/react"
 import { client } from "@/lib/game/client"
-import useSound from "use-sound"
+import {
+  ControllerBackground,
+  ControllerBG,
+  ControllerFG,
+  ControllerForeground,
+  ControllerMargin,
+} from "@/config"
 
 export const Shoot = () => {
   const [isPressing, setPressing] = useState(false)
@@ -28,11 +34,14 @@ export const Shoot = () => {
     <button
       {...bind()}
       className={clsx(
-        "w-16 h-16 rounded-full text-slate-200 flex justify-center items-center p-6 whitespace-nowrap transition-all select-none touch-none font-black",
+        "rounded-full flex justify-center items-center p-6 whitespace-nowrap transition-all select-none touch-none font-black",
         isPressing && "scale-[110%]"
       )}
       style={{
-        background: "rgba(50, 50, 50, 50%)",
+        color: ControllerFG,
+        background: ControllerBG,
+        width: ControllerMargin * 1.5,
+        height: ControllerMargin * 1.5,
       }}
     >
       X

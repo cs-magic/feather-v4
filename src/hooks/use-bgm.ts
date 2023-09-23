@@ -45,7 +45,7 @@ export const useEndingBGM = (game?: IGame) => {
 
   useEffect(() => {
     if (state === "over" && bgmEnabled && duration) {
-      stop()
+      play()
     }
   }, [state, bgmEnabled, duration])
 }

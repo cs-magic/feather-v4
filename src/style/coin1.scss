@@ -5,17 +5,16 @@ $coin-thickness: 1px;
 $coin-color: rgb(255, 223, 95);
 
 $coin-front: "/image/coin.png";
-        //"https://tosv.byted.org/obj/maat/img/d2FuZ3NoaXpoZW4uNzUzMA/file_178a58ae02711.png";
+//"https://tosv.byted.org/obj/maat/img/d2FuZ3NoaXpoZW4uNzUzMA/file_178a58ae02711.png";
 
-$coin-back:"/image/coin.png";
-        //"https://tosv.byted.org/obj/maat/img/d2FuZ3NoaXpoZW4uNzUzMA/file_178a58ae0276.png";
+$coin-back: "/image/coin.png";
+//"https://tosv.byted.org/obj/maat/img/d2FuZ3NoaXpoZW4uNzUzMA/file_178a58ae0276.png";
 
 $edge-faces: 100;
 
 $edge-face-length: 3.14 * $coin-diameter / $edge-faces;
 
 $turn-time: 8s;
-
 
 
 .coin {
@@ -37,9 +36,7 @@ $turn-time: 8s;
 }
 
 
-
 .coin__front,
-
 .coin__back {
 
   position: absolute;
@@ -87,7 +84,6 @@ $turn-time: 8s;
 }
 
 
-
 .coin__front {
 
   background-image: url($coin-front);
@@ -107,7 +103,6 @@ $turn-time: 8s;
   transform: translateZ(-$coin-thickness / 2) rotateY(180deg);
 
 }
-
 
 
 .coin__edge {
@@ -142,22 +137,13 @@ $turn-time: 8s;
 
       // rotateZ(360deg / $edge-faces * $i + 90)
 
-      transform: translateY($coin-diameter / 2 - $edge-face-length / 2)
-
-      translateX($coin-diameter / 2 - $coin-thickness / 2)
-
-      rotateY(90deg)
-
-      rotateX(360deg / $edge-faces * $i + 90)
-
-      translateZ($coin-diameter / 2);
+      transform: translateY($coin-diameter / 2 - $edge-face-length / 2) translateX($coin-diameter / 2 - $coin-thickness / 2) rotateY(90deg) rotateX(360deg / $edge-faces * $i + 90) translateZ($coin-diameter / 2);
 
     }
 
   }
 
 }
-
 
 
 // 阴影 css
@@ -183,7 +169,6 @@ $turn-time: 8s;
 }
 
 
-
 @keyframes rotate3d {
 
   0% {
@@ -191,7 +176,6 @@ $turn-time: 8s;
     transform: perspective(1000px) rotateY(0deg);
 
   }
-
 
 
   100% {
@@ -203,11 +187,9 @@ $turn-time: 8s;
 }
 
 
-
 @keyframes shine {
 
   0%,
-
   15% {
 
     transform: translateY($coin-diameter * 2) rotate(-40deg);

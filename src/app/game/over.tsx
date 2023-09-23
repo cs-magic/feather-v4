@@ -1,4 +1,4 @@
-import { client, GameClient, restartClient } from "@/lib/game/client"
+import { client, restartClient } from "@/lib/game/client"
 import { trpc } from "@/lib/trpc"
 import { GameRanks } from "@/app/game/comp/ranks"
 import React from "react"

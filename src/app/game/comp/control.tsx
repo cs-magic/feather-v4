@@ -4,6 +4,7 @@ import React from "react"
 import { useControlMode } from "@/store"
 import { JoystickController } from "./joystick"
 import { Shoot } from "@/app/game/comp/shoot"
+import { ControllerMargin } from "@/config"
 
 export const GameControl = ({ player }: { player: IPlayer }) => {
   const { value: controlMode } = useControlMode()
@@ -14,11 +15,23 @@ export const GameControl = ({ player }: { player: IPlayer }) => {
       <Player player={player} />
       {controlMode === "joystick" && (
         <>
-          <div className={"absolute left-12 bottom-12 z-50"}>
+          <div
+            className={"absolute  z-50 -translate-x-1/2 translate-y-1/2"}
+            style={{
+              left: ControllerMargin,
+              bottom: ControllerMargin,
+            }}
+          >
             <JoystickController />
           </div>
 
-          <div className={"absolute right-12 bottom-12 z-50"}>
+          <div
+            className={"absolute z-50 translate-x-1/2 translate-y-1/2"}
+            style={{
+              right: ControllerMargin,
+              bottom: ControllerMargin,
+            }}
+          >
             <Shoot />
           </div>
         </>

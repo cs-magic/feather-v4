@@ -1,6 +1,5 @@
 import { HTMLAttributes, PropsWithChildren, ReactNode } from "react"
 import clsx from "clsx"
-import ReactMarkdown from "react-markdown"
 import { useLabelEnabled } from "@/store"
 
 type ILabelLine = { icon?: string; label: ReactNode } & PropsWithChildren

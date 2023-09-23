@@ -18,7 +18,7 @@ export const GameRender = ({ game }: { game: IGame }) => {
   } = useViewport()
 
   switch (renderMode) {
-    case "CSS":
+    case "css":
       return game.objs.map((f, i) => (
         <ObjContainer
           key={i}
@@ -40,7 +40,7 @@ export const GameRender = ({ game }: { game: IGame }) => {
         </ObjContainer>
       ))
 
-    case "Canvas":
+    case "canvas":
       return (
         <Canvas>
           {game.objs.map((obj, index) => (

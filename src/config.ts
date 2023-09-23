@@ -43,11 +43,11 @@ export const CONFIG = {
       label: "渲染引擎",
       values: [
         {
-          value: "CSS",
+          value: "css",
           desc: "标准模式（对设备性能要求略高）",
         },
         {
-          value: "Canvas",
+          value: "canvas",
           desc: "Beta模式（画面更流畅）",
         },
       ],
@@ -86,3 +86,12 @@ export const CONFIG = {
     },
   },
 }
+
+const ControllerBackground = 50
+const ControllerForeground = 200
+
+export const ControllerMargin = 80
+export const ControllerTransparency = 20
+
+export const ControllerFG = `rgba(${ControllerForeground}, ${ControllerForeground}, ${ControllerForeground}, ${ControllerTransparency}%)`
+export const ControllerBG = `rgba(${ControllerBackground}, ${ControllerBackground}, ${ControllerBackground}, ${ControllerTransparency}%)`

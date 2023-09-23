@@ -11,7 +11,6 @@ import {
 } from "@/store"
 import * as Dialog from "@radix-ui/react-dialog"
 import { DialogTriggerProps } from "@radix-ui/react-dialog"
-import { client } from "@/lib/game/client"
 import * as Select from "@radix-ui/react-select"
 import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
 import { SelectItem } from "@/app/game/comp/statusbar"
@@ -19,6 +18,7 @@ import * as Switch from "@radix-ui/react-switch"
 import * as Separator from "@radix-ui/react-separator"
 import { CONFIG } from "@/config"
 import { IBearStore, ISelects, ISwitch } from "@/ds"
+import { client } from "@/lib/game/client"
 
 const TheField = ({
   label,
@@ -62,10 +62,10 @@ const SelectField = <T extends string>({
 
             <Select.Viewport className="p-[5px]">
               <Select.Group>
-                <SelectItem value={"CSS"}>
+                <SelectItem value={"css"}>
                   标准模式（对设备性能要求略高）
                 </SelectItem>
-                <SelectItem value={"Canvas"}>Beta模式（画面更流畅）</SelectItem>
+                <SelectItem value={"canvas"}>Beta模式（画面更流畅）</SelectItem>
               </Select.Group>
             </Select.Viewport>
           </Select.Content>
@@ -81,7 +81,7 @@ export const SwitchComp = ({
   value,
 }: ISwitch & IBearStore<boolean>) => (
   <fieldset className="mb-[15px] flex items-center gap-5">
-    <label className="text-violet11 w-[90px] text-right text-[15px]">
+    <label className="text-violet11 w-16 shrink-0 text-right text-[15px]">
       {label}
     </label>
 
@@ -104,7 +104,7 @@ export const SelectComp = <T extends string>({
 }: ISelects<T> & IBearStore<T>) => {
   return (
     <fieldset className="mb-[15px] flex items-center gap-5">
-      <label className="text-violet11 w-[90px] text-right text-[15px]">
+      <label className="text-violet11 w-16 shrink-0 text-right text-[15px]">
         {label}
       </label>
 
@@ -162,15 +162,14 @@ export const GameSettingsContainer = ({
     ...CONFIG.userPreference.bgm,
     ...useBGMEnabled(),
   }
-
-  const [settingOpened, setSettingOpened] = useState(false)
+  const [open, setOpen] = useState(false)
 
   return (
     <Dialog.Root
-      open={settingOpened}
+      open={open}
       onOpenChange={(v) => {
+        setOpen(v)
         client.do({ type: v ? "pause" : "resume" })
-        setSettingOpened(v)
       }}
     >
       <Dialog.Trigger {...props} />

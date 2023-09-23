@@ -1,7 +1,7 @@
 import { ICoinObj } from "@/lib/game/object/coin"
 import { useTexture } from "@react-three/drei"
 import React from "react"
-import { DoubleSide, Mesh } from "three"
+import { Mesh } from "three"
 import { useFrame } from "@react-three/fiber"
 import { ObjContainer } from "@/app/game/entity/obj"
 import clsx from "clsx"

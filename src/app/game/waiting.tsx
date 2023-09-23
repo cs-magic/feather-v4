@@ -10,7 +10,7 @@ import { client } from "@/lib/game/client"
 
 export const GameWaiting = () => (
   <div className={"h-full flex flex-col gap-8 p-8"}>
-    <div className={"flex items-center justify-between gap-8"}>
+    <div className={"flex flex-wrap items-center justify-between gap-8"}>
       <Image
         priority
         width={240}
