@@ -1,10 +1,10 @@
 import { GameObjectBase, IObjBase, ObjID } from "@/lib/game/object/base"
 
-export type IFeatherObject = IObjBase<"feather">
+export type IFeatherObj = IObjBase<"feather">
 
 export class FeatherObject
   extends GameObjectBase<"feather">
-  implements IFeatherObject
+  implements IFeatherObj
 {
   // 羽毛可以携带被吹的人的信息（todo: 不一定有必要）
   public playerBlew?: string

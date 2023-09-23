@@ -19,7 +19,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
         />
       </head>
 
-      <body>
+      <body className={"w-screen h-screen"}>
         <Screen />
 
         <ThemeProvider>

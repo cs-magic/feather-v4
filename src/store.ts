@@ -1,5 +1,27 @@
 import { create } from "zustand"
 import { PLAYER_LIFE_MAX } from "@/config"
+import { GameState } from "@/lib/game/server"
+
+export enum RenderMode {
+  CSS = "CSS",
+  Canvas = "Canvas",
+}
+
+export interface IGameStore {
+  state: GameState
+  setState: (state: GameState) => void
+
+  renderMode: RenderMode
+  setRenderMode: (renderMode: RenderMode) => void
+}
+
+export const useGameStore = create<IGameStore>((set) => ({
+  state: "waiting",
+  setState: (state) => set({ state }),
+
+  renderMode: RenderMode.CSS,
+  setRenderMode: (renderMode) => set({ renderMode }),
+}))
 
 export interface PlayerState {
   x: number
@@ -17,10 +39,10 @@ export const usePlayerStore = create<PlayerState>((set) => ({
   setX: (x) => set({ x }),
 
   life: PLAYER_LIFE_MAX,
-  setLife: (life: number) => set({ life }),
+  setLife: (life) => set({ life }),
 
   rage: 0,
-  setRage: (rage: number) => set({ rage }),
+  setRage: (rage) => set({ rage }),
 }))
 
 export interface TestState {

@@ -2,13 +2,14 @@ import { trpc } from "@/lib/trpc"
 
 export const GameRanks = () => {
   const { data: ranks } = trpc.listGameRecords.useQuery({})
-  if (!ranks) return "loading"
 
   return (
-    <div className={"py-4 flex flex-col gap-2"}>
+    <div className={"w-full py-4 flex flex-col gap-2"}>
       <h2 className={"text-2xl font-bold"}>排行榜</h2>
 
-      {!ranks.length ? (
+      {!ranks ? (
+        "loading ..."
+      ) : !ranks.length ? (
         "暂无数据"
       ) : (
         <div className="overflow-x-auto">

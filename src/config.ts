@@ -1,5 +1,6 @@
 export const siteConfig = {
   links: {
+    company: "https://cs-magic.com",
     github: "https://github.com/cs-magic/blow-feather",
   },
 }

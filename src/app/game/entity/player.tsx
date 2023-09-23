@@ -19,6 +19,8 @@ import { PlayerImageMemo } from "@/app/game/entity/player-image"
 
 /**
  * todo: 对 drag 进行一层封装
+ *
+ * note: 因为 player 的图片需要基于服务器的状态进行更新，所以这个组件也需要在core组件内部
  * @param player
  * @constructor
  */

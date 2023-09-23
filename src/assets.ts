@@ -16,6 +16,8 @@ import Ljq10Image from "../public/image/player/ljq/10.png"
 import ZsyIdleImage from "../public/image/player/zsy/0.png"
 import MaliaoImage from "@/../public/image/maliao.png"
 
+import LogoImage from "@/../public/image/logo.png"
+
 export const Assets = {
   ljq: [
     LjqIdleImage,
@@ -40,4 +42,5 @@ export const Assets = {
 
   feather: FeatherImage,
   coin: CoinImage,
+  logo: LogoImage,
 }
