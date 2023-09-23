@@ -1,27 +1,20 @@
-import { CLIENT_FPS } from "@/config"
 import { client } from "@/lib/game/client"
 import React, { useEffect } from "react"
-import useInterval from "@/hooks/use-interval"
 import { GameStatusbar } from "@/app/game/comp/statusbar"
 import { GameControl } from "@/app/game/comp/control"
 import { GameRender } from "@/app/game/comp/render"
 
 import { useEventsBGM } from "@/hooks/use-bgm"
-import { useEvents, useGame } from "@/store"
+import { IGame, IGameEvent } from "@/lib/game/server"
 
-export const GamePlaying = () => {
-  const { player } = client
-
-  const { game, setGame } = useGame()
-  const { setEvents } = useEvents()
-
-  useEventsBGM()
-
-  useInterval(() => {
-    const { game, events } = client.sync()
-    setGame(game)
-    setEvents(events)
-  }, 1000 / CLIENT_FPS)
+export const GamePlaying = ({
+  game,
+  events,
+}: {
+  game: IGame
+  events: IGameEvent[]
+}) => {
+  useEventsBGM(events)
 
   useEffect(() => {
     // - 单人prepare 则立即开始
@@ -37,10 +30,10 @@ export const GamePlaying = () => {
       <GameRender game={game} />
 
       {/* 状态栏 */}
-      <GameStatusbar player={player} game={game} />
+      <GameStatusbar player={client.player} game={game} />
 
       {/* 玩家控制 */}
-      <GameControl player={player} />
+      <GameControl player={client.player} />
     </div>
   )
 }

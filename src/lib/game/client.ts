@@ -1,6 +1,6 @@
-import { GameServer, IGame, IGameEvent } from "@/lib/game/server"
+import { GameServer } from "@/lib/game/server"
 import { Player, PlayerAction } from "@/lib/game/player"
-import { PLAYER, PLAYER_DEFAULT_ID } from "@/config"
+import { PLAYER } from "@/config"
 
 export class GameClient {
   public server: GameServer

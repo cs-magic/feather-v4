@@ -1,12 +1,12 @@
 import { HTMLAttributes, PropsWithChildren, ReactNode } from "react"
 import clsx from "clsx"
 import ReactMarkdown from "react-markdown"
-import { useLabel } from "@/store"
+import { useLabelEnabled } from "@/store"
 
 type ILabelLine = { icon?: string; label: ReactNode } & PropsWithChildren
 
 export const LabelLine = ({ icon, label, children }: ILabelLine) => {
-  const { value: labelEnabled } = useLabel()
+  const { value: labelEnabled } = useLabelEnabled()
 
   return (
     <div

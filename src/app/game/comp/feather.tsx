@@ -1,16 +1,17 @@
 import { IFeatherObj } from "@/lib/game/object/feather"
-import { useViewportStore } from "@/hooks/use-viewpoint"
 import { ObjContainer } from "@/app/game/entity/obj"
 import clsx from "clsx"
 import Image from "next/image"
 import { Assets } from "@/assets"
 import { ignore } from "@/lib/helpers"
 import React from "react"
-import { ICoinObj } from "@/lib/game/object/coin"
 import { useTexture } from "@react-three/drei"
+import { useViewport } from "@/store"
 
 const CSSFeather = ({ obj }: { obj: IFeatherObj }) => {
-  const { width: vw, height: vh } = useViewportStore()
+  const {
+    viewport: { w: vw, h: vh },
+  } = useViewport()
 
   return (
     <ObjContainer

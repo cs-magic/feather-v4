@@ -1,42 +1,27 @@
-import { useState } from "react"
 import { Joystick } from "react-joystick-component"
 import { IJoystickUpdateEvent } from "react-joystick-component/build/lib/Joystick"
-
-import useInterval from "@/hooks/use-interval"
-import { usePlayerX } from "@/store"
-import { PLAYER } from "@/config"
+import { usePlayerSpeed } from "@/store"
 
 export const JoystickController = () => {
-  const [playerSpeed, setPlayerSpeed] = useState(0)
-  const { x: x0, setX } = usePlayerX()
+  const { setSpeed } = usePlayerSpeed()
 
   const handleMove = (event: IJoystickUpdateEvent) => {
-    setPlayerSpeed((x) => event.x ?? 0)
     // console.log("moving: ", event)
+    setSpeed(event.x ?? 0)
   }
 
   const handleStop = (event: IJoystickUpdateEvent) => {
-    setPlayerSpeed(0)
+    setSpeed(0)
     // console.log("stop: ", event)
   }
-
-  useInterval(() => {
-    if (playerSpeed) {
-      let x = x0
-      x += playerSpeed * 0.3
-      x = Math.max(x, PLAYER.x.min)
-      x = Math.min(x, PLAYER.x.max)
-      setX(x)
-    }
-  }, 20) // 50fps
 
   return (
     <Joystick
       size={100}
       sticky={false}
       stickSize={50}
-      baseColor="#222"
-      stickColor="#165E75"
+      baseColor="rgba(50,50,50,50%)"
+      stickColor="rgba(200,200,200,20%)"
       move={handleMove}
       stop={handleStop}
     ></Joystick>

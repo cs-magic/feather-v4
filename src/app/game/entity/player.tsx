@@ -1,21 +1,19 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useSpring } from "@react-spring/web"
 import { useGesture } from "@use-gesture/react"
 import clsx from "clsx"
-import { PLAYER_IMAGE_WIDTH, PLAYER_LIFE_MAX, PLAYER_RAGE_MAX } from "@/config"
+import { PLAYER } from "@/config"
 import { client } from "@/lib/game/client"
 import {
   getRectangleBlowXRadius,
   getRectangleBlowY,
   IPlayer,
 } from "@/lib/game/player"
-import useSound from "use-sound"
 import { Obj, ObjContainer } from "@/app/game/entity/obj"
-import Image from "next/image"
 import { LabelLine, ProgressLabelLine } from "@/app/utils/label.line"
-import { useToggle, useVibrate } from "react-use"
-import { useViewportStore } from "@/hooks/use-viewpoint"
 import { PlayerImageMemo } from "@/app/game/entity/player-image"
+import { useControlMode, usePlayerSpeed, useViewport } from "@/store"
+import { clamp } from "lodash"
 
 /**
  * todo: 对 drag 进行一层封装
@@ -25,20 +23,33 @@ import { PlayerImageMemo } from "@/app/game/entity/player-image"
  * @constructor
  */
 export const Player = ({ player }: { player: IPlayer }) => {
-  const { width: vw, height: vh } = useViewportStore()
-
-  const X = vw >> 1 // 初始的 x 位置
-
+  const { value: controlMode } = useControlMode()
+  const { speed } = usePlayerSpeed()
+  const {
+    viewport: { w: vw, h: vh },
+  } = useViewport()
   const [{ left }, api] = useSpring(() => ({
     left: vw >> 1,
   }))
 
-  const [playGiveUp, {}] = useSound("/sound/有没有认真工作.mp3")
-  const [playWorkHard, {}] = useSound("/sound/哪里贵了.mp3")
+  const playerImageWidth = vw * PLAYER.w
 
-  const [vibrating, toggleVibrating] = useToggle(true)
+  /**
+   *
+   * @param targetXPct
+   */
+  const move = (targetXPct: number) => {
+    // todo: 应该直接传最终效果，毕竟屏幕上只是动画
+    targetXPct = clamp(targetXPct, PLAYER.w / 2, 1 - PLAYER.w / 2)
+    // console.log({ x: player.x, targetXPct })
+    client.do({ type: "move", x: targetXPct })
+    api.start({ left: targetXPct * vw })
+  }
 
-  useVibrate(vibrating, [300, 100, 200, 100, 1000, 300], false)
+  useEffect(() => {
+    // console.log({ x: player.x, speed })
+    move(player.x + speed * 0.05)
+  }, [speed])
 
   const bind = useGesture(
     {
@@ -47,11 +58,9 @@ export const Player = ({ player }: { player: IPlayer }) => {
         // note: !important: 不能用正在的动画位置，否则会脱节，因为过 x ms后位置就不在这了
         client.do({ type: "pressDown", x: (left.animation.to as number) / vw })
       },
-      onDrag: ({ movement: [mx], offset: [ox] }) => {
-        // console.log("onDrag: ", { mx })
-        // 应该直接传最终效果，毕竟屏幕上只是动画
-        client.do({ type: "move", x: (X + ox) / vw })
-        api.start({ left: X + ox })
+      onDrag: ({ movement: [mx], offset: [ox], delta: [dx] }) => {
+        console.log("onDrag: ", { dx })
+        move(player.x + dx / vw)
       },
       onDragEnd: () => {
         console.log("onDragEnd")
@@ -61,14 +70,17 @@ export const Player = ({ player }: { player: IPlayer }) => {
     {
       drag: {
         bounds: {
-          // 玩家一开始居中（anchor也居中），完了，可以朝左或朝右移动到与容器对齐的位置，这两个距离是相等的
-          left: -(vw - PLAYER_IMAGE_WIDTH) >> 1,
-          right: (vw - PLAYER_IMAGE_WIDTH) >> 1,
+          // 1. 玩家一开始居中（anchor也居中），完了，可以朝左或朝右移动到与容器对齐的位置，这两个距离是相等的
+          // left: -(vw - PLAYER_IMAGE_WIDTH) >> 1,
+          // right: (vw - PLAYER_IMAGE_WIDTH) >> 1,
+          //
+          // 2. 在使用 delta + 服务端数据后，就不需要设置bounds了
         },
       },
     }
   )
 
+  const props = controlMode === "gesture" ? { ...bind() } : {}
   return (
     <>
       <ObjContainer
@@ -76,10 +88,10 @@ export const Player = ({ player }: { player: IPlayer }) => {
         y={vh}
         className={"-translate-y-[50%] z-50"}
         style={{
-          width: vw * 0.28,
-          height: vw * 0.28 * 1.2,
+          width: playerImageWidth,
+          height: playerImageWidth * 1.2,
         }}
-        {...bind()}
+        {...props}
       >
         <PlayerImageMemo i={Math.floor(player.rage / 10)} />
       </ObjContainer>
@@ -129,7 +141,7 @@ export const PlayerStatus = ({ player }: { player: IPlayer }) => {
           icon={"😁"}
           label={"体力"}
           value={player.life}
-          valueMax={PLAYER_LIFE_MAX}
+          valueMax={PLAYER.life.max}
           className={"progress-accent w-12"}
         />
 
@@ -137,7 +149,7 @@ export const PlayerStatus = ({ player }: { player: IPlayer }) => {
           icon={"🔥"}
           label={"怒气"}
           value={player.rage}
-          valueMax={PLAYER_RAGE_MAX}
+          valueMax={PLAYER.rage.max}
           className={"progress-warning w-12"}
         />
       </div>

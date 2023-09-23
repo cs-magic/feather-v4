@@ -1,4 +1,4 @@
-import { GAME_LIFE_MAX, SERVER_FPS, TOTAL_PROGRESS } from "@/config"
+import { GAME } from "@/config"
 import { IPlayer, Player, PlayerAction, PlayerID } from "@/lib/game/player"
 import { ObjID } from "@/lib/game/object/base"
 import { FeatherObject } from "@/lib/game/object/feather"
@@ -64,7 +64,7 @@ export class GameServer implements IGame {
   public state: GameServerState = "waiting"
   public stage = 1 // 关卡
   public tick = 0
-  public life = GAME_LIFE_MAX // 游戏的血条由掉落的羽毛控制
+  public life = GAME.life.max // 游戏的血条由掉落的羽毛控制
   public players: Player[] = []
   public objs: GameObj[] = []
   public progress = 0
@@ -79,9 +79,9 @@ export class GameServer implements IGame {
 
       this.tick += 1
 
-      if (this.progress < TOTAL_PROGRESS) {
+      if (this.progress < GAME.targetFeathers) {
         // n 秒新增一片羽毛
-        if (this.tick % (SERVER_FPS * this.featherInterval) === 1)
+        if (this.tick % (GAME.fps.server * this.featherInterval) === 1)
           this.objs.push(new FeatherObject(++this.progress, defaultYSpeed))
       }
 
@@ -164,7 +164,7 @@ export class GameServer implements IGame {
       ) {
         this.state = "over"
       }
-    }, 1000 / SERVER_FPS)
+    }, 1000 / GAME.fps.server)
   }
 
   public onPlayerJoin(player: Player) {
@@ -202,14 +202,19 @@ export class GameServer implements IGame {
         player.x = action.x
         break
 
+      case "clench-start":
       case "pressDown":
         console.log("onPressDown")
-        console.log({ x: action.x.toFixed(2) })
         player.pressing = true
         player.pressDownTime = Date.now()
-        player.pressDownX = action.x
+        player.pressDownX =
+          "x" in action
+            ? action.x
+            : // clench-start 不需要上报 x 位置
+              player.x
         break
 
+      case "clench-end":
       case "pressUp":
         console.log("onPressUp")
         //  既可以是 idle，也可以是 clenching，吹气

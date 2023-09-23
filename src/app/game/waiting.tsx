@@ -6,7 +6,7 @@ import { Assets } from "@/assets"
 import Image from "next/image"
 import { Button, Link } from "@radix-ui/themes"
 import { GameSettingsContainer } from "@/app/game/comp/settings"
-import { useClientState } from "@/store"
+import { client } from "@/lib/game/client"
 
 export const GameWaiting = () => (
   <div className={"h-full flex flex-col gap-8 p-8"}>
@@ -38,13 +38,10 @@ export const GameWaiting = () => (
 )
 
 const StartButton = () => {
-  const { setClientState, clientState } = useClientState()
-  console.log({ clientState, setClientState })
   return (
     <Button
       onClick={() => {
-        //   用户进入房间，自动跳转到游戏页
-        setClientState("playing")
+        client.do({ type: "prepare" })
       }}
     >
       立即开始

@@ -3,14 +3,17 @@ import { useTexture } from "@react-three/drei"
 import React from "react"
 import { DoubleSide, Mesh } from "three"
 import { useFrame } from "@react-three/fiber"
-import { useViewportStore } from "@/hooks/use-viewpoint"
 import { ObjContainer } from "@/app/game/entity/obj"
 import clsx from "clsx"
 
 import { Coin1 } from "@/app/game/comp/coin/coin1"
+import { useViewport } from "@/store"
+import { TwoPassDoubleSide } from "three/src/constants"
 
 const CSSCoin = ({ obj }: { obj: ICoinObj }) => {
-  const { width: vw, height: vh } = useViewportStore()
+  const {
+    viewport: { w: vw, h: vh },
+  } = useViewport()
 
   return (
     <ObjContainer
@@ -45,8 +48,11 @@ const CanvasCoin = ({ obj }: { obj: ICoinObj }) => {
 
       <meshBasicMaterial
         map={coinTexture}
-        side={DoubleSide}
+        side={TwoPassDoubleSide}
         color={"#FFD700"} // gold color
+        // Three.js - Render an object always on top, ref: https://stackoverflow.com/a/62818553/9422455
+        depthTest={false}
+        depthWrite={false}
       />
     </mesh>
   )

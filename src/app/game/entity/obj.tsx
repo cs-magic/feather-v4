@@ -3,7 +3,7 @@ import clsx from "clsx"
 import { animated } from "@react-spring/web"
 import { pos2str, SNumber } from "@/lib/number"
 import { useElementSize } from "@mantine/hooks"
-import { useTesting } from "@/store"
+import { useTestingEnabled } from "@/store"
 import { ignore } from "@/lib/helpers"
 
 export type IObjContainer = {
@@ -20,7 +20,7 @@ export const ObjContainer = ({
   style,
   ...props
 }: IObjContainer) => {
-  const { isTesting } = useTesting()
+  const { isTesting } = useTestingEnabled()
   const { ref, width, height } = useElementSize()
   // console.log("obj: ", { width, height })
   return (
@@ -72,7 +72,7 @@ export type IObj = {
 
 export const Obj = forwardRef<HTMLDivElement, IObj>(
   ({ w, h, x, y, bg, className, style, children, ...props }, ref) => {
-    const { isTesting } = useTesting()
+    const { isTesting } = useTestingEnabled()
 
     return (
       <animated.div

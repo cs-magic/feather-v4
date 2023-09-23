@@ -1,10 +1,10 @@
 import useSound from "use-sound"
 import { useEffect } from "react"
-import { useBGM, useEvents, useGame } from "@/store"
+import { useBGMEnabled } from "@/store"
+import { IGame, IGameEvent } from "@/lib/game/server"
 
-export const usePlayingBGM = () => {
-  const { value: bgmEnabled } = useBGM()
-  const { game } = useGame()
+export const usePlayingBGM = (game?: IGame) => {
+  const { value: bgmEnabled } = useBGMEnabled()
   const state = game?.state
 
   const [play, { sound, stop, pause, duration }] = useSound(
@@ -34,9 +34,8 @@ export const usePlayingBGM = () => {
   }, [state, duration, bgmEnabled])
 }
 
-export const useEndingBGM = () => {
-  const { value: bgmEnabled } = useBGM()
-  const { game } = useGame()
+export const useEndingBGM = (game?: IGame) => {
+  const { value: bgmEnabled } = useBGMEnabled()
   const state = game?.state
 
   const [play, { sound, stop, pause, duration }] = useSound(
@@ -51,9 +50,8 @@ export const useEndingBGM = () => {
   }, [state, bgmEnabled, duration])
 }
 
-export const useEventsBGM = () => {
-  const { value: bgmEnabled } = useBGM()
-  const { events } = useEvents()
+export const useEventsBGM = (events: IGameEvent[]) => {
+  const { value: bgmEnabled } = useBGMEnabled()
 
   const [playGotCoin] = useSound("/sound/吃金币.mp3")
   const [playBlowLow] = useSound("/sound/吹.mp3", { volume: 0.5 })

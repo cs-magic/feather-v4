@@ -8,15 +8,16 @@ export const siteConfig = {
   },
 }
 
-export const GAME_LIFE_MAX = 5
-
-export const PLAYER_LIFE_MAX = 100
-export const PLAYER_RAGE_MAX = 100
-
-export const CLIENT_FPS = 30
-export const SERVER_FPS = 50
-
-export const PLAYER_DEFAULT_ID = "ljq"
+export const GAME = {
+  life: {
+    max: 5,
+  },
+  targetFeathers: 79,
+  fps: {
+    server: 50,
+    client: 30,
+  },
+}
 
 export const PLAYER = {
   id: {
@@ -27,12 +28,16 @@ export const PLAYER = {
     min: 0.05,
     max: 0.95,
   },
+  life: {
+    max: 100,
+  },
+  rage: {
+    max: 100,
+  },
+  w: 0.28,
 }
 
-export const PLAYER_IMAGE_WIDTH = 200
-export const TOTAL_PROGRESS = 79
-
-export const config = {
+export const CONFIG = {
   userPreference: {
     renderMode: {
       label: "渲染引擎",

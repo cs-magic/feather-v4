@@ -1,10 +1,10 @@
 import { IPlayer } from "@/lib/game/player"
 import { IGame } from "@/lib/game/server"
-import { useTesting } from "@/store"
+import { useTestingEnabled } from "@/store"
 import clsx from "clsx"
 import { PlayerStatus } from "@/app/game/entity/player"
 import { LabelLine } from "@/app/utils/label.line"
-import { GAME_LIFE_MAX, TOTAL_PROGRESS } from "@/config"
+import { GAME } from "@/config"
 import { range } from "lodash"
 import React from "react"
 import * as Select from "@radix-ui/react-select"
@@ -40,7 +40,7 @@ export const GameStatusbar = ({
   player: IPlayer
   game: IGame
 }) => {
-  const { isTesting, setIsTesting } = useTesting()
+  const { isTesting, setIsTesting } = useTestingEnabled()
 
   return (
     <div
@@ -69,20 +69,22 @@ export const GameStatusbar = ({
 
         <LabelLine icon={"💫"} label={"进度"}>
           <p className={"text-xs font-medium"}>
-            {`${game.progress.toString().padStart(2, "0")} / ${TOTAL_PROGRESS}`}
+            {`${game.progress.toString().padStart(2, "0")} / ${
+              GAME.targetFeathers
+            }`}
           </p>
         </LabelLine>
 
         <LabelLine icon={"❤️"} label={"生命"}>
           <div className={"flex h-full divide-x border border-gray-200"}>
-            {range(GAME_LIFE_MAX).map((k, i) => (
+            {range(GAME.life.max).map((k, i) => (
               <div
                 className={clsx(
                   "w-2 h-full border-gray-300",
                   i < game.life &&
-                    (game.life <= GAME_LIFE_MAX * 0.2
+                    (game.life <= GAME.life.max * 0.2
                       ? "bg-red-500"
-                      : game.life <= GAME_LIFE_MAX * 0.4
+                      : game.life <= GAME.life.max * 0.4
                       ? "bg-yellow-500"
                       : "bg-green-500")
                 )}

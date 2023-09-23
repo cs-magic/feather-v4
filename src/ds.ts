@@ -13,3 +13,8 @@ export type IBearStore<T extends any> = {
   value: T
   setValue: (v: T) => void
 }
+
+export interface Viewport {
+  w: number
+  h: number
+}

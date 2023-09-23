@@ -1,22 +1,24 @@
 "use client"
 
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { useEndingBGM, usePlayingBGM } from "@/hooks/use-bgm"
 import { GameWaiting } from "@/app/game/waiting"
 import { GameOver } from "@/app/game/over"
 import { GamePlaying } from "@/app/game/playing"
 import clsx from "clsx"
 import { useElementSize } from "@mantine/hooks"
-import { useViewportStore } from "@/hooks/use-viewpoint"
-import { useClientState } from "@/store"
+import { useViewport } from "@/store"
+import useInterval from "@/hooks/use-interval"
+import { client } from "@/lib/game/client"
+import { GAME } from "@/config"
+import { IGame, IGameEvent } from "@/lib/game/server"
 
 export default function GamePage() {
-  const { setHeight, setWidth } = useViewportStore()
+  const { setViewport } = useViewport()
   const { ref, width, height } = useElementSize()
 
   useEffect(() => {
-    setWidth(width)
-    setHeight(height)
+    setViewport({ w: width, h: height })
   }, [width, height])
 
   return (
@@ -45,14 +47,22 @@ export default function GamePage() {
 }
 
 const GameCore = () => {
-  const { clientState } = useClientState()
-  usePlayingBGM()
-  useEndingBGM()
+  const [game, setGame] = useState<IGame>()
+  const [events, setEvents] = useState<IGameEvent[]>([])
 
-  switch (clientState) {
+  usePlayingBGM(game)
+  useEndingBGM(game)
+
+  useInterval(() => {
+    const { game, events } = client.sync()
+    setGame(game)
+    setEvents(events)
+  }, 1000 / GAME.fps.client)
+
+  switch (game?.state) {
     case "playing":
     case "paused":
-      return <GamePlaying />
+      return <GamePlaying game={game} events={events} />
     case "over":
       return <GameOver />
     case "waiting":

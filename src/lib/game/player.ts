@@ -1,4 +1,4 @@
-import { PLAYER_LIFE_MAX, PLAYER_RAGE_MAX, SERVER_FPS } from "@/config"
+import { GAME, PLAYER } from "@/config"
 import { clamp } from "lodash"
 
 import { GameObj } from "@/lib/game/object/objects"
@@ -14,6 +14,10 @@ export type PlayerActionType =
   | "pressDown"
   | "move"
   | "pressUp"
+
+  // joystick with button
+  | "clench-start"
+  | "clench-end"
 
   // 用户对服务机的特殊控制，手游一般是没有的，我们可以有
   | "pause"
@@ -48,11 +52,16 @@ export interface PlayerStopAction extends PlayerActionBase<"stop"> {}
 
 export interface PlayerRestartAction extends PlayerActionBase<"stop"> {}
 
+export interface PlayerClenchStartAction
+  extends PlayerActionBase<"clench-start"> {}
+
 export interface PlayerPressDownAction extends PlayerActionBase<"pressDown"> {
   x: number // 上报按压时的位置
 }
 
 export interface PlayerPressUpAction extends PlayerActionBase<"pressUp"> {}
+
+export interface PlayerClenchEndAction extends PlayerActionBase<"clench-end"> {}
 
 export interface PlayerMoveAction extends PlayerActionBase<"move"> {
   x: number // [0: 1]
@@ -64,6 +73,8 @@ export type PlayerAction =
   | PlayerResumeAction
   | PlayerStopAction
   | PlayerRestartAction
+  | PlayerClenchStartAction
+  | PlayerClenchEndAction
   | PlayerPressDownAction
   | PlayerPressUpAction
   | PlayerMoveAction
@@ -77,7 +88,11 @@ export interface IPlayer {
   prepared: boolean
 }
 
-export const getRectangleBlowY = (rage: number) => 0.2 + rage / 400
+/**
+ * @return [.5 - 1]
+ * @param rage
+ */
+export const getRectangleBlowY = (rage: number) => 0.5 + rage / 200
 export const getRectangleBlowXRadius = () => 0.15
 
 export class Player implements IPlayer {
@@ -87,7 +102,7 @@ export class Player implements IPlayer {
   public state: PlayerStateInGame = "idle"
   public score = 0
   public x = 0.5 // container内的百分比x坐标
-  public life = PLAYER_LIFE_MAX
+  public life = PLAYER.life.max
   public rage = 0
   public skillType: PlayerSkillType = "rectangle"
 
@@ -131,9 +146,9 @@ export class Player implements IPlayer {
       dizzy: 0, // 奋斗过头，会收到额外惩罚
     }
     this.life = clamp(
-      this.life + lifeAddSpeed[this.state] / SERVER_FPS,
+      this.life + lifeAddSpeed[this.state] / GAME.fps.server,
       0,
-      PLAYER_LIFE_MAX
+      PLAYER.life.max
     )
 
     // 没有体力时不允许集气
@@ -146,9 +161,9 @@ export class Player implements IPlayer {
       idle: -50, // 躺平，怒气缓慢降低
     }
     this.rage = clamp(
-      this.rage + rageAddSpeed[this.state] / SERVER_FPS,
+      this.rage + rageAddSpeed[this.state] / GAME.fps.server,
       0,
-      PLAYER_RAGE_MAX
+      PLAYER.rage.max
     )
   }
 

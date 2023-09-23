@@ -3,9 +3,9 @@ import {
   ControlMode,
   RenderMode,
   UILibrary,
-  useBGM,
+  useBGMEnabled,
   useControlMode,
-  useLabel,
+  useLabelEnabled,
   useRenderMode,
   useUILibrary,
 } from "@/store"
@@ -17,7 +17,7 @@ import { ChevronDownIcon, ChevronUpIcon } from "@radix-ui/react-icons"
 import { SelectItem } from "@/app/game/comp/statusbar"
 import * as Switch from "@radix-ui/react-switch"
 import * as Separator from "@radix-ui/react-separator"
-import { config } from "@/config"
+import { CONFIG } from "@/config"
 import { IBearStore, ISelects, ISwitch } from "@/ds"
 
 const TheField = ({
@@ -126,7 +126,9 @@ export const SelectComp = <T extends string>({
             <Select.Viewport className="p-[5px]">
               <Select.Group>
                 {values.map((v) => (
-                  <SelectItem value={v.value}>{v.desc || v.value}</SelectItem>
+                  <SelectItem key={v.value} value={v.value}>
+                    {v.desc || v.value}
+                  </SelectItem>
                 ))}
               </Select.Group>
             </Select.Viewport>
@@ -141,24 +143,24 @@ export const GameSettingsContainer = ({
   ...props
 }: PropsWithChildren & DialogTriggerProps) => {
   const controlModeProps: ISelects<ControlMode> & IBearStore<ControlMode> = {
-    ...config.userPreference.controlMode,
+    ...CONFIG.userPreference.controlMode,
     ...useControlMode(),
   }
   const renderModeProps: ISelects<RenderMode> & IBearStore<RenderMode> = {
-    ...config.userPreference.renderMode,
+    ...CONFIG.userPreference.renderMode,
     ...useRenderMode(),
   }
   const uiLibraryProps: ISelects<UILibrary> & IBearStore<UILibrary> = {
-    ...config.userPreference.uiLibrary,
+    ...CONFIG.userPreference.uiLibrary,
     ...useUILibrary(),
   }
   const labelProps: ISwitch & IBearStore<boolean> = {
-    ...config.userPreference.label,
-    ...useLabel(),
+    ...CONFIG.userPreference.label,
+    ...useLabelEnabled(),
   }
   const bgmProps: ISwitch & IBearStore<boolean> = {
-    ...config.userPreference.bgm,
-    ...useBGM(),
+    ...CONFIG.userPreference.bgm,
+    ...useBGMEnabled(),
   }
 
   const [settingOpened, setSettingOpened] = useState(false)

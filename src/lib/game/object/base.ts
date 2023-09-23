@@ -1,5 +1,4 @@
-import { SERVER_FPS } from "@/config"
-import { randomUUID } from "node:crypto"
+import { GAME } from "@/config"
 
 export type GameObjectType = "feather" | "coin"
 
@@ -55,12 +54,15 @@ export class GameObjectBase<T extends GameObjectType> implements IObjBase<T> {
   public nextTick() {
     // 碰到边缘就改方向
     if (this.x <= this.xMin || this.x >= this.xMax) this.xSpeed = -this.xSpeed
-    this.x += this.xSpeed / SERVER_FPS
+    this.x += this.xSpeed / GAME.fps.server
 
     // 回复速度
     if (this.ySpeed < this.defaultYSpeed)
-      this.ySpeed = Math.min(this.defaultYSpeed, this.ySpeed + 0.3 / SERVER_FPS)
-    this.y += this.ySpeed / SERVER_FPS
+      this.ySpeed = Math.min(
+        this.defaultYSpeed,
+        this.ySpeed + 0.3 / GAME.fps.server
+      )
+    this.y += this.ySpeed / GAME.fps.server
   }
 
   public serialize(): IObjBase<T> {

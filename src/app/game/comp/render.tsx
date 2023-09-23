@@ -1,6 +1,5 @@
 import { IGame } from "@/lib/game/server"
-import { useRenderMode } from "@/store"
-import { useViewportStore } from "@/hooks/use-viewpoint"
+import { useRenderMode, useViewport } from "@/store"
 import { ObjContainer } from "@/app/game/entity/obj"
 import clsx from "clsx"
 import Image from "next/image"
@@ -14,7 +13,9 @@ import { Coin1 } from "@/app/game/comp/coin/coin1"
 
 export const GameRender = ({ game }: { game: IGame }) => {
   const { value: renderMode } = useRenderMode()
-  const { width: vw, height: vh } = useViewportStore()
+  const {
+    viewport: { w: vw, h: vh },
+  } = useViewport()
 
   switch (renderMode) {
     case "CSS":
