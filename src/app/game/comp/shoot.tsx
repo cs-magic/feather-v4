@@ -3,13 +3,7 @@ import React, { useState } from "react"
 import clsx from "clsx"
 import { useGesture } from "@use-gesture/react"
 import { client } from "@/lib/game/client"
-import {
-  ControllerBackground,
-  ControllerBG,
-  ControllerFG,
-  ControllerForeground,
-  ControllerMargin,
-} from "@/config"
+import { ControllerBG, ControllerFG, ControllerMargin } from "@/config"
 
 export const Shoot = () => {
   const [isPressing, setPressing] = useState(false)
