@@ -15,7 +15,7 @@ export const GAME = {
   targetFeathers: 79,
   fps: {
     server: 50,
-    client: 30,
+    client: 50,
   },
 }
 
