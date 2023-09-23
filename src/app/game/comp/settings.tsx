@@ -19,6 +19,7 @@ import * as Separator from "@radix-ui/react-separator"
 import { CONFIG } from "@/config"
 import { IBearStore, ISelects, ISwitch } from "@/ds"
 import { client } from "@/lib/game/client"
+import { GameServerState } from "@/lib/game/server"
 
 const TheField = ({
   label,
@@ -140,8 +141,9 @@ export const SelectComp = <T extends string>({
 }
 
 export const GameSettingsContainer = ({
+  state,
   ...props
-}: PropsWithChildren & DialogTriggerProps) => {
+}: PropsWithChildren & DialogTriggerProps & { state: GameServerState }) => {
   const controlModeProps: ISelects<ControlMode> & IBearStore<ControlMode> = {
     ...CONFIG.userPreference.controlMode,
     ...useControlMode(),
@@ -169,7 +171,8 @@ export const GameSettingsContainer = ({
       open={open}
       onOpenChange={(v) => {
         setOpen(v)
-        client.do({ type: v ? "pause" : "resume" })
+        if (state === "playing" || state === "paused")
+          client.do({ type: v ? "pause" : "resume" })
       }}
     >
       <Dialog.Trigger {...props} />

@@ -35,7 +35,7 @@ export const GameStatusbar = ({
 
       {/* 右上： 游戏状态*/}
       <div className={"flex flex-col gap-1 "}>
-        <GameSettingsContainer asChild>
+        <GameSettingsContainer asChild state={game.state}>
           <button className={"text-left"}>
             <LabelLine icon={"⚙️"} label={"设置"} />
           </button>

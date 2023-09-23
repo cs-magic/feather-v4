@@ -50,7 +50,7 @@ const StartButton = () => {
 }
 
 const SettingsButton = () => (
-  <GameSettingsContainer>
+  <GameSettingsContainer state={"waiting"}>
     <Link underline={"always"} size={"3"} highContrast>
       ⚙️ 设置
     </Link>
